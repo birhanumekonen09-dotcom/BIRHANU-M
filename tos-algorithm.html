@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Table of Specifications (TOS) Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background-color: #f4f4f4; }
+        .input-group { margin-bottom: 10px; }
+        label { display: inline-block; width: 180px; }
+        input { padding: 5px; width: 100px; }
+        button { padding: 8px 15px; background: #007BFF; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+
+    <h2>Table of Specifications (TOS) Generator</h2>
+    
+    <div class="input-group">
+        <label for="totalItems">Total Test Items:</label>
+        <input type="number" id="totalItems" value="50">
+    </div>
+
+    <h3>Topics & Class Periods</h3>
+    <div id="topicsContainer">
+        <div class="topic-row input-group">
+            <input type="text" placeholder="Topic Name" value="Topic 1" class="topic-name">
+            <input type="number" placeholder="Periods" value="5" class="topic-periods">
+        </div>
+        <div class="topic-row input-group">
+            <input type="text" placeholder="Topic Name" value="Topic 2" class="topic-name">
+            <input type="number" placeholder="Periods" value="10" class="topic-periods">
+        </div>
+    </div>
+    <button onclick="addTopic()">Add Topic</button>
+
+    <h3>Bloom's Taxonomy Distribution (%)</h3>
+    <div class="input-group"><label>Remembering:</label><input type="number" id="bloomRemember" value="20"></div>
+    <div class="input-group"><label>Understanding:</label><input type="number" id="bloomUnderstand" value="30"></div>
+    <div class="input-group"><label>Applying:</label><input type="number" id="bloomApply" value="20"></div>
+    <div class="input-group"><label>Analyzing:</label><input type="number" id="bloomAnalyze" value="15"></div>
+    <div class="input-group"><label>Evaluating:</label><input type="number" id="bloomEvaluate" value="10"></div>
+    <div class="input-group"><label>Creating:</label><input type="number" id="bloomCreate" value="5"></div>
+
+    <br>
+    <button onclick="calculateTOS()">Generate TOS</button>
+
+    <div id="resultContainer"></div>
+
+    <script>
+        function addTopic() {
+            const container = document.getElementById('topicsContainer');
+            const div = document.createElement('div');
+            div.className = 'topic-row input-group';
+            div.innerHTML = `
+                <input type="text" placeholder="Topic Name" class="topic-name">
+                <input type="number" placeholder="Periods" class="topic-periods">
+            `;
+            container.appendChild(div);
+        }
+
+        function calculateTOS() {
+            const totalItems = parseFloat(document.getElementById('totalItems').value);
+            
+            // Gather topics and calculate total periods
+            const topicRows = document.querySelectorAll('.topic-row');
+            let topics = [];
+            let totalPeriods = 0;
+
+            topicRows.forEach(row => {
+                const name = row.querySelector('.topic-name').value || 'Untitled';
+                const periods = parseFloat(row.querySelector('.topic-periods').value) || 0;
+                topics.push({ name, periods });
+                totalPeriods += periods;
+            });
+
+            if (totalPeriods === 0) {
+                alert('Total periods cannot be zero.');
+                return;
+            }
+
+            // Gather Bloom's weights
+            const blooms = {
+                Remembering: parseFloat(document.getElementById('bloomRemember').value) || 0,
+                Understanding: parseFloat(document.getElementById('bloomUnderstand').value) || 0,
+                Applying: parseFloat(document.getElementById('bloomApply').value) || 0,
+                Analyzing: parseFloat(document.getElementById('bloomAnalyze').value) || 0,
+                Evaluating: parseFloat(document.getElementById('bloomEvaluate').value) || 0,
+                Creating: parseFloat(document.getElementById('bloomCreate').value) || 0
+            };
+
+            const bloomKeys = Object.keys(blooms);
+
+            // Build HTML Table
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Topic</th>
+                            <th>Periods</th>
+                            <th>Weight (%)</th>
+                            <th>No. of Items</th>
+                            ${bloomKeys.map(b => `<th>${b} (${blooms[b]}%)</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            let grandTotalItems = 0;
+            let bloomTotals = {};
+            bloomKeys.forEach(b => bloomTotals[b] = 0);
+
+            topics.forEach(topic => {
+                const weight = (topic.periods / totalPeriods) * 100;
+                const topicItems = Math.round((weight / 100) * totalItems);
+                grandTotalItems += topicItems;
+
+                html += `<tr>
+                    <td>${topic.name}</td>
+                    <td>${topic.periods}</td>
+                    <td>${weight.toFixed(2)}%</td>
+                    <td>${topicItems}</td>`;
+
+                bloomKeys.forEach(b => {
+                    const levelItems = Math.round(topicItems * (blooms[b] / 100));
+                    bloomTotals[b] += levelItems;
+                    html += `<td>${levelItems}</td>`;
+                });
+
+                html += `</tr>`;
+            });
+
+            // Totals Row
+            html += `
+                <tr style="font-weight: bold; background-color: #f9f9f9;">
+                    <td>Total</td>
+                    <td>${totalPeriods}</td>
+                    <td>100%</td>
+                    <td>${grandTotalItems}</td>
+                    ${bloomKeys.map(b => `<td>${bloomTotals[b]}</td>`).join('')}
+                </tr>
+            `;
+
+            html += `</tbody></table>`;
+            document.getElementById('resultContainer').innerHTML = html;
+        }
+    </script>
+</body>
+</html>
