@@ -12,7 +12,7 @@
 
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 1000px; background: #fff; margin: auto; padding: 30px; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; }
+        .container { max-width: 1200px; background: #fff; margin: auto; padding: 30px; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; }
         .auth-screen, .app-screen, .payment-screen, .owner-screen { display: none; }
         .active-screen { display: block; }
         .controls, .auth-box, .payment-box, .owner-box { background: #eef2f7; padding: 20px; border-radius: 6px; margin-bottom: 25px; display: flex; flex-direction: column; gap: 15px; }
@@ -20,24 +20,29 @@
         input[type="text"], input[type="password"], input[type="date"], input[type="number"], select { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; min-width: 140px; }
         .day-config-card { background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 15px; margin-bottom: 15px; }
         .day-config-card h3 { margin: 0 0 10px 0; font-size: 15px; color: #0056b3; border-bottom: 2px solid #eef2f7; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
-        .day-config-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        .day-config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .ai-select-group { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 4px; display: flex; flex-direction: column; gap: 5px; }
+        .ai-select-group label { font-size: 12px; font-weight: bold; color: #1e293b; display: flex; justify-content: space-between; align-items: center; }
+        .ai-select-group select { width: 100%; padding: 8px; font-size: 13px; background: #fff; }
         .checkbox-scroll { max-height: 120px; overflow-y: auto; border: 1px solid #ddd; padding: 5px; border-radius: 4px; background: #fafafa; }
         .checkbox-scroll label { display: block; font-size: 12px; margin-bottom: 4px; cursor: pointer; }
         button { padding: 12px 25px; background-color: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; }
         button:hover { background-color: #004085; }
         .secondary-btn { background-color: #6c757d; width: auto; padding: 6px 12px; font-size: 12px; }
         .secondary-btn:hover { background-color: #5a6268; }
-        .day-plan-page { margin-bottom: 50px; padding-bottom: 40px; page-break-after: always; break-after: page; }
+        .ai-assist-btn { background-color: #0284c7; color: white; border: none; padding: 3px 8px; font-size: 11px; border-radius: 3px; cursor: pointer; font-weight: normal; }
+        .ai-assist-btn:hover { background-color: #0369a1; }
+        .day-plan-page { margin-bottom: 50px; padding-bottom: 40px; page-break-after: always; break-after: page; width: 100%; box-sizing: border-box; }
         .day-badge { background: #0056b3; color: white; padding: 5px 15px; font-weight: bold; display: inline-block; border-radius: 4px; margin-bottom: 10px; font-size: 15px; }
         .header-top { text-align: center; margin-bottom: 15px; }
         .metadata-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px; font-size: 14px; }
-        .metadata-row { display: flex; align-items: flex-end; margin-bottom: 10px; font-size: 14px; }
-        .metadata-row label, .metadata-grid label { font-weight: bold; margin-right: 5px; white-space: nowrap; }
-        .metadata-row input, .metadata-grid input { flex: 1; border: none; border-bottom: 1px dotted #333; outline: none; font-family: inherit; font-size: 14px; padding: 2px 5px; background: transparent; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; font-size: 13px; }
-        th, td { border: 1px solid #333; padding: 8px; vertical-align: top; }
-        th { background-color: #f2f2f2; text-align: center; font-size: 12px; }
-        textarea { width: 100%; border: none; resize: vertical; font-family: inherit; font-size: inherit; background: transparent; outline: none; box-sizing: border-box; }
+        .metadata-row { display: flex; align-items: flex-start; margin-bottom: 10px; font-size: 14px; width: 100%; }
+        .metadata-row label { font-weight: bold; margin-right: 8px; white-space: nowrap; min-width: 170px; padding-top: 2px; }
+        .metadata-row textarea, .metadata-grid input { flex: 1; border: none; border-bottom: 1px dotted #333; outline: none; font-family: inherit; font-size: 14px; padding: 2px 5px; background: transparent; resize: vertical; overflow: hidden; box-sizing: border-box; width: 100%; }
+        table { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; font-size: 12px; }
+        th, td { border: 1px solid #333; padding: 6px; vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; }
+        th { background-color: #f2f2f2; text-align: center; font-size: 11px; }
+        textarea { width: 100%; border: none; resize: vertical; font-family: inherit; font-size: inherit; background: transparent; outline: none; box-sizing: border-box; overflow: hidden; height: auto; word-wrap: break-word; overflow-wrap: break-word; }
         .footer-section { margin-top: 10px; font-size: 14px; }
         .footer-section textarea { border-bottom: 1px dotted #333; margin-top: 5px; height: 40px; }
         .export-panel { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
@@ -49,16 +54,20 @@
         .btn-txt { background-color: #6c757d; }
         .btn-txt:hover { background-color: #5a6268; }
         @media print { 
-            body { background: #fff; padding: 0; } 
-            .controls, .export-panel, .secondary-btn { display: none; } 
-            .container { box-shadow: none; padding: 0; max-width: 100%; } 
-            .day-plan-page { page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid; margin-bottom: 0; padding-bottom: 0; }
+            body { background: #fff; padding: 0; color: #000; } 
+            .controls, .export-panel, .secondary-btn, .ai-assist-btn { display: none !important; } 
+            .container { box-shadow: none; padding: 0; max-width: 100%; width: 100%; } 
+            .day-plan-page { page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid; margin-bottom: 0; padding-bottom: 20px; width: 100%; }
+            textarea, input { border: none !important; background: transparent !important; resize: none !important; height: auto !important; overflow: visible !important; white-space: pre-wrap !important; word-wrap: break-word !important; font-family: inherit !important; font-size: 11px !important; padding: 0 !important; color: #000 !important; }
+            table { page-break-inside: auto; width: 100% !important; table-layout: fixed !important; }
+            tr { page-break-inside: avoid; page-break-after: auto; }
+            td, th { page-break-inside: avoid; overflow: visible !important; word-wrap: break-word !important; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" style="max-width: 1200px;">
     <!-- Authentication Screen -->
     <div id="authScreen" class="auth-screen active-screen">
         <div class="auth-box">
@@ -106,7 +115,7 @@
         </div>
     </div>
 
-    <!-- Payment Gate Screen (Telebirr / CBE Instructions) -->
+    <!-- Payment Gate Screen -->
     <div id="paymentScreen" class="payment-screen">
         <div class="payment-box">
             <h2 style="text-align:center; color:#0056b3; margin-top:0;">Payment Verification Required</h2>
@@ -172,7 +181,7 @@
 </div>
 
 <script>
-    // Firebase Configuration (Using your exact project details)
+    // Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyBcJTD77Bxa7A1NP6I18i3Tue2wXf4F17Y",
         authDomain: "adika-academy-lesson-planner.firebaseapp.com",
@@ -197,6 +206,29 @@
 
     const assessmentList = [
         "Classwork", "Homework", "Exit ticket", "Concept tests", "Two minute papers", "Performance tasks"
+    ];
+
+    const teachingAidsList = [
+        "Blackboards and whiteboards",
+        "Chalk and dry-erase markers",
+        "Textbooks",
+        "Workbooks and exercise pads",
+        "Notebooks",
+        "Pens and pencils",
+        "Handouts and worksheets",
+        "Flashcards",
+        "Charts and posters",
+        "Geographical maps",
+        "Globes",
+        "Projectors",
+        "Computers and laptops",
+        "Interactive flat panels and smartboards",
+        "Educational videos and animations",
+        "Audio recordings and podcasts",
+        "Real objects (realia)",
+        "Physical 3D models",
+        "Educational quiz and gamification software",
+        "Bulletin boards"
     ];
 
     const defaultTopics = [
@@ -367,12 +399,16 @@
             html += getDayConfigHtml(i, defaultTopics[i-1]);
         }
         document.getElementById('dayConfigsContainer').innerHTML = html;
+        for(let i=1; i<=5; i++) {
+            updateAiOptionsForDay(i);
+        }
         checkAddButtonState();
     }
 
     function getDayConfigHtml(dayNum, defaultTopic) {
         let stratHtml = strategiesList.map((s, idx) => `<label><input type="checkbox" name="strat${dayNum}" value="${s}" ${idx<2?'checked':''}> ${s}</label>`).join('');
         let assessHtml = assessmentList.map((a, idx) => `<label><input type="checkbox" name="assess${dayNum}" value="${a}" ${idx===0?'checked':''}> ${a}</label>`).join('');
+        let aidsHtml = teachingAidsList.map((ta, idx) => `<label><input type="checkbox" name="aids${dayNum}" value="${ta}" ${idx<3?'checked':''}> ${ta}</label>`).join('');
 
         return `
             <div class="day-config-card" id="configCard_${dayNum}" data-day="${dayNum}">
@@ -381,8 +417,9 @@
                     <button type="button" class="secondary-btn" style="background-color:#dc3545;" onclick="omitDay(${dayNum})">Omit / Remove</button>
                 </h3>
                 <div class="controls-row" style="margin-bottom: 10px;">
-                    <input type="text" id="topic${dayNum}" placeholder="Topic Name" value="${defaultTopic}">
+                    <input type="text" id="topic${dayNum}" placeholder="Topic Name" value="${defaultTopic}" oninput="updateAiOptionsForDay(${dayNum})">
                 </div>
+                
                 <div style="margin-bottom: 10px; background: #fdfdfd; padding: 10px; border: 1px solid #e2e8f0; border-radius: 4px;">
                     <h4 style="margin: 0 0 8px 0; font-size: 13px; color: #333;">Manual Minute Distribution (Total: 45 Mins)</h4>
                     <div style="display: flex; gap: 10px;">
@@ -391,14 +428,44 @@
                         <div style="flex:1;"><label style="font-size:11px;">Concluding Mins:</label><input type="number" id="conclMin${dayNum}" value="8" min="1" max="45" style="width:100%; padding:5px;"></div>
                     </div>
                 </div>
-                <div class="day-config-grid">
+
+                <div class="day-config-grid" style="grid-template-columns: 1fr;">
+                    <div class="ai-select-group">
+                        <label>
+                            <span>AI Alternative Rationale Options</span>
+                            <button type="button" class="ai-assist-btn" onclick="updateAiOptionsForDay(${dayNum})">✨ Refresh AI Alternatives</button>
+                        </label>
+                        <select id="rationaleSelect${dayNum}"></select>
+                    </div>
+                    <div class="ai-select-group">
+                        <label>
+                            <span>AI Alternative Learning Objectives Options</span>
+                        </label>
+                        <select id="objectivesSelect${dayNum}"></select>
+                    </div>
+                    <div class="ai-select-group">
+                        <label>
+                            <span>AI Alternative Pre-requisite Knowledge Options</span>
+                        </label>
+                        <select id="prereqSelect${dayNum}"></select>
+                    </div>
+                </div>
+
+                <div class="day-config-grid" style="margin-top: 15px;">
                     <div class="select-box-group">
                         <h4 style="font-size:12px; margin:0 0 5px 0;">Active Learning Strategies</h4>
                         <div class="checkbox-scroll">${stratHtml}</div>
                     </div>
-                    <div class="select-box-group" style="grid-column: span 2;">
+                    <div class="select-box-group">
                         <h4 style="font-size:12px; margin:0 0 5px 0;">Assessment Activities</h4>
                         <div class="checkbox-scroll">${assessHtml}</div>
+                    </div>
+                </div>
+
+                <div class="day-config-grid" style="margin-top: 15px; grid-template-columns: 1fr;">
+                    <div class="select-box-group">
+                        <h4 style="font-size:12px; margin:0 0 5px 0;">Teaching Aids</h4>
+                        <div class="checkbox-scroll">${aidsHtml}</div>
                     </div>
                 </div>
             </div>
@@ -421,7 +488,8 @@
         }
 
         const div = document.createElement('div');
-        div.innerHTML = getDayConfigHtml(newDayNum, defaultTopics[newDayNum-1] || `Topic ${newDayNum}`);
+        let defaultTopicName = defaultTopics[newDayNum-1] || `Advanced Topic ${newDayNum}`;
+        div.innerHTML = getDayConfigHtml(newDayNum, defaultTopicName);
         
         existingCards.forEach(card => {
             if(parseInt(card.getAttribute('data-day')) > newDayNum) {
@@ -433,6 +501,7 @@
             container.appendChild(div.firstElementChild);
         }
 
+        updateAiOptionsForDay(newDayNum);
         checkAddButtonState();
     }
 
@@ -453,65 +522,252 @@
         }
     }
 
+    function getAiAlternatives(topicVal) {
+        const t = topicVal.trim().toLowerCase();
+
+        let rationales = [];
+        let objectives = [];
+        let prereqs = [];
+
+        if (t.includes('lens') || t.includes('optic') || t.includes('mirror') || t.includes('refraction')) {
+            rationales = [
+                `Mastery of ${topicVal} provides critical optical engineering foundations necessary for designing precision imaging instruments and corrective laser systems.`,
+                `Understanding ${topicVal} enables learners to calculate focal behaviors, trace light paths accurately, and solve advanced physics board examination items.`,
+                `Exploring ${topicVal} bridges theoretical wave mechanics with real-world optical technology applications used in cameras, microscopes, and telescopes.`,
+                `Inquiry into ${topicVal} builds spatial reasoning regarding light propagation and interface transitions across diverse transparent media.`,
+                `Analyzing ${topicVal} equips students with the optics background needed for modern fiber-optic communications and photonics technologies.`,
+                `Studying ${topicVal} reinforces quantitative problem-solving methodologies through rigorous focal length and magnification equations.`,
+                `Investigating ${topicVal} uncovers how optical instruments manipulate light to extend human visual capabilities in scientific research.`,
+                `The concepts within ${topicVal} offer essential predictive frameworks for evaluating image distortion and optical aberration corrections.`
+            ];
+            objectives = [
+                `Students will empirically verify lens equations, construct accurate ray diagrams, and calculate image magnification factors with 90% precision.`,
+                `Students will differentiate between concave and convex optical properties, measure focal lengths experimentally, and solve quantitative refraction problems.`,
+                `Students will analyze image formation characteristics under varied object distances and compute image locations using the standard thin lens formula.`,
+                `Students will diagram virtual and real image creation paths using proper principal ray tracing conventions.`,
+                `Students will measure angle of incidence and angle of refraction values to validate Snell's Law experimentally.`,
+                `Students will evaluate the impact of refractive index changes on light speed and wavelength shifts through dense media.`,
+                `Students will calculate optical power in diopters for diverse combinations of converging and diverging lens setups.`,
+                `Students will design a simplified optical device schematic incorporating multiple lens elements to achieve specific magnification goals.`
+            ];
+            prereqs = [
+                `Fundamental knowledge of geometric angles, the law of reflection, and standard linear algebraic equation solving.`,
+                `Familiarity with wave propagation, basic graphing coordinates, and preliminary definitions of focal points and principal axes.`,
+                `Basic understanding of light speed constants, refractive indices, and algebraic fraction manipulation.`,
+                `Competency in plotting linear and inverse-proportional relationships on Cartesian grids.`,
+                `Recall of standard trigonometric functions and right-triangle geometric properties.`,
+                `Understanding of energy transmission concepts and electromagnetic wave basics from prior physics units.`,
+                `Familiarity with significant figures, measurement error calculations, and laboratory unit conversions.`,
+                `Prior exposure to basic optical phenomena such as shadows, reflection mirrors, and light scattering.`
+            ];
+        } else if (t.includes('wave') || t.includes('momentum') || t.includes('force') || t.includes('newton') || t.includes('motion')) {
+            rationales = [
+                `A rigorous understanding of ${topicVal} enables learners to quantify dynamic collision forces and mechanical energy conservation in physical systems.`,
+                `Analyzing ${topicVal} is crucial for students to model real-world kinetic interactions, vehicle safety mechanics, and dynamic vector systems.`,
+                `Mastering ${topicVal} equips learners with essential mathematical modeling techniques for calculating velocity shifts and force distributions.`,
+                `Exploration of ${topicVal} provides vital insight into how energy and momentum transfer dynamically across interacting bodies.`,
+                `Studying ${topicVal} lays the groundwork for advanced mechanics, aerospace engineering, and structural dynamics analyses.`,
+                `Investigating ${topicVal} strengthens analytical thinking by connecting abstract force formulas to tangible motion phenomena.`,
+                `The principles underlying ${topicVal} explain structural resilience and failure points during sudden mechanical impacts.`,
+                `Understanding ${topicVal} helps demystify everyday kinetic phenomena, from sports trajectories to industrial machinery operations.`
+            ];
+            objectives = [
+                `Students will compute vector resultants, apply conservation of momentum equations, and analyze velocity-time graphs accurately.`,
+                `Students will solve multi-step force equations, calculate kinetic energy transfers, and interpret dynamic system graphs with precision.`,
+                `Students will formulate impulse-momentum theorems and calculate collision velocities using structured physical equations.`,
+                `Students will derive acceleration parameters using mass-force proportional relationships and free-body diagrams.`,
+                `Students will evaluate system energy losses during inelastic collisions using conservation principles.`,
+                `Students will measure changes in momentum experimentally and account for external friction variables.`,
+                `Students will construct velocity vector diagrams for multi-directional force vectors under equilibrium conditions.`,
+                `Students will calculate stopping distances and reaction-time kinematics for moving physical loads.`
+            ];
+            prereqs = [
+                `Basic vector addition, trigonometric ratios (sin, cos, tan), and Newton's laws of motion.`,
+                `Elementary algebra, linear equation solving, and standard SI unit conversions for mass, velocity, and time.`,
+                `Familiarity with graphing linear relationships, slope calculations, and fundamental force definitions.`,
+                `Understanding of scalar versus vector quantities and basic coordinate directional conventions.`,
+                `Recall of kinematic equations describing constant acceleration and displacement over time.`,
+                `Prior practice with free-body diagram sketching and identifying normal, gravity, and tension forces.`,
+                `Competency in rearranging algebraic equations to isolate unknown variables like mass or acceleration.`,
+                `Basic awareness of energy conservation principles and kinetic versus potential energy definitions.`
+            ];
+        } else if (t.includes('geometry') || t.includes('probability') || t.includes('algebra') || t.includes('coordinate') || t.includes('matrix') || t.includes('math')) {
+            rationales = [
+                `Proficiency in ${topicVal} equips students with essential spatial reasoning and quantitative modeling frameworks required for advanced data science and spatial design.`,
+                `Studying ${topicVal} develops rigorous deductive logic and systematic problem-solving strategies applicable across engineering and financial sectors.`,
+                `Mastering ${topicVal} enables learners to decode complex spatial patterns, calculate probabilistic risks, and structure logical mathematical proofs.`,
+                `Engagement with ${topicVal} strengthens abstract thinking capabilities and structural arrangement skills.`,
+                `Competence in ${topicVal} is indispensable for interpreting statistical datasets and architectural spatial layouts.`,
+                `Exploring ${topicVal} bridges theoretical mathematical structures with practical algorithmic computing tasks.`,
+                `The tools found in ${topicVal} provide clear methods for optimizing shapes, paths, and likelihood outcomes.`,
+                `Understanding ${topicVal} fosters precision and clarity in quantitative communication and technical design.`
+            ];
+            objectives = [
+                `Students will derive complex geometric theorems, solve multi-step coordinate equations, and compute compound probability distributions.`,
+                `Students will construct rigorous logical proofs, analyze spatial grid coordinates, and calculate statistical likelihoods accurately.`,
+                `Students will apply algebraic formulas to resolve coordinate positioning challenges and interpret probability tree models.`,
+                `Students will calculate perimeter, area, and volume metrics for irregular compound geometric figures.`,
+                `Students will determine theoretical versus empirical probabilities for multi-stage independent events.`,
+                `Students will manipulate algebraic matrices to solve simultaneous linear equation systems efficiently.`,
+                `Students will graph transformed geometric functions accurately on a standard Cartesian plane.`,
+                `Students will evaluate logical arguments and identify flaws in probabilistic reasoning scenarios.`
+            ];
+            prereqs = [
+                `Fundamental algebraic factoring, Cartesian coordinate orientation, and basic ratio/proportion principles.`,
+                `Familiarity with angle properties, linear functions, and introductory set theory or counting principles.`,
+                `Basic competency in solving simultaneous equations and plotting points on a 2D plane.`,
+                `Recall of fraction operations, percentages, and basic exponent rules.`,
+                `Understanding of polygon properties, parallel line theorems, and Pythagorean relationships.`,
+                `Prior exposure to probability sample spaces and basic counting multiplication rules.`,
+                `Ability to read table datasets and interpret simple graphical distributions.`,
+                `Familiarity with algebraic notation symbols and substitution techniques.`
+            ];
+        } else if (t.includes('cell') || t.includes('photosynthesis') || t.includes('genetics') || t.includes('ecosystem') || t.includes('respiratory') || t.includes('biology')) {
+            rationales = [
+                `Deep comprehension of ${topicVal} is vital for understanding micro-level energy conversions, hereditary transmission, and complex organism homeostasis.`,
+                `Exploring ${topicVal} provides students with essential biochemical insight into metabolic pathways, cellular organization, and ecological balance.`,
+                `Investigating ${topicVal} connects microscopic cellular structures with macro-level biological survival mechanisms and environmental adaptation.`,
+                `Study of ${topicVal} illuminates how living systems capture, store, and utilize energy efficiently.`,
+                `Knowledge of ${topicVal} underpins modern medical insights, agricultural biotechnology, and ecological conservation practices.`,
+                `Examining ${topicVal} builds appreciation for the structural complexity and interdependent nature of living tissues.`,
+                `The concepts in ${topicVal} clarify how genetic code translates into functional physical traits across generations.`,
+                `Understanding ${topicVal} equips learners to evaluate contemporary bioethical issues and health science reports.`
+            ];
+            objectives = [
+                `Students will trace biochemical reaction sequences, label microscopic structural components, and analyze ecological/cellular interdependencies.`,
+                `Students will diagram metabolic cycle stages, differentiate between organelle functions, and evaluate biological adaptation mechanisms.`,
+                `Students will explain hereditary or metabolic processes and interpret experimental biological data accurately.`,
+                `Students will compare aerobic and anaerobic metabolic pathways across different cellular environments.`,
+                `Students will analyze Punnett squares to predict inheritance probabilities for monohybrid and dihybrid crosses.`,
+                `Students will model energy flow through trophic levels within a designated ecosystem framework.`,
+                `Students will identify key phases of cellular division using microscope slide imagery or diagrams.`,
+                `Students will evaluate environmental factors affecting enzyme reaction rates in biological tissues.`
+            ];
+            prereqs = [
+                `Basic organic chemistry building blocks, cell organelle identification, and introductory ecological definitions.`,
+                `Familiarity with microscopic imaging principles, enzyme action basics, and cell membrane permeability.`,
+                `Preliminary understanding of cellular respiration, energy currencies (ATP), and basic biological terminology.`,
+                `Recall of molecular diffusion, osmosis, and active transport mechanisms across membranes.`,
+                `Basic awareness of DNA structure, chromosome organization, and heredity basics.`,
+                `Familiarity with trophic classifications (producers, consumers, decomposers) in food chains.`,
+                `Understanding of basic chemical formulas for water, carbon dioxide, and glucose.`,
+                `Prior exposure to scientific drawing and biological diagram labeling conventions.`
+            ];
+        } else {
+            rationales = [
+                `Mastery of ${topicVal} builds essential critical thinking and quantitative analysis skills required for academic progression and practical problem solving.`,
+                `Exploring ${topicVal} provides learners with targeted conceptual tools to investigate real-world applications and solve complex domain challenges.`,
+                `Understanding ${topicVal} fosters deeper analytical inquiry and reinforces core interdisciplinary competencies across the curriculum.`,
+                `Engagement with ${topicVal} broadens intellectual perspectives and supports structured inquiry habits.`,
+                `Proficiency in ${topicVal} serves as a stepping stone for advanced topic specializations and project execution.`,
+                `Analyzing ${topicVal} cultivates systematic troubleshooting methods applicable in diverse professional settings.`,
+                `The core tenets of ${topicVal} offer reliable frameworks for evaluating complex information sources.`,
+                `Study of ${topicVal} enhances cognitive flexibility and synthesis of cross-disciplinary concepts.`
+            ];
+            objectives = [
+                `Students will analyze key principles, compute domain-specific problem sets, and evaluate theoretical applications of ${topicVal} with accuracy.`,
+                `Students will demonstrate conceptual mastery of ${topicVal} through structured problem-solving and peer-led analytical discussions.`,
+                `Students will evaluate core mechanisms, interpret topical data sets, and synthesize valid conclusions regarding ${topicVal}.`,
+                `Students will design a small-scale project or model illustrating the core mechanisms of ${topicVal}.`,
+                `Students will critique common misconceptions and clarify fundamental definitions related to ${topicVal}.`,
+                `Students will apply learned frameworks to resolve case studies involving ${topicVal}.`,
+                `Students will communicate structured summaries of ${topicVal} through concise oral presentations.`,
+                `Students will construct detailed comparative matrices contrasting ${topicVal} with adjacent concepts.`
+            ];
+            prereqs = [
+                `Foundational terminology, baseline conceptual frameworks, and introductory principles from prior academic units.`,
+                `Familiarity with basic inquiry methods, general vocabulary, and preliminary subject matter concepts.`,
+                `Basic competency in prerequisite problem solving and fundamental background definitions related to the module.`,
+                `Recall of general safety guidelines and collaborative group work protocols.`,
+                `Basic information literacy skills required for gathering secondary source data.`,
+                `Familiarity with organizational outlining and structured note-taking methods.`,
+                `Introductory exposure to analytical questioning techniques and hypothesis generation.`,
+                `Basic readiness for independent reading comprehension and task execution.`
+            ];
+        }
+
+        return { rationales, objectives, prereqs };
+    }
+
+    function updateAiOptionsForDay(dayNum) {
+        const topicInput = document.getElementById(`topic${dayNum}`);
+        if (!topicInput) return;
+        const topicVal = topicInput.value || "General Topic";
+
+        const alternatives = getAiAlternatives(topicVal);
+
+        const ratSelect = document.getElementById(`rationaleSelect${dayNum}`);
+        const objSelect = document.getElementById(`objectivesSelect${dayNum}`);
+        const preSelect = document.getElementById(`prereqSelect${dayNum}`);
+
+        if (ratSelect) {
+            ratSelect.innerHTML = alternatives.rationales.map((r, idx) => `<option value="${escapeHtml(r)}">Option ${idx + 1}: ${escapeHtml(r)}</option>`).join('');
+        }
+        if (objSelect) {
+            objSelect.innerHTML = alternatives.objectives.map((o, idx) => `<option value="${escapeHtml(o)}">Option ${idx + 1}: ${escapeHtml(o)}</option>`).join('');
+        }
+        if (preSelect) {
+            preSelect.innerHTML = alternatives.prereqs.map((p, idx) => `<option value="${escapeHtml(p)}">Option ${idx + 1}: ${escapeHtml(p)}</option>`).join('');
+        }
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
     function getIntelligentLessonContent(topicVal) {
-        let t = topicVal.toLowerCase();
-        let subtopic = "Core Principles & Mechanisms";
-        let rationale = "Understanding this concept is essential for building advanced analytical reasoning and core scientific proficiency.";
-        let objectives = `Students will be able to analyze, explain, and apply core principles of ${topicVal} accurately.`;
-        let prereq = "Basic foundational vocabulary and introductory problem-solving models from previous units.";
-        let starterContent = "Contextual Hook & Concept Provocation";
-        let starterRole = `Introduce a real-world scenario relating to ${topicVal} and prompt initial student hypotheses.`;
-        let starterAction = "Brainstorm initial hypotheses and engage in inquiry prompts.";
+        const t = topicVal.trim().toLowerCase();
+        
+        let subtopic = `Core Structural Mechanisms, Analytical Properties, and Applied Problem Solving in ${topicVal}`;
+        let starterContent = `Contextual inquiry and real-world problem provocation regarding ${topicVal}`;
+        let starterRole = `Present a targeted conceptual dilemma or practical challenge related directly to ${topicVal}.`;
+        let starterAction = `Brainstorm initial hypotheses, share insights in pairs, and formulate focused inquiry questions.`;
         let starterMethod = "Brainstorming";
         let starterAssessment = "Formative Check";
         
-        let mainContent = `Deep dive, structural model analysis, and guided problem-solving regarding ${topicVal}.`;
-        let mainRole = "Facilitate active learning strategies and provide step-by-step cognitive scaffolding.";
-        let mainAction = "Collaborate in peer groups, investigate problem sets, and derive solutions.";
+        let mainContent = `Comprehensive exploration, step-by-step analytical breakdown, and guided problem-solving drills specific to ${topicVal}.`;
+        let mainRole = `Facilitate interactive learning structures, monitor student progress, and provide targeted technical scaffolding.`;
+        let mainAction = `Collaborate in small peer groups to complete structured task sheets, solve equations, and analyze models.`;
         
-        let plenaryContent = "Synthesis, Q&A Review, and Exit Evaluation";
-        let plenaryRole = "Lead summary discussion, clear misconceptions, and administer final verification task.";
-        let plenaryAction = "Complete final reflection or evaluation tasks.";
+        let plenaryContent = `Summary review, conceptual debrief, and misconception resolution`;
+        let plenaryRole = `Synthesize main takeaways, clarify specific hurdles, and direct closing evaluations.`;
+        let plenaryAction = `Complete exit assessment and summarize key conceptual insights.`;
         let plenaryMethod = "Peer Instruction";
         let plenaryAssessment = "Exit ticket";
-        let aids = "Whiteboard, markers, core textbooks";
+        let aids = `Whiteboard, instructional handouts, specialized reference charts`;
 
-        if (t.includes('lens') || t.includes('optic') || t.includes('mirror')) {
-            subtopic = "Refraction, Focal Length, and Ray Tracing";
-            rationale = "Optics forms the backbone of modern imaging systems, optical instruments, and foundational wave physics.";
-            objectives = "Students will calculate focal lengths using mirror/lens equations and construct accurate ray diagrams.";
-            prereq = "Elementary geometry, angles of incidence/reflection, and wave propagation properties.";
-            starterContent = "Real-world optical illusions & focal point demonstration";
-            mainContent = "Ray diagram sketching, focal point calculations, and virtual lab verification.";
-            aids = "Optical bench, laser source, concave/convex mirrors, ray boxes.";
-        } else if (t.includes('wave') || t.includes('momentum')) {
-            subtopic = "Conservation Laws and Wave Equation Dynamics";
-            rationale = "Momentum conservation and wave mechanics explain collision dynamics and energy transfer across systems.";
-            objectives = "Students will apply conservation of momentum formulas and compute wave velocity and frequency variables.";
-            prereq = "Basic algebra, vector addition, and kinetic energy definitions.";
-            starterContent = "Collision simulation analysis & momentum shock hook";
-            mainContent = "Problem-solving drill on impulse-momentum theorem and wave speed calculations.";
-            aids = "Ticker-timer sets, air tracks, mass sets, wave demonstration springs.";
-        } else if (t.includes('geometry') || t.includes('probability')) {
-            subtopic = "Spatial Coordinate Mapping & Dependent Event Analysis";
-            rationale = "Spatial geometry and probability models govern risk assessment, logical deduction, and structural design.";
-            objectives = "Students will solve coordinate proofs and compute compound probabilities for complex events.";
-            prereq = "Algebraic linear equations and basic ratio/fraction calculations.";
-            starterContent = "Probability paradox teaser & coordinate layout puzzle";
-            mainContent = "Step-by-step geometric proofs, probability tree diagram mapping, and guided practice.";
-            aids = "Geometric sets, graph boards, simulation software tools.";
-        } else if (t.includes('cell') || t.includes('photosynthesis') || t.includes('genetics') || t.includes('ecosystem')) {
-            subtopic = "Biochemical Pathways & Cellular Architecture";
-            rationale = "Understanding biological systems provides crucial insight into cellular energy conversion and hereditary transmission.";
-            objectives = "Students will trace metabolic pathways and map structural-functional relationships in biological units.";
-            prereq = "Basic organic chemistry building blocks and cellular biology fundamentals.";
-            starterContent = "Microscopic slide projection & ecological interdependence hook";
-            mainContent = "Detailed diagrammatic breakdown, process mapping, and collaborative concept analysis.";
-            aids = "Compound microscopes, biological charts, model kits.";
+        if (t.includes('lens') || t.includes('optic') || t.includes('mirror') || t.includes('refraction')) {
+            subtopic = `Ray Tracing, Snell's Law Derivations, and Focal Length Calculation for ${topicVal}`;
+            starterContent = `Optical bench refraction anomaly & focal point discovery puzzle`;
+            starterRole = `Demonstrate light bending through varied curved glass surfaces to provoke cognitive inquiry.`;
+            starterAction = `Observe focal convergence and record initial hypotheses regarding focal length variance.`;
+            mainContent = `Rigorous step-by-step application of mirror and lens formulas ($1/f = 1/d_o + 1/d_i$), ray tracing drills, and laboratory simulation verification.`;
+            aids = `Optical benches, laser boxes, convex and concave lenses, precision rulers`;
+        } else if (t.includes('wave') || t.includes('momentum') || t.includes('force') || t.includes('newton') || t.includes('motion')) {
+            subtopic = `Vector Decomposition, Impulse-Momentum Theorem, and Energy Conservation in ${topicVal}`;
+            starterContent = `Momentum collision simulation and impact force teaser`;
+            starterRole = `Pose a discrepant event involving inelastic versus elastic collisions to stimulate critical thinking.`;
+            starterAction = `Analyze collision velocities and debate momentum conservation outcomes in pairs.`;
+            mainContent = `Intensive quantitative problem solving focused on momentum conservation ($p = mv$), kinetic energy transformations, and graphical impulse integration.`;
+            aids = `Air track apparatus, ticker timers, mass sets, dynamic carts`;
+        } else if (t.includes('geometry') || t.includes('probability') || t.includes('algebra') || t.includes('coordinate') || t.includes('matrix') || t.includes('math')) {
+            subtopic = `Algorithmic Derivation, Spatial Coordinate Mapping, and Analytical Proofs for ${topicVal}`;
+            starterContent = `Spatial paradox teaser & probability distribution hook`;
+            starterRole = `Introduce a counter-intuitive probability or coordinate puzzle to capture student curiosity.`;
+            starterAction = `Brainstorm initial problem-solving strategies and sketch rough coordinate coordinates.`;
+            mainContent = `Systematic theorem proof walkthroughs, coordinate geometry derivation drills, and structured probability tree computations.`;
+            aids = `Whiteboard graph boards, geometric instrument sets, scientific calculators`;
+        } else if (t.includes('cell') || t.includes('photosynthesis') || t.includes('genetics') || t.includes('ecosystem') || t.includes('respiratory') || t.includes('biology')) {
+            subtopic = `Biochemical Pathway Mapping, Cellular Structural Analysis, and Metabolic Dynamics of ${topicVal}`;
+            starterContent = `Microscopic specimen projection & metabolic cycle teaser`;
+            starterRole = `Display high-magnification cellular slide imagery to spark investigative questions.`;
+            starterAction = `Examine structural anomalies and articulate initial observations in collaborative groups.`;
+            mainContent = `Detailed process mapping of metabolic pathways, structural-functional tabular analysis, and interactive diagrammatic breakdowns.`;
+            aids = `Compound microscopes, 3D anatomical models, laminated cellular charts`;
         }
 
         return {
-            subtopic, rationale, objectives, prereq,
+            subtopic,
             starterContent, starterRole, starterAction, starterMethod, starterAssessment,
             mainContent, mainRole, mainAction,
             plenaryContent, plenaryRole, plenaryAction, plenaryMethod, plenaryAssessment,
@@ -553,7 +809,12 @@
         cards.forEach((card) => {
             sequenceIndex++;
             const dayNum = card.getAttribute('data-day');
-            const topicVal = card.querySelector(`input[id^="topic"]`).value || "Core Lesson Subject";
+            const topicInputElem = card.querySelector(`input[id^="topic"]`);
+            const topicVal = topicInputElem ? topicInputElem.value.trim() : "Core Lesson Subject";
+
+            const selectedRationale = document.getElementById(`rationaleSelect${dayNum}`)?.value || "Standard instructional rationale.";
+            const selectedObjectives = document.getElementById(`objectivesSelect${dayNum}`)?.value || "Standard learning objectives.";
+            const selectedPrereq = document.getElementById(`prereqSelect${dayNum}`)?.value || "Standard prerequisite knowledge.";
 
             const sMin = document.getElementById(`starterMin${dayNum}`)?.value || "5";
             const mMin = document.getElementById(`mainMin${dayNum}`)?.value || "32";
@@ -564,6 +825,9 @@
 
             const checkedAssess = Array.from(card.querySelectorAll(`input[name^="assess"]:checked`)).map(cb => cb.value);
             const assessText = checkedAssess.length > 0 ? checkedAssess.join(", ") : "Classwork";
+
+            const checkedAids = Array.from(card.querySelectorAll(`input[name^="aids"]:checked`)).map(cb => cb.value);
+            const aidsText = checkedAids.length > 0 ? checkedAids.join(", ") : getIntelligentLessonContent(topicVal).aids;
 
             let currDate = new Date(baseDate);
             currDate.setDate(baseDate.getDate() + (sequenceIndex - 1));
@@ -591,63 +855,80 @@
                         <div><label>Unit Track:</label><input type="text" value="Module Sequence - Part ${sequenceIndex}"></div>
                     </div>
 
-                    <div class="metadata-row"><label>Topic of the lesson:</label><input type="text" value="${topicVal}"></div>
-                    <div class="metadata-row"><label>Subtopic of the lesson:</label><input type="text" value="${plan.subtopic}"></div>
-                    <div class="metadata-row"><label>Rationale of the lesson:</label><input type="text" value="${plan.rationale}"></div>
-                    <div class="metadata-row"><label>Learning Objectives:</label><input type="text" value="${plan.objectives}"></div>
-                    <div class="metadata-row"><label>Pre-requisite Knowledge:</label><input type="text" value="${plan.prereq}"></div>
+                    <div class="metadata-row"><label>Topic of the lesson:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${topicVal}</textarea></div>
+                    <div class="metadata-row"><label>Subtopic of the lesson:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.subtopic}</textarea></div>
+                    <div class="metadata-row"><label>Rationale of the lesson:</label><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedRationale}</textarea></div>
+                    <div class="metadata-row"><label>Learning Objectives:</label><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedObjectives}</textarea></div>
+                    <div class="metadata-row"><label>Pre-requisite Knowledge:</label><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedPrereq}</textarea></div>
 
                     <table>
+                        <colgroup>
+                            <col style="width: 10%;">
+                            <col style="width: 8%;">
+                            <col style="width: 20%;">
+                            <col style="width: 20%;">
+                            <col style="width: 22%;">
+                            <col style="width: 10%;">
+                            <col style="width: 10%;">
+                        </colgroup>
                         <thead>
                             <tr>
-                                <th style="width: 12%;">Stage</th>
-                                <th style="width: 10%;">Time</th>
-                                <th style="width: 18%;">Contents</th>
-                                <th style="width: 20%;">Teacher Role</th>
-                                <th style="width: 20%;">Student Actions</th>
-                                <th style="width: 10%;">Method</th>
-                                <th style="width: 10%;">Assessment</th>
+                                <th>Stage</th>
+                                <th>Time</th>
+                                <th>Contents</th>
+                                <th>Teacher Role</th>
+                                <th>Student Actions</th>
+                                <th>Method</th>
+                                <th>Assessment</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td><strong>Starter Activity</strong></td>
-                                <td><textarea rows="2">${sMin} mins</textarea></td>
-                                <td><textarea rows="2">${plan.starterContent}</textarea></td>
-                                <td><textarea rows="2">${plan.starterRole}</textarea></td>
-                                <td><textarea rows="2">${plan.starterAction}</textarea></td>
-                                <td><textarea rows="2">${plan.starterMethod}</textarea></td>
-                                <td><textarea rows="2">${plan.starterAssessment}</textarea></td>
+                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${sMin} mins</textarea></td>
+                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterContent}</textarea></td>
+                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterRole}</textarea></td>
+                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterAction}</textarea></td>
+                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterMethod}</textarea></td>
+                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterAssessment}</textarea></td>
                             </tr>
                             <tr>
                                 <td><strong>Main Activity</strong></td>
-                                <td style="background:#fafafa;"><textarea rows="6">${mMin} mins</textarea></td>
-                                <td><textarea rows="6">${plan.mainContent}</textarea></td>
-                                <td style="background:#fffdf0;"><textarea rows="6">Facilitates active strategies (${stratText}) and provides technical scaffolding.</textarea></td>
-                                <td><textarea rows="6">${plan.mainAction}</textarea></td>
-                                <td style="font-weight:bold; color:#b58100;"><textarea rows="6">${stratText}</textarea></td>
-                                <td style="font-weight:bold; color:#0056b3;"><textarea rows="6">${assessText}</textarea></td>
+                                <td style="background:#fafafa;"><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${mMin} mins</textarea></td>
+                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainContent}</textarea></td>
+                                <td style="background:#fffdf0;"><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">Facilitates active strategies (${stratText}) and provides technical scaffolding for ${topicVal}.</textarea></td>
+                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainAction}</textarea></td>
+                                <td style="font-weight:bold; color:#b58100;"><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${stratText}</textarea></td>
+                                <td style="font-weight:bold; color:#0056b3;"><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${assessText}</textarea></td>
                             </tr>
                             <tr>
                                 <td><strong>Concluding Activity</strong></td>
-                                <td style="background:#fafafa;"><textarea rows="2">${cMin} mins</textarea></td>
-                                <td><textarea rows="2">${plan.plenaryContent}</textarea></td>
-                                <td><textarea rows="2">${plan.plenaryRole}</textarea></td>
-                                <td><textarea rows="2">${plan.plenaryAction}</textarea></td>
-                                <td><textarea rows="2">${plan.plenaryMethod}</textarea></td>
-                                <td><textarea rows="2">${plan.plenaryAssessment}</textarea></td>
+                                <td style="background:#fafafa;"><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${cMin} mins</textarea></td>
+                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryContent}</textarea></td>
+                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryRole}</textarea></td>
+                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryAction}</textarea></td>
+                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryMethod}</textarea></td>
+                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryAssessment}</textarea></td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <div class="footer-section"><label><strong>Teaching Aids:</strong></label><textarea>${plan.aids}</textarea></div>
-                    <div class="footer-section" style="margin-top:10px;"><label><strong>Reflection Metric:</strong></label><textarea>Evaluated strategy efficiency (${stratText}) versus target cognitive outcomes.</textarea></div>
+                    <div class="footer-section"><label><strong>Teaching Aids:</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${aidsText}</textarea></div>
+                    <div class="footer-section" style="margin-top:10px;"><label><strong>Reflection Metric:</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">Evaluated strategy efficiency (${stratText}) versus target cognitive outcomes for ${topicVal}.</textarea></div>
                 </div>
             `;
         });
 
         document.getElementById('plansContainer').innerHTML = containerHtml;
         document.getElementById('exportPanel').style.display = 'flex';
+        
+        // Auto-adjust heights for rendered textareas
+        setTimeout(() => {
+            document.querySelectorAll('#plansContainer textarea').forEach(ta => {
+                ta.style.height = '';
+                ta.style.height = ta.scrollHeight + 'px';
+            });
+        }, 50);
     }
 
     function exportFile(format) {
@@ -676,19 +957,27 @@
                     }
                 });
 
+                const textareas = page.querySelectorAll('.metadata-row textarea');
+                textareas.forEach(ta => {
+                    const lbl = ta.previousElementSibling;
+                    if(lbl) {
+                        content += `${lbl.innerText} ${ta.value}\n`;
+                    }
+                });
+
                 content += `\n--- LESSON BREAKDOWN ---\n`;
                 const rows = page.querySelectorAll('tbody tr');
                 rows.forEach(row => {
                     const stage = row.querySelector('strong')?.innerText || "Stage";
-                    const textareas = row.querySelectorAll('textarea');
+                    const tas = row.querySelectorAll('textarea');
                     content += `\n[${stage}]\n`;
-                    if(textareas.length >= 6) {
-                        content += `  - Time: ${textareas[0].value}\n`;
-                        content += `  - Contents: ${textareas[1].value}\n`;
-                        content += `  - Teacher Role: ${textareas[2].value}\n`;
-                        content += `  - Student Actions: ${textareas[3].value}\n`;
-                        content += `  - Method: ${textareas[4].value}\n`;
-                        content += `  - Assessment: ${textareas[5].value}\n`;
+                    if(tas.length >= 6) {
+                        content += `  - Time: ${tas[0].value}\n`;
+                        content += `  - Contents: ${tas[1].value}\n`;
+                        content += `  - Teacher Role: ${tas[2].value}\n`;
+                        content += `  - Student Actions: ${tas[3].value}\n`;
+                        content += `  - Method: ${tas[4].value}\n`;
+                        content += `  - Assessment: ${tas[5].value}\n`;
                     }
                 });
                 
@@ -709,8 +998,8 @@
                 <style>
                     body { font-family: 'Arial', sans-serif; color: #333; }
                     .day-plan { page-break-after: always; break-after: page; margin-bottom: 40px; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; }
-                    th, td { border: 1px solid #333; padding: 8px; vertical-align: top; font-size: 13px; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; table-layout: fixed; }
+                    th, td { border: 1px solid #333; padding: 6px; vertical-align: top; font-size: 11px; word-wrap: break-word; overflow-wrap: break-word; }
                     th { background-color: #f2f2f2; text-align: center; }
                 </style>
                 </head>
