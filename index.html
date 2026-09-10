@@ -2,151 +2,754 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Table of Specifications (TOS) Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adika Youth Academy - Secure Lesson Plan Generator</title>
+    
+    <!-- Firebase SDK Compat Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-        th { background-color: #f4f4f4; }
-        .input-group { margin-bottom: 10px; }
-        label { display: inline-block; width: 180px; }
-        input { padding: 5px; width: 100px; }
-        button { padding: 8px 15px; background: #007BFF; color: white; border: none; cursor: pointer; }
-        button:hover { background: #0056b3; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1000px; background: #fff; margin: auto; padding: 30px; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; }
+        .auth-screen, .app-screen, .payment-screen, .owner-screen { display: none; }
+        .active-screen { display: block; }
+        .controls, .auth-box, .payment-box, .owner-box { background: #eef2f7; padding: 20px; border-radius: 6px; margin-bottom: 25px; display: flex; flex-direction: column; gap: 15px; }
+        .controls-row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+        input[type="text"], input[type="password"], input[type="date"], input[type="number"], select { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; min-width: 140px; }
+        .day-config-card { background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 15px; margin-bottom: 15px; }
+        .day-config-card h3 { margin: 0 0 10px 0; font-size: 15px; color: #0056b3; border-bottom: 2px solid #eef2f7; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .day-config-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        .checkbox-scroll { max-height: 120px; overflow-y: auto; border: 1px solid #ddd; padding: 5px; border-radius: 4px; background: #fafafa; }
+        .checkbox-scroll label { display: block; font-size: 12px; margin-bottom: 4px; cursor: pointer; }
+        button { padding: 12px 25px; background-color: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; }
+        button:hover { background-color: #004085; }
+        .secondary-btn { background-color: #6c757d; width: auto; padding: 6px 12px; font-size: 12px; }
+        .secondary-btn:hover { background-color: #5a6268; }
+        .day-plan-page { margin-bottom: 50px; padding-bottom: 40px; page-break-after: always; break-after: page; }
+        .day-badge { background: #0056b3; color: white; padding: 5px 15px; font-weight: bold; display: inline-block; border-radius: 4px; margin-bottom: 10px; font-size: 15px; }
+        .header-top { text-align: center; margin-bottom: 15px; }
+        .metadata-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px; font-size: 14px; }
+        .metadata-row { display: flex; align-items: flex-end; margin-bottom: 10px; font-size: 14px; }
+        .metadata-row label, .metadata-grid label { font-weight: bold; margin-right: 5px; white-space: nowrap; }
+        .metadata-row input, .metadata-grid input { flex: 1; border: none; border-bottom: 1px dotted #333; outline: none; font-family: inherit; font-size: 14px; padding: 2px 5px; background: transparent; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; font-size: 13px; }
+        th, td { border: 1px solid #333; padding: 8px; vertical-align: top; }
+        th { background-color: #f2f2f2; text-align: center; font-size: 12px; }
+        textarea { width: 100%; border: none; resize: vertical; font-family: inherit; font-size: inherit; background: transparent; outline: none; box-sizing: border-box; }
+        .footer-section { margin-top: 10px; font-size: 14px; }
+        .footer-section textarea { border-bottom: 1px dotted #333; margin-top: 5px; height: 40px; }
+        .export-panel { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .export-panel button { flex: 1; min-width: 150px; }
+        .btn-print { background-color: #28a745; }
+        .btn-print:hover { background-color: #218838; }
+        .btn-doc { background-color: #17a2b8; }
+        .btn-doc:hover { background-color: #138496; }
+        .btn-txt { background-color: #6c757d; }
+        .btn-txt:hover { background-color: #5a6268; }
+        @media print { 
+            body { background: #fff; padding: 0; } 
+            .controls, .export-panel, .secondary-btn { display: none; } 
+            .container { box-shadow: none; padding: 0; max-width: 100%; } 
+            .day-plan-page { page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid; margin-bottom: 0; padding-bottom: 0; }
+        }
     </style>
 </head>
 <body>
 
-    <h2>Table of Specifications (TOS) Generator</h2>
-    
-    <div class="input-group">
-        <label for="totalItems">Total Test Items:</label>
-        <input type="number" id="totalItems" value="50">
+<div class="container">
+    <!-- Authentication Screen -->
+    <div id="authScreen" class="auth-screen active-screen">
+        <div class="auth-box">
+            <h2 style="text-align:center; color:#0056b3; margin-top:0;">Adika Youth Academy Portal</h2>
+            <div id="authError" style="color: red; font-size: 13px; text-align: center; display:none;"></div>
+            <div class="controls-row">
+                <input type="text" id="authUsername" placeholder="Enter Your Unique Username">
+            </div>
+            <div class="controls-row">
+                <input type="password" id="authPassword" placeholder="Enter Your Password">
+            </div>
+            <div class="controls-row" style="gap: 10px;">
+                <button onclick="handleLogin()">Login</button>
+                <button onclick="handleSignup()" style="background-color: #17a2b8;">Register Account</button>
+            </div>
+            <div style="text-align: center; margin-top: 5px;">
+                <a href="#" onclick="openOwnerLogin(); return false;" style="font-size: 13px; color: #0056b3;">🔑 Owner Admin Portal</a>
+            </div>
+        </div>
     </div>
 
-    <h3>Topics & Class Periods</h3>
-    <div id="topicsContainer">
-        <div class="topic-row input-group">
-            <input type="text" placeholder="Topic Name" value="Topic 1" class="topic-name">
-            <input type="number" placeholder="Periods" value="5" class="topic-periods">
-        </div>
-        <div class="topic-row input-group">
-            <input type="text" placeholder="Topic Name" value="Topic 2" class="topic-name">
-            <input type="number" placeholder="Periods" value="10" class="topic-periods">
-        </div>
-    </div>
-    <button onclick="addTopic()">Add Topic</button>
-
-    <h3>Bloom's Taxonomy Distribution (%)</h3>
-    <div class="input-group"><label>Remembering:</label><input type="number" id="bloomRemember" value="20"></div>
-    <div class="input-group"><label>Understanding:</label><input type="number" id="bloomUnderstand" value="30"></div>
-    <div class="input-group"><label>Applying:</label><input type="number" id="bloomApply" value="20"></div>
-    <div class="input-group"><label>Analyzing:</label><input type="number" id="bloomAnalyze" value="15"></div>
-    <div class="input-group"><label>Evaluating:</label><input type="number" id="bloomEvaluate" value="10"></div>
-    <div class="input-group"><label>Creating:</label><input type="number" id="bloomCreate" value="5"></div>
-
-    <br>
-    <button onclick="calculateTOS()">Generate TOS</button>
-
-    <div id="resultContainer"></div>
-
-    <script>
-        function addTopic() {
-            const container = document.getElementById('topicsContainer');
-            const div = document.createElement('div');
-            div.className = 'topic-row input-group';
-            div.innerHTML = `
-                <input type="text" placeholder="Topic Name" class="topic-name">
-                <input type="number" placeholder="Periods" class="topic-periods">
-            `;
-            container.appendChild(div);
-        }
-
-        function calculateTOS() {
-            const totalItems = parseFloat(document.getElementById('totalItems').value);
+    <!-- Owner Admin Dashboard Screen -->
+    <div id="ownerScreen" class="owner-screen">
+        <div class="owner-box">
+            <h2 style="text-align:center; color:#0056b3; margin-top:0;">Owner Access Control Panel</h2>
+            <p style="font-size: 13px; color:#555; text-align:center;">Approve custom teacher accounts and assign generation quotas after confirming Telebirr or CBE payment.</p>
             
-            // Gather topics and calculate total periods
-            const topicRows = document.querySelectorAll('.topic-row');
-            let topics = [];
-            let totalPeriods = 0;
+            <div class="controls-row">
+                <input type="text" id="ownerTargetUser" placeholder="Enter Registered Teacher Username">
+                <select id="ownerQuotaSelect">
+                    <option value="10">10 Uses</option>
+                    <option value="15">15 Uses</option>
+                    <option value="25">25 Uses</option>
+                    <option value="30">30 Uses</option>
+                    <option value="50">50 Uses</option>
+                    <option value="unlimited">Unlimited Uses</option>
+                </select>
+                <button onclick="grantUserAccess()" style="background-color: #28a745; width: auto;">Approve & Set Quota</button>
+            </div>
+            <div class="controls-row">
+                <button onclick="revokeUserAccess()" style="background-color: #dc3545; width: auto;">Revoke Access</button>
+                <button class="secondary-btn" onclick="backToAuth()" style="width:100%;">Back to Login</button>
+            </div>
+            <div id="ownerMessage" style="font-size: 13px; color: green; text-align: center; font-weight: bold;"></div>
+        </div>
+    </div>
 
-            topicRows.forEach(row => {
-                const name = row.querySelector('.topic-name').value || 'Untitled';
-                const periods = parseFloat(row.querySelector('.topic-periods').value) || 0;
-                topics.push({ name, periods });
-                totalPeriods += periods;
+    <!-- Payment Gate Screen (Telebirr / CBE Instructions) -->
+    <div id="paymentScreen" class="payment-screen">
+        <div class="payment-box">
+            <h2 style="text-align:center; color:#0056b3; margin-top:0;">Payment Verification Required</h2>
+            <p style="text-align:center; font-size: 14px; color:#555;" id="paymentMessageText">Your account is registered, but payment has not been confirmed by the administrator yet.</p>
+            
+            <div style="background:#fff; padding:15px; border-radius:6px; border:1px solid #cbd5e1; margin-bottom: 10px; font-size:13px; line-height: 1.6;">
+                <h4 style="margin:0 0 8px 0; color:#0056b3;">Transfer Subscription Fee via:</h4>
+                <p style="margin:0;">📱 <b>Telebirr:</b> 0911234567 (Birhanu Mekonen)</p>
+                <p style="margin:5px 0 0 0;">🏦 <b>CBE Account:</b> 1000123456789 (Birhanu Mekonen)</p>
+                <p style="margin:10px 0 0 0; color:#b45309;"><b>Next Step:</b> Send your registered username via SMS/Telegram to the owner to unlock your account quota.</p>
+            </div>
+
+            <div class="controls-row" style="gap: 10px;">
+                <button class="secondary-btn" onclick="handleLogout()" style="width:100%; padding:12px;">Back to Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Generator Screen -->
+    <div id="appScreen" class="app-screen">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eef2f7; padding-bottom: 10px; margin-bottom: 15px;">
+            <div>
+                <h2 style="margin:0; color:#0056b3; font-size: 18px;">Lesson Plan Generator Workspace (Max 5 Days)</h2>
+                <span id="quotaDisplay" style="font-size: 12px; color: #555; font-weight: bold;"></span>
+            </div>
+            <button class="secondary-btn" onclick="handleLogout()">Log Out</button>
+        </div>
+
+        <div class="controls">
+            <div class="controls-row">
+                <input type="text" id="teacherNameInput" placeholder="Teacher Name" value="Birhanu Mekonen">
+                <input type="text" id="subjectInput" placeholder="Subject Name" value="General Physics & Mathematics">
+                <input type="text" id="gradeInput" placeholder="Grade & Section" value="Grade 10 - A">
+            </div>
+
+            <div class="controls-row">
+                <div>
+                    <label style="font-size:12px; font-weight:bold; display:block;">Start Date:</label>
+                    <input type="date" id="startDateInput" value="2026-09-14">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:bold; display:block;">End Date:</label>
+                    <input type="date" id="endDateInput" value="2026-09-18">
+                </div>
+                <div style="flex: 2; display: flex; align-items: flex-end; gap: 10px;">
+                    <button type="button" id="addDayBtn" class="secondary-btn" onclick="addDayConfig()" style="height: 41px;">+ Add Day Slot (Max 5)</button>
+                </div>
+            </div>
+
+            <div id="dayConfigsContainer"></div>
+
+            <button onclick="generateLessonPlans()">Generate & Render Plans</button>
+        </div>
+
+        <div id="plansContainer"></div>
+        
+        <div class="export-panel" id="exportPanel" style="display:none;">
+            <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
+            <button class="btn-doc" onclick="exportFile('doc')">Download as Word (.doc)</button>
+            <button class="btn-txt" onclick="exportFile('txt')">Download as Text (.txt)</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBcJTD77Bxa7a1NP6I1...",
+        authDomain: "adika-academy-lesson.firebaseapp.com",
+        projectId: "adika-academy-lesson",
+        storageBucket: "adika-academy-lesson.appspot.com",
+        messagingSenderId: "357215814367",
+        appId: "1:357215814367:web:41804f...",
+        measurementId: "G-GKHG0LS95S"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let activeUsername = "";
+
+    const strategiesList = [
+        "Think pair share", "Jigsaw", "Brainstorming", "Fishbowl", "Role-play", 
+        "Problem Based learning", "Concept Mapping", "Interactive Simulations and Labs", 
+        "Case study", "Gallery walk", "Peer Instruction"
+    ];
+
+    const assessmentList = [
+        "Classwork", "Homework", "Exit ticket", "Concept tests", "Two minute papers", "Performance tasks"
+    ];
+
+    const defaultTopics = [
+        "Cell Structure and Functions",
+        "Process of Photosynthesis",
+        "Ecosystems and Food Webs",
+        "Introduction to Genetics",
+        "Human Respiratory System"
+    ];
+
+    function getEmailForUser(username) {
+        return username.trim().toLowerCase() + "@adika.edu";
+    }
+
+    async function handleSignup() {
+        const u = document.getElementById('authUsername').value.trim();
+        const p = document.getElementById('authPassword').value.trim();
+        if(!u || !p) { showAuthError("Provide both a unique username and password."); return; }
+        
+        try {
+            const email = getEmailForUser(u);
+            await auth.createUserWithEmailAndPassword(email, p);
+            
+            await db.collection("users").doc(u).set({
+                username: u,
+                isPaid: false,
+                quotaType: "none",
+                quotaLeft: 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            if (totalPeriods === 0) {
-                alert('Total periods cannot be zero.');
+            alert("Account registered successfully! After making your Telebirr or CBE payment, contact the owner with your username to activate your access quota.");
+            document.getElementById('authError').style.display = 'none';
+        } catch (error) {
+            showAuthError("Registration failed: " + error.message);
+        }
+    }
+
+    async function handleLogin() {
+        const u = document.getElementById('authUsername').value.trim();
+        const p = document.getElementById('authPassword').value.trim();
+        
+        if(!u || !p) { showAuthError("Enter both username and password."); return; }
+
+        try {
+            const email = getEmailForUser(u);
+            await auth.signInWithEmailAndPassword(email, p);
+            activeUsername = u;
+            await checkPaymentAndProceed();
+        } catch (error) {
+            showAuthError("Invalid username or password. Please check your details or register.");
+        }
+    }
+
+    async function checkPaymentAndProceed() {
+        const userDocRef = db.collection("users").doc(activeUsername);
+        const docSnap = await userDocRef.get();
+
+        if (!docSnap.exists) {
+            showAuthError("User profile data not found in cloud database.");
+            return;
+        }
+
+        const userData = docSnap.data();
+        const isPaid = userData.isPaid;
+        const quotaType = userData.quotaType;
+        let remaining = userData.quotaLeft;
+
+        document.getElementById('authScreen').classList.remove('active-screen');
+        document.getElementById('ownerScreen').classList.remove('active-screen');
+
+        if (!isPaid) {
+            document.getElementById('appScreen').classList.remove('active-screen');
+            document.getElementById('paymentMessageText').innerHTML = "Your account is registered, but payment has not been confirmed by the administrator yet.";
+            document.getElementById('paymentScreen').classList.add('active-screen');
+        } else if (quotaType !== 'unlimited' && remaining <= 0) {
+            document.getElementById('appScreen').classList.remove('active-screen');
+            document.getElementById('paymentMessageText').innerHTML = "<b>Your generation quota has been exhausted!</b> Please make a renewal payment via Telebirr or CBE and contact the owner.";
+            document.getElementById('paymentScreen').classList.add('active-screen');
+        } else {
+            document.getElementById('paymentScreen').classList.remove('active-screen');
+            document.getElementById('appScreen').classList.add('active-screen');
+            
+            let quotaText = quotaType === 'unlimited' ? 'Unlimited Generations' : `Remaining Generations: ${remaining}`;
+            document.getElementById('quotaDisplay').innerText = quotaText;
+            
+            initDayConfigs();
+        }
+    }
+
+    function openOwnerLogin() {
+        const pass = prompt("Enter Owner Admin Password:");
+        if (pass === "Owner382") {
+            document.getElementById('authScreen').classList.remove('active-screen');
+            document.getElementById('ownerScreen').classList.add('active-screen');
+        } else if (pass !== null) {
+            alert("Incorrect owner password.");
+        }
+    }
+
+    async function grantUserAccess() {
+        const target = document.getElementById('ownerTargetUser').value.trim();
+        const quotaVal = document.getElementById('ownerQuotaSelect').value;
+        const msg = document.getElementById('ownerMessage');
+        
+        if(!target) { alert("Enter a valid username."); return; }
+        
+        let quotaLeftNum = quotaVal === 'unlimited' ? 999999 : parseInt(quotaVal);
+
+        try {
+            await db.collection("users").doc(target).set({
+                isPaid: true,
+                quotaType: quotaVal,
+                quotaLeft: quotaLeftNum
+            }, { merge: true });
+
+            msg.style.color = 'green';
+            msg.innerText = `Success! Account approved with ${quotaVal === 'unlimited' ? 'Unlimited' : quotaVal + ' uses'} for: ${target}`;
+            document.getElementById('ownerTargetUser').value = "";
+        } catch (error) {
+            alert("Error updating user access: " + error.message);
+        }
+    }
+
+    async function revokeUserAccess() {
+        const target = document.getElementById('ownerTargetUser').value.trim();
+        const msg = document.getElementById('ownerMessage');
+        if(!target) { alert("Enter a valid username."); return; }
+        
+        try {
+            await db.collection("users").doc(target).set({
+                isPaid: false,
+                quotaType: "none",
+                quotaLeft: 0
+            }, { merge: true });
+
+            msg.style.color = 'red';
+            msg.innerText = `Access revoked for user: ${target}`;
+            document.getElementById('ownerTargetUser').value = "";
+        } catch (error) {
+            alert("Error revoking access: " + error.message);
+        }
+    }
+
+    function backToAuth() {
+        document.getElementById('ownerScreen').classList.remove('active-screen');
+        document.getElementById('authScreen').classList.add('active-screen');
+    }
+
+    function handleLogout() {
+        auth.signOut();
+        activeUsername = "";
+        document.getElementById('appScreen').classList.remove('active-screen');
+        document.getElementById('paymentScreen').classList.remove('active-screen');
+        document.getElementById('ownerScreen').classList.remove('active-screen');
+        document.getElementById('authScreen').classList.add('active-screen');
+    }
+
+    function showAuthError(msg) {
+        const err = document.getElementById('authError');
+        err.innerText = msg;
+        err.style.display = 'block';
+    }
+
+    function initDayConfigs() {
+        let html = "";
+        for(let i=1; i<=5; i++) {
+            html += getDayConfigHtml(i, defaultTopics[i-1]);
+        }
+        document.getElementById('dayConfigsContainer').innerHTML = html;
+        checkAddButtonState();
+    }
+
+    function getDayConfigHtml(dayNum, defaultTopic) {
+        let stratHtml = strategiesList.map((s, idx) => `<label><input type="checkbox" name="strat${dayNum}" value="${s}" ${idx<2?'checked':''}> ${s}</label>`).join('');
+        let assessHtml = assessmentList.map((a, idx) => `<label><input type="checkbox" name="assess${dayNum}" value="${a}" ${idx===0?'checked':''}> ${a}</label>`).join('');
+
+        return `
+            <div class="day-config-card" id="configCard_${dayNum}" data-day="${dayNum}">
+                <h3>
+                    <span>Day ${dayNum} Configuration</span>
+                    <button type="button" class="secondary-btn" style="background-color:#dc3545;" onclick="omitDay(${dayNum})">Omit / Remove</button>
+                </h3>
+                <div class="controls-row" style="margin-bottom: 10px;">
+                    <input type="text" id="topic${dayNum}" placeholder="Topic Name" value="${defaultTopic}">
+                </div>
+                <div style="margin-bottom: 10px; background: #fdfdfd; padding: 10px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                    <h4 style="margin: 0 0 8px 0; font-size: 13px; color: #333;">Manual Minute Distribution (Total: 45 Mins)</h4>
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex:1;"><label style="font-size:11px;">Starter Mins:</label><input type="number" id="starterMin${dayNum}" value="5" min="1" max="45" style="width:100%; padding:5px;"></div>
+                        <div style="flex:1;"><label style="font-size:11px;">Main Mins:</label><input type="number" id="mainMin${dayNum}" value="32" min="1" max="45" style="width:100%; padding:5px;"></div>
+                        <div style="flex:1;"><label style="font-size:11px;">Concluding Mins:</label><input type="number" id="conclMin${dayNum}" value="8" min="1" max="45" style="width:100%; padding:5px;"></div>
+                    </div>
+                </div>
+                <div class="day-config-grid">
+                    <div class="select-box-group">
+                        <h4 style="font-size:12px; margin:0 0 5px 0;">Active Learning Strategies</h4>
+                        <div class="checkbox-scroll">${stratHtml}</div>
+                    </div>
+                    <div class="select-box-group" style="grid-column: span 2;">
+                        <h4 style="font-size:12px; margin:0 0 5px 0;">Assessment Activities</h4>
+                        <div class="checkbox-scroll">${assessHtml}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function addDayConfig() {
+        const container = document.getElementById('dayConfigsContainer');
+        const existingCards = container.querySelectorAll('.day-config-card');
+        
+        if (existingCards.length >= 5) {
+            alert("Maximum limit of 5 days reached.");
+            return;
+        }
+
+        let currentDays = Array.from(existingCards).map(card => parseInt(card.getAttribute('data-day')));
+        let newDayNum = 1;
+        while(currentDays.includes(newDayNum)) {
+            newDayNum++;
+        }
+
+        const div = document.createElement('div');
+        div.innerHTML = getDayConfigHtml(newDayNum, defaultTopics[newDayNum-1] || `Topic ${newDayNum}`);
+        
+        existingCards.forEach(card => {
+            if(parseInt(card.getAttribute('data-day')) > newDayNum) {
+                container.insertBefore(div.firstElementChild, card);
                 return;
             }
+        });
+        if(!div.firstElementChild.parentNode) {
+            container.appendChild(div.firstElementChild);
+        }
 
-            // Gather Bloom's weights
-            const blooms = {
-                Remembering: parseFloat(document.getElementById('bloomRemember').value) || 0,
-                Understanding: parseFloat(document.getElementById('bloomUnderstand').value) || 0,
-                Applying: parseFloat(document.getElementById('bloomApply').value) || 0,
-                Analyzing: parseFloat(document.getElementById('bloomAnalyze').value) || 0,
-                Evaluating: parseFloat(document.getElementById('bloomEvaluate').value) || 0,
-                Creating: parseFloat(document.getElementById('bloomCreate').value) || 0
-            };
+        checkAddButtonState();
+    }
 
-            const bloomKeys = Object.keys(blooms);
+    function omitDay(dayNum) {
+        const card = document.getElementById(`configCard_${dayNum}`);
+        if(card) card.remove();
+        checkAddButtonState();
+    }
 
-            // Build HTML Table
-            let html = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Topic</th>
-                            <th>Periods</th>
-                            <th>Weight (%)</th>
-                            <th>No. of Items</th>
-                            ${bloomKeys.map(b => `<th>${b} (${blooms[b]}%)</th>`).join('')}
-                        </tr>
-                    </thead>
-                    <tbody>
+    function checkAddButtonState() {
+        const container = document.getElementById('dayConfigsContainer');
+        const count = container.querySelectorAll('.day-config-card').length;
+        const addBtn = document.getElementById('addDayBtn');
+        if (count >= 5) {
+            addBtn.style.display = 'none';
+        } else {
+            addBtn.style.display = 'inline-block';
+        }
+    }
+
+    function getIntelligentLessonContent(topicVal) {
+        let t = topicVal.toLowerCase();
+        let subtopic = "Core Principles & Mechanisms";
+        let rationale = "Understanding this concept is essential for building advanced analytical reasoning and core scientific proficiency.";
+        let objectives = `Students will be able to analyze, explain, and apply core principles of ${topicVal} accurately.`;
+        let prereq = "Basic foundational vocabulary and introductory problem-solving models from previous units.";
+        let starterContent = "Contextual Hook & Concept Provocation";
+        let starterRole = `Introduce a real-world scenario relating to ${topicVal} and prompt initial student hypotheses.`;
+        let starterAction = "Brainstorm initial hypotheses and engage in inquiry prompts.";
+        let starterMethod = "Brainstorming";
+        let starterAssessment = "Formative Check";
+        
+        let mainContent = `Deep dive, structural model analysis, and guided problem-solving regarding ${topicVal}.`;
+        let mainRole = "Facilitate active learning strategies and provide step-by-step cognitive scaffolding.";
+        let mainAction = "Collaborate in peer groups, investigate problem sets, and derive solutions.";
+        
+        let plenaryContent = "Synthesis, Q&A Review, and Exit Evaluation";
+        let plenaryRole = "Lead summary discussion, clear misconceptions, and administer final verification task.";
+        let plenaryAction = "Complete final reflection or evaluation tasks.";
+        let plenaryMethod = "Peer Instruction";
+        let plenaryAssessment = "Exit ticket";
+        let aids = "Whiteboard, markers, core textbooks";
+
+        if (t.includes('lens') || t.includes('optic') || t.includes('mirror')) {
+            subtopic = "Refraction, Focal Length, and Ray Tracing";
+            rationale = "Optics forms the backbone of modern imaging systems, optical instruments, and foundational wave physics.";
+            objectives = "Students will calculate focal lengths using mirror/lens equations and construct accurate ray diagrams.";
+            prereq = "Elementary geometry, angles of incidence/reflection, and wave propagation properties.";
+            starterContent = "Real-world optical illusions & focal point demonstration";
+            mainContent = "Ray diagram sketching, focal point calculations, and virtual lab verification.";
+            aids = "Optical bench, laser source, concave/convex mirrors, ray boxes.";
+        } else if (t.includes('wave') || t.includes('momentum')) {
+            subtopic = "Conservation Laws and Wave Equation Dynamics";
+            rationale = "Momentum conservation and wave mechanics explain collision dynamics and energy transfer across systems.";
+            objectives = "Students will apply conservation of momentum formulas and compute wave velocity and frequency variables.";
+            prereq = "Basic algebra, vector addition, and kinetic energy definitions.";
+            starterContent = "Collision simulation analysis & momentum shock hook";
+            mainContent = "Problem-solving drill on impulse-momentum theorem and wave speed calculations.";
+            aids = "Ticker-timer sets, air tracks, mass sets, wave demonstration springs.";
+        } else if (t.includes('geometry') || t.includes('probability')) {
+            subtopic = "Spatial Coordinate Mapping & Dependent Event Analysis";
+            rationale = "Spatial geometry and probability models govern risk assessment, logical deduction, and structural design.";
+            objectives = "Students will solve coordinate proofs and compute compound probabilities for complex events.";
+            prereq = "Algebraic linear equations and basic ratio/fraction calculations.";
+            starterContent = "Probability paradox teaser & coordinate layout puzzle";
+            mainContent = "Step-by-step geometric proofs, probability tree diagram mapping, and guided practice.";
+            aids = "Geometric sets, graph boards, simulation software tools.";
+        } else if (t.includes('cell') || t.includes('photosynthesis') || t.includes('genetics') || t.includes('ecosystem')) {
+            subtopic = "Biochemical Pathways & Cellular Architecture";
+            rationale = "Understanding biological systems provides crucial insight into cellular energy conversion and hereditary transmission.";
+            objectives = "Students will trace metabolic pathways and map structural-functional relationships in biological units.";
+            prereq = "Basic organic chemistry building blocks and cellular biology fundamentals.";
+            starterContent = "Microscopic slide projection & ecological interdependence hook";
+            mainContent = "Detailed diagrammatic breakdown, process mapping, and collaborative concept analysis.";
+            aids = "Compound microscopes, biological charts, model kits.";
+        }
+
+        return {
+            subtopic, rationale, objectives, prereq,
+            starterContent, starterRole, starterAction, starterMethod, starterAssessment,
+            mainContent, mainRole, mainAction,
+            plenaryContent, plenaryRole, plenaryAction, plenaryMethod, plenaryAssessment,
+            aids
+        };
+    }
+
+    async function generateLessonPlans() {
+        const userDocRef = db.collection("users").doc(activeUsername);
+        const docSnap = await userDocRef.get();
+        if (!docSnap.exists) return;
+
+        const userData = docSnap.data();
+        const quotaType = userData.quotaType;
+        let remaining = userData.quotaLeft;
+
+        if (quotaType !== 'unlimited') {
+            if (remaining <= 0) {
+                alert("Generation quota exhausted! Please contact owner for renewal.");
+                checkPaymentAndProceed();
+                return;
+            }
+            remaining--;
+            await userDocRef.update({ quotaLeft: remaining });
+            document.getElementById('quotaDisplay').innerText = `Remaining Generations: ${remaining}`;
+        }
+
+        const teacherName = document.getElementById('teacherNameInput').value || "Teacher";
+        const subject = document.getElementById('subjectInput').value || "Subject";
+        const gradeSection = document.getElementById('gradeInput').value || "Grade";
+        const startDateStr = document.getElementById('startDateInput').value;
+
+        let baseDate = startDateStr ? new Date(startDateStr) : new Date();
+
+        const cards = document.querySelectorAll('.day-config-card');
+        let containerHtml = "";
+        let sequenceIndex = 0;
+
+        cards.forEach((card) => {
+            sequenceIndex++;
+            const dayNum = card.getAttribute('data-day');
+            const topicVal = card.querySelector(`input[id^="topic"]`).value || "Core Lesson Subject";
+
+            const sMin = document.getElementById(`starterMin${dayNum}`)?.value || "5";
+            const mMin = document.getElementById(`mainMin${dayNum}`)?.value || "32";
+            const cMin = document.getElementById(`conclMin${dayNum}`)?.value || "8";
+
+            const checkedStrats = Array.from(card.querySelectorAll(`input[name^="strat"]:checked`)).map(cb => cb.value);
+            const stratText = checkedStrats.length > 0 ? checkedStrats.join(" + ") : "Peer Instruction";
+
+            const checkedAssess = Array.from(card.querySelectorAll(`input[name^="assess"]:checked`)).map(cb => cb.value);
+            const assessText = checkedAssess.length > 0 ? checkedAssess.join(", ") : "Classwork";
+
+            let currDate = new Date(baseDate);
+            currDate.setDate(baseDate.getDate() + (sequenceIndex - 1));
+            let dateFormatted = currDate.toISOString().split('T')[0];
+
+            const plan = getIntelligentLessonContent(topicVal);
+
+            containerHtml += `
+                <div class="day-plan-page">
+                    <div class="day-badge">DAY ${sequenceIndex} LESSON PLAN</div>
+                    
+                    <div class="header-top">
+                        <h3 style="margin:0; font-size:14px; color:#555;">አዲካ youth አካዳሚ &nbsp;&nbsp;|&nbsp;&nbsp; Adika Youth Academy</h3>
+                        <h2 style="margin:5px 0 15px 0; font-size:20px; text-transform:uppercase; border-bottom:2px solid #333; display:inline-block;">Daily Lesson Framework</h2>
+                    </div>
+
+                    <div class="metadata-grid">
+                        <div style="grid-column: span 2;"><label>Teacher:</label><input type="text" value="${teacherName}"></div>
+                        <div><label>Subject:</label><input type="text" value="${subject}"></div>
+                        <div><label>Grade:</label><input type="text" value="${gradeSection}"></div>
+                    </div>
+
+                    <div class="metadata-grid" style="grid-template-columns: repeat(2, 1fr);">
+                        <div><label>Date:</label><input type="text" value="${dateFormatted}"></div>
+                        <div><label>Unit Track:</label><input type="text" value="Module Sequence - Part ${sequenceIndex}"></div>
+                    </div>
+
+                    <div class="metadata-row"><label>Topic of the lesson:</label><input type="text" value="${topicVal}"></div>
+                    <div class="metadata-row"><label>Subtopic of the lesson:</label><input type="text" value="${plan.subtopic}"></div>
+                    <div class="metadata-row"><label>Rationale of the lesson:</label><input type="text" value="${plan.rationale}"></div>
+                    <div class="metadata-row"><label>Learning Objectives:</label><input type="text" value="${plan.objectives}"></div>
+                    <div class="metadata-row"><label>Pre-requisite Knowledge:</label><input type="text" value="${plan.prereq}"></div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 12%;">Stage</th>
+                                <th style="width: 10%;">Time</th>
+                                <th style="width: 18%;">Contents</th>
+                                <th style="width: 20%;">Teacher Role</th>
+                                <th style="width: 20%;">Student Actions</th>
+                                <th style="width: 10%;">Method</th>
+                                <th style="width: 10%;">Assessment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Starter Activity</strong></td>
+                                <td><textarea rows="2">${sMin} mins</textarea></td>
+                                <td><textarea rows="2">${plan.starterContent}</textarea></td>
+                                <td><textarea rows="2">${plan.starterRole}</textarea></td>
+                                <td><textarea rows="2">${plan.starterAction}</textarea></td>
+                                <td><textarea rows="2">${plan.starterMethod}</textarea></td>
+                                <td><textarea rows="2">${plan.starterAssessment}</textarea></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Main Activity</strong></td>
+                                <td style="background:#fafafa;"><textarea rows="6">${mMin} mins</textarea></td>
+                                <td><textarea rows="6">${plan.mainContent}</textarea></td>
+                                <td style="background:#fffdf0;"><textarea rows="6">Facilitates active strategies (${stratText}) and provides technical scaffolding.</textarea></td>
+                                <td><textarea rows="6">${plan.mainAction}</textarea></td>
+                                <td style="font-weight:bold; color:#b58100;"><textarea rows="6">${stratText}</textarea></td>
+                                <td style="font-weight:bold; color:#0056b3;"><textarea rows="6">${assessText}</textarea></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Concluding Activity</strong></td>
+                                <td style="background:#fafafa;"><textarea rows="2">${cMin} mins</textarea></td>
+                                <td><textarea rows="2">${plan.plenaryContent}</textarea></td>
+                                <td><textarea rows="2">${plan.plenaryRole}</textarea></td>
+                                <td><textarea rows="2">${plan.plenaryAction}</textarea></td>
+                                <td><textarea rows="2">${plan.plenaryMethod}</textarea></td>
+                                <td><textarea rows="2">${plan.plenaryAssessment}</textarea></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="footer-section"><label><strong>Teaching Aids:</strong></label><textarea>${plan.aids}</textarea></div>
+                    <div class="footer-section" style="margin-top:10px;"><label><strong>Reflection Metric:</strong></label><textarea>Evaluated strategy efficiency (${stratText}) versus target cognitive outcomes.</textarea></div>
+                </div>
             `;
+        });
 
-            let grandTotalItems = 0;
-            let bloomTotals = {};
-            bloomKeys.forEach(b => bloomTotals[b] = 0);
+        document.getElementById('plansContainer').innerHTML = containerHtml;
+        document.getElementById('exportPanel').style.display = 'flex';
+    }
 
-            topics.forEach(topic => {
-                const weight = (topic.periods / totalPeriods) * 100;
-                const topicItems = Math.round((weight / 100) * totalItems);
-                grandTotalItems += topicItems;
+    function exportFile(format) {
+        const pages = document.querySelectorAll('.day-plan-page');
+        if (pages.length === 0) {
+            alert("Please generate lesson plans first.");
+            return;
+        }
 
-                html += `<tr>
-                    <td>${topic.name}</td>
-                    <td>${topic.periods}</td>
-                    <td>${weight.toFixed(2)}%</td>
-                    <td>${topicItems}</td>`;
+        let content = "";
+        const subject = document.getElementById('subjectInput').value || "Lesson_Plans";
+        const filename = subject.replace(/[^a-zA-Z0-9]/g, '_');
 
-                bloomKeys.forEach(b => {
-                    const levelItems = Math.round(topicItems * (blooms[b] / 100));
-                    bloomTotals[b] += levelItems;
-                    html += `<td>${levelItems}</td>`;
+        if (format === 'txt') {
+            pages.forEach((page, index) => {
+                content += `========================================\n`;
+                content += `DAY ${index + 1} LESSON PLAN\n`;
+                content += `========================================\n`;
+                
+                const inputs = page.querySelectorAll('input');
+                inputs.forEach(inp => {
+                    if(inp.previousElementSibling) {
+                        content += `${inp.previousElementSibling.innerText} ${inp.value}\n`;
+                    } else {
+                        content += `${inp.value}\n`;
+                    }
                 });
 
-                html += `</tr>`;
+                content += `\n--- LESSON BREAKDOWN ---\n`;
+                const rows = page.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const stage = row.querySelector('strong')?.innerText || "Stage";
+                    const textareas = row.querySelectorAll('textarea');
+                    content += `\n[${stage}]\n`;
+                    if(textareas.length >= 6) {
+                        content += `  - Time: ${textareas[0].value}\n`;
+                        content += `  - Contents: ${textareas[1].value}\n`;
+                        content += `  - Teacher Role: ${textareas[2].value}\n`;
+                        content += `  - Student Actions: ${textareas[3].value}\n`;
+                        content += `  - Method: ${textareas[4].value}\n`;
+                        content += `  - Assessment: ${textareas[5].value}\n`;
+                    }
+                });
+                
+                const footers = page.querySelectorAll('.footer-section textarea');
+                if(footers.length >= 2) {
+                    content += `\nTeaching Aids: ${footers[0].value}\n`;
+                    content += `Reflection: ${footers[1].value}\n`;
+                }
+                content += `\n\n========================================\n\n`;
             });
 
-            // Totals Row
-            html += `
-                <tr style="font-weight: bold; background-color: #f9f9f9;">
-                    <td>Total</td>
-                    <td>${totalPeriods}</td>
-                    <td>100%</td>
-                    <td>${grandTotalItems}</td>
-                    ${bloomKeys.map(b => `<td>${bloomTotals[b]}</td>`).join('')}
-                </tr>
+            downloadBlob(content, filename + '_Lesson_Plans.txt', 'text/plain;charset=utf-8');
+
+        } else if (format === 'doc') {
+            content = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'><title>Lesson Plans</title>
+                <style>
+                    body { font-family: 'Arial', sans-serif; color: #333; }
+                    .day-plan { page-break-after: always; break-after: page; margin-bottom: 40px; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; }
+                    th, td { border: 1px solid #333; padding: 8px; vertical-align: top; font-size: 13px; }
+                    th { background-color: #f2f2f2; text-align: center; }
+                </style>
+                </head>
+                <body>
             `;
 
-            html += `</tbody></table>`;
-            document.getElementById('resultContainer').innerHTML = html;
+            pages.forEach((page) => {
+                let clone = page.cloneNode(true);
+                clone.querySelectorAll('input').forEach(inp => {
+                    let span = document.createElement('span');
+                    span.style.fontWeight = 'bold';
+                    span.innerText = inp.value;
+                    inp.parentNode.replaceChild(span, inp);
+                });
+                clone.querySelectorAll('textarea').forEach(ta => {
+                    let span = document.createElement('span');
+                    span.innerText = ta.value;
+                    ta.parentNode.replaceChild(span, ta);
+                });
+                content += `<div class="day-plan">${clone.innerHTML}</div>`;
+            });
+
+            content += `</body></html>`;
+            downloadBlob(content, filename + '_Lesson_Plans.doc', 'application/msword;charset=utf-8');
         }
-    </script>
+    }
+
+    function downloadBlob(content, filename, contentType) {
+        const blob = new Blob([content], { type: contentType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+</script>
+
 </body>
 </html>
