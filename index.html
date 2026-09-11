@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adika Youth Academy - Secure Lesson Plan Generator</title>
+    <title>Daily Lesson Plan Generator</title>
     
     <!-- Firebase SDK Compat Scripts -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -17,7 +17,7 @@
         .active-screen { display: block; }
         .controls, .auth-box, .payment-box, .owner-box { background: #eef2f7; padding: 20px; border-radius: 6px; margin-bottom: 25px; display: flex; flex-direction: column; gap: 15px; }
         .controls-row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
-        input[type="text"], input[type="password"], input[type="date"], input[type="number"], select { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; min-width: 140px; }
+        input[type="text"], input[type="password"], input[type="date"], input[type="number"], select { flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; min-width: 140px; background: #fff; }
         .day-config-card { background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 15px; margin-bottom: 15px; }
         .day-config-card h3 { margin: 0 0 10px 0; font-size: 15px; color: #0056b3; border-bottom: 2px solid #eef2f7; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
         .day-config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
@@ -32,7 +32,16 @@
         .secondary-btn:hover { background-color: #5a6268; }
         .ai-assist-btn { background-color: #0284c7; color: white; border: none; padding: 3px 8px; font-size: 11px; border-radius: 3px; cursor: pointer; font-weight: normal; }
         .ai-assist-btn:hover { background-color: #0369a1; }
-        .day-plan-page { margin-bottom: 50px; padding-bottom: 40px; page-break-after: always; break-after: page; width: 100%; box-sizing: border-box; }
+        
+        /* Rendered Plan Page & Logo Positioning Styles */
+        .day-plan-page { position: relative; overflow: hidden; margin-bottom: 50px; padding-bottom: 40px; page-break-after: always; break-after: page; width: 100%; box-sizing: border-box; }
+        .day-plan-page > *:not(.plan-watermark) { position: relative; z-index: 1; }
+        .plan-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55%; max-width: 420px; opacity: 0.08; z-index: 0; pointer-events: none; user-select: none; }
+        .plan-header-logo { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 10px; }
+        .plan-header-logo img { width: 55px; height: 55px; object-fit: contain; }
+        .plan-footer-logo { text-align: center; margin-top: 15px; }
+        .plan-footer-logo img { width: 40px; height: 40px; object-fit: contain; }
+
         .day-badge { background: #0056b3; color: white; padding: 5px 15px; font-weight: bold; display: inline-block; border-radius: 4px; margin-bottom: 10px; font-size: 15px; }
         .header-top { text-align: center; margin-bottom: 15px; }
         .metadata-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px; font-size: 14px; }
@@ -54,11 +63,12 @@
         .btn-txt { background-color: #6c757d; }
         .btn-txt:hover { background-color: #5a6268; }
         @media print { 
-            body { background: #fff; padding: 0; color: #000; } 
+            body { background: #fff; padding: 0; color: #000; font-family: 'Times New Roman', Times, serif !important; } 
+            .container, .day-plan-page, input, textarea, th, td, label { font-family: 'Times New Roman', Times, serif !important; }
             .controls, .export-panel, .secondary-btn, .ai-assist-btn { display: none !important; } 
             .container { box-shadow: none; padding: 0; max-width: 100%; width: 100%; } 
             .day-plan-page { page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid; margin-bottom: 0; padding-bottom: 20px; width: 100%; }
-            textarea, input { border: none !important; background: transparent !important; resize: none !important; height: auto !important; overflow: visible !important; white-space: pre-wrap !important; word-wrap: break-word !important; font-family: inherit !important; font-size: 11px !important; padding: 0 !important; color: #000 !important; }
+            textarea, input { border: none !important; background: transparent !important; resize: none !important; height: auto !important; overflow: visible !important; white-space: pre-wrap !important; word-wrap: break-word !important; font-size: 12px !important; padding: 0 !important; color: #000 !important; }
             table { page-break-inside: auto; width: 100% !important; table-layout: fixed !important; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             td, th { page-break-inside: avoid; overflow: visible !important; word-wrap: break-word !important; }
@@ -71,7 +81,7 @@
     <!-- Authentication Screen -->
     <div id="authScreen" class="auth-screen active-screen">
         <div class="auth-box">
-            <h2 style="text-align:center; color:#0056b3; margin-top:0;">Adika Youth Academy Portal</h2>
+            <h2 style="text-align:center; color:#0056b3; margin-top:0;">Daily Lesson Plan Generator Portal</h2>
             <div id="authError" style="color: red; font-size: 13px; text-align: center; display:none;"></div>
             <div class="controls-row">
                 <input type="text" id="authUsername" placeholder="Enter Your Unique Username">
@@ -152,6 +162,15 @@
             </div>
 
             <div class="controls-row">
+                <div style="flex: 1;">
+                    <label style="font-size:12px; font-weight:bold; display:block;">School Name:</label>
+                    <select id="schoolNameSelect">
+                        <option value="Adika Youth Academy" selected>Adika Youth Academy</option>
+                        <option value="Adika Primary & Secondary School">Adika Primary & Secondary School</option>
+                        <option value="Global Vision Academy">Global Vision Academy</option>
+                        <option value="Horizon Excellence School">Horizon Excellence School</option>
+                    </select>
+                </div>
                 <div>
                     <label style="font-size:12px; font-weight:bold; display:block;">Start Date:</label>
                     <input type="date" id="startDateInput" value="2026-09-14">
@@ -160,8 +179,29 @@
                     <label style="font-size:12px; font-weight:bold; display:block;">End Date:</label>
                     <input type="date" id="endDateInput" value="2026-09-18">
                 </div>
-                <div style="flex: 2; display: flex; align-items: flex-end; gap: 10px;">
-                    <button type="button" id="addDayBtn" class="secondary-btn" onclick="addDayConfig()" style="height: 41px;">+ Add Day Slot (Max 5)</button>
+            </div>
+
+            <!-- Adika Youth Academy Logo Configuration Controls -->
+            <div class="controls-row" style="background: #f8fafc; padding: 12px; border-radius: 4px; border: 1px solid #cbd5e1;">
+                <div style="flex: 2;">
+                    <label style="font-size:12px; font-weight:bold; display:block;">Logo Image URL / Base64:</label>
+                    <input type="text" id="logoUrlInput" value="https://adikayouthacademy.com/favicon.ico" placeholder="Paste Data URI or image link here">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size:12px; font-weight:bold; display:block;">Logo Placement Position:</label>
+                    <select id="logoPositionSelect">
+                        <option value="watermark" selected>Watermark Background</option>
+                        <option value="top">Top Header</option>
+                        <option value="bottom">Bottom Footer</option>
+                        <option value="none">Do Not Use Logo</option>
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size:12px; font-weight:bold; display:block;">Watermark Opacity:</label>
+                    <input type="number" id="watermarkOpacityInput" value="0.08" min="0.05" max="0.4" step="0.05">
+                </div>
+                <div style="flex: 2; display: flex; align-items: flex-end;">
+                    <button type="button" id="addDayBtn" class="secondary-btn" onclick="addDayConfig()" style="height: 41px; width:100%;">+ Add Day Slot (Max 5)</button>
                 </div>
             </div>
 
@@ -432,22 +472,28 @@
                 <div class="day-config-grid" style="grid-template-columns: 1fr;">
                     <div class="ai-select-group">
                         <label>
-                            <span>AI Alternative Rationale Options</span>
+                            <span>AI Alternative Rationale Options (10 Options Available)</span>
                             <button type="button" class="ai-assist-btn" onclick="updateAiOptionsForDay(${dayNum})">✨ Refresh AI Alternatives</button>
                         </label>
                         <select id="rationaleSelect${dayNum}"></select>
                     </div>
                     <div class="ai-select-group">
                         <label>
-                            <span>AI Alternative Learning Objectives Options</span>
+                            <span>AI Alternative Learning Objectives Options (10 Options Available)</span>
                         </label>
                         <select id="objectivesSelect${dayNum}"></select>
                     </div>
                     <div class="ai-select-group">
                         <label>
-                            <span>AI Alternative Pre-requisite Knowledge Options</span>
+                            <span>AI Alternative Pre-requisite Knowledge Options (Topic-Specific - 10 Options Available)</span>
                         </label>
                         <select id="prereqSelect${dayNum}"></select>
+                    </div>
+                    <div class="ai-select-group">
+                        <label>
+                            <span>AI Alternative Teaching Aids Options</span>
+                        </label>
+                        <select id="aidsSelect${dayNum}"></select>
                     </div>
                 </div>
 
@@ -464,7 +510,7 @@
 
                 <div class="day-config-grid" style="margin-top: 15px; grid-template-columns: 1fr;">
                     <div class="select-box-group">
-                        <h4 style="font-size:12px; margin:0 0 5px 0;">Teaching Aids</h4>
+                        <h4 style="font-size:12px; margin:0 0 5px 0;">Teaching Aids (Default Checkboxes)</h4>
                         <div class="checkbox-scroll">${aidsHtml}</div>
                     </div>
                 </div>
@@ -528,6 +574,7 @@
         let rationales = [];
         let objectives = [];
         let prereqs = [];
+        let aidsOptions = [];
 
         if (t.includes('lens') || t.includes('optic') || t.includes('mirror') || t.includes('refraction')) {
             rationales = [
@@ -535,158 +582,213 @@
                 `Understanding ${topicVal} enables learners to calculate focal behaviors, trace light paths accurately, and solve advanced physics board examination items.`,
                 `Exploring ${topicVal} bridges theoretical wave mechanics with real-world optical technology applications used in cameras, microscopes, and telescopes.`,
                 `Inquiry into ${topicVal} builds spatial reasoning regarding light propagation and interface transitions across diverse transparent media.`,
-                `Analyzing ${topicVal} equips students with the optics background needed for modern fiber-optic communications and photonics technologies.`,
-                `Studying ${topicVal} reinforces quantitative problem-solving methodologies through rigorous focal length and magnification equations.`,
-                `Investigating ${topicVal} uncovers how optical instruments manipulate light to extend human visual capabilities in scientific research.`,
-                `The concepts within ${topicVal} offer essential predictive frameworks for evaluating image distortion and optical aberration corrections.`
+                `Analyzing ${topicVal} deepens comprehension of optical phenomena, wavefront deviations, and image distortion factors in scientific equipment.`,
+                `Investigating ${topicVal} fosters critical scientific observation, empirical data logging, and advanced optical physics problem-solving competency.`,
+                `Apprehending ${topicVal} connects fundamental physics laws with modern telecommunication fibers and photonic device engineering.`,
+                `Studying ${topicVal} cultivates structured reasoning about focal points, virtual image formation, and lens aberration correction.`,
+                `Evaluating ${topicVal} prepares students to understand human vision corrections, optical instruments, and precision laser applications.`,
+                `Examining ${topicVal} equips learners with rigorous mathematical modeling skills required for optical physics design and analysis.`
             ];
             objectives = [
                 `Students will empirically verify lens equations, construct accurate ray diagrams, and calculate image magnification factors with 90% precision.`,
                 `Students will differentiate between concave and convex optical properties, measure focal lengths experimentally, and solve quantitative refraction problems.`,
                 `Students will analyze image formation characteristics under varied object distances and compute image locations using the standard thin lens formula.`,
-                `Students will diagram virtual and real image creation paths using proper principal ray tracing conventions.`,
-                `Students will measure angle of incidence and angle of refraction values to validate Snell's Law experimentally.`,
-                `Students will evaluate the impact of refractive index changes on light speed and wavelength shifts through dense media.`,
-                `Students will calculate optical power in diopters for diverse combinations of converging and diverging lens setups.`,
-                `Students will design a simplified optical device schematic incorporating multiple lens elements to achieve specific magnification goals.`
+                `Students will draw precise principal ray diagrams for diverse mirror arrangements and verify focal point intersections accurately.`,
+                `Students will calculate refractive index ratios and predict ray deviation angles across media interfaces using Snell's law.`,
+                `Students will evaluate optical instrument setups and explain the functional role of convex lenses in magnification systems.`,
+                `Students will measure virtual versus real image distances and construct empirical data comparison charts.`,
+                `Students will solve complex multi-step lens combination problems and interpret focal length curvature relationships.`,
+                `Students will demonstrate practical laboratory safety and precision alignment techniques during optical bench experiments.`,
+                `Students will synthesize theoretical optics principles into comprehensive explanatory reports detailing image formation behavior.`
             ];
             prereqs = [
-                `Fundamental knowledge of geometric angles, the law of reflection, and standard linear algebraic equation solving.`,
-                `Familiarity with wave propagation, basic graphing coordinates, and preliminary definitions of focal points and principal axes.`,
-                `Basic understanding of light speed constants, refractive indices, and algebraic fraction manipulation.`,
-                `Competency in plotting linear and inverse-proportional relationships on Cartesian grids.`,
-                `Recall of standard trigonometric functions and right-triangle geometric properties.`,
-                `Understanding of energy transmission concepts and electromagnetic wave basics from prior physics units.`,
-                `Familiarity with significant figures, measurement error calculations, and laboratory unit conversions.`,
-                `Prior exposure to basic optical phenomena such as shadows, reflection mirrors, and light scattering.`
+                `Precise recall of the laws of reflection, geometric angles of incidence, and standard Cartesian linear graphing conventions.`,
+                `Familiarity with electromagnetic wave propagation velocities, refractive index ratios, and algebraic fraction manipulation.`,
+                `Prior mastery of focal point principles, principal axis alignments, and right-triangle trigonometry applications.`,
+                `Understanding of optical density contrasts, medium interface speeds, and inverse-proportional mathematical relationships.`,
+                `Competency in plotting coordinate points, analyzing linear equations, and interpreting graphical slope trends.`,
+                `Basic knowledge of transverse wave behaviors, frequency, wavelength, and wave propagation energy.`,
+                `Familiarity with algebraic substitution techniques and quadratic equation roots in physics applications.`,
+                `Previous exposure to light ray behavior, shadows, and pinhole camera image projection concepts.`,
+                `Understanding of scalar and vector quantities as applied to directional light propagation vectors.`,
+                `Recall of foundational geometry axioms concerning similar triangles and intersecting geometric lines.`
+            ];
+            aidsOptions = [
+                `Optical benches, ray boxes, convex/concave lenses, and precision measuring scales.`,
+                `Laser light sources, glass prisms, white plotting sheets, and protractors.`,
+                `Interactive ray-tracing simulation software, projector displays, and guided worksheet packets.`
             ];
         } else if (t.includes('wave') || t.includes('momentum') || t.includes('force') || t.includes('newton') || t.includes('motion')) {
             rationales = [
                 `A rigorous understanding of ${topicVal} enables learners to quantify dynamic collision forces and mechanical energy conservation in physical systems.`,
                 `Analyzing ${topicVal} is crucial for students to model real-world kinetic interactions, vehicle safety mechanics, and dynamic vector systems.`,
                 `Mastering ${topicVal} equips learners with essential mathematical modeling techniques for calculating velocity shifts and force distributions.`,
-                `Exploration of ${topicVal} provides vital insight into how energy and momentum transfer dynamically across interacting bodies.`,
-                `Studying ${topicVal} lays the groundwork for advanced mechanics, aerospace engineering, and structural dynamics analyses.`,
-                `Investigating ${topicVal} strengthens analytical thinking by connecting abstract force formulas to tangible motion phenomena.`,
-                `The principles underlying ${topicVal} explain structural resilience and failure points during sudden mechanical impacts.`,
-                `Understanding ${topicVal} helps demystify everyday kinetic phenomena, from sports trajectories to industrial machinery operations.`
+                `Studying ${topicVal} builds foundational competence in classical mechanics required for advanced engineering and aerospace calculations.`,
+                `Evaluating ${topicVal} develops critical analytical skills regarding momentum transfer, impulse duration, and acceleration forces.`,
+                `Investigating ${topicVal} connects theoretical physics laws with practical structural impact testing and vehicle crash dynamics.`,
+                `Apprehending ${topicVal} fosters structured problem-solving habits for handling complex multi-body dynamic interaction problems.`,
+                `Exploring ${topicVal} enhances quantitative reasoning concerning kinetic energy conservation and vector component resolutions.`,
+                `Inquiry into ${topicVal} prepares students for higher-level studies in mechanical engineering, robotics, and particle physics.`,
+                `Examining ${topicVal} bridges abstract kinematic formulas with observable physical phenomena in everyday motion.`
             ];
             objectives = [
                 `Students will compute vector resultants, apply conservation of momentum equations, and analyze velocity-time graphs accurately.`,
                 `Students will solve multi-step force equations, calculate kinetic energy transfers, and interpret dynamic system graphs with precision.`,
-                `Students will formulate impulse-momentum theorems and calculate collision velocities using structured physical equations.`,
-                `Students will derive acceleration parameters using mass-force proportional relationships and free-body diagrams.`,
-                `Students will evaluate system energy losses during inelastic collisions using conservation principles.`,
-                `Students will measure changes in momentum experimentally and account for external friction variables.`,
-                `Students will construct velocity vector diagrams for multi-directional force vectors under equilibrium conditions.`,
-                `Students will calculate stopping distances and reaction-time kinematics for moving physical loads.`
+                `Students will measure collision times, calculate impulse forces, and verify momentum conservation laws experimentally.`,
+                `Students will derive dynamic motion equations and evaluate acceleration forces across variable mass configurations.`,
+                `Students will construct free-body force diagrams and apply Newton's laws to complex inclined plane systems.`,
+                `Students will analyze energy transformation efficiency in mechanical systems and compute work-energy theorem values.`,
+                `Students will evaluate velocity vector components and solve relative motion problems under uniform acceleration.`,
+                `Students will design empirical friction testing setups and compute static versus kinetic coefficient values.`,
+                `Students will interpret dynamic graphs depicting momentum-time relationships and calculate area-under-curve values.`,
+                `Students will synthesize comprehensive kinetic analysis reports integrating theoretical calculations and experimental results.`
             ];
             prereqs = [
-                `Basic vector addition, trigonometric ratios (sin, cos, tan), and Newton's laws of motion.`,
-                `Elementary algebra, linear equation solving, and standard SI unit conversions for mass, velocity, and time.`,
-                `Familiarity with graphing linear relationships, slope calculations, and fundamental force definitions.`,
-                `Understanding of scalar versus vector quantities and basic coordinate directional conventions.`,
-                `Recall of kinematic equations describing constant acceleration and displacement over time.`,
-                `Prior practice with free-body diagram sketching and identifying normal, gravity, and tension forces.`,
-                `Competency in rearranging algebraic equations to isolate unknown variables like mass or acceleration.`,
-                `Basic awareness of energy conservation principles and kinetic versus potential energy definitions.`
+                `Thorough command of vector addition methods, trigonometric components (sin, cos), and Newton's first and second laws of motion.`,
+                `Familiarity with kinematic equations for constant acceleration, mass-velocity proportional units, and standard SI conversions.`,
+                `Prior understanding of free-body diagrams, friction forces, and basic scalar versus vector multiplication rules.`,
+                `Competency in rearranging algebraic formulas to isolate unknown variables like acceleration, force, or time intervals.`,
+                `Recall of work, energy, and power definitions along with corresponding joule and watt unit conversions.`,
+                `Understanding of gravitational acceleration constants, mass weight distinctions, and normal force interactions.`,
+                `Familiarity with Cartesian coordinate systems and graphical interpretation of slope and area under curves.`,
+                `Previous exposure to elastic versus inelastic collision concepts in introductory science modules.`,
+                `Basic competency in solving simultaneous linear equations derived from physical constraint conditions.`,
+                `Recall of fundamental trigonometric ratios and Pythagorean theorem applications for vector triangles.`
+            ];
+            aidsOptions = [
+                `Air tracks, dynamic carts, slotted mass sets, and ticker-tape timers.`,
+                `Force tables, spring balances, vector charts, and whiteboard markers.`,
+                `Physics simulation software, digital motion sensors, and graphical analysis handouts.`
             ];
         } else if (t.includes('geometry') || t.includes('probability') || t.includes('algebra') || t.includes('coordinate') || t.includes('matrix') || t.includes('math')) {
             rationales = [
                 `Proficiency in ${topicVal} equips students with essential spatial reasoning and quantitative modeling frameworks required for advanced data science and spatial design.`,
                 `Studying ${topicVal} develops rigorous deductive logic and systematic problem-solving strategies applicable across engineering and financial sectors.`,
                 `Mastering ${topicVal} enables learners to decode complex spatial patterns, calculate probabilistic risks, and structure logical mathematical proofs.`,
-                `Engagement with ${topicVal} strengthens abstract thinking capabilities and structural arrangement skills.`,
-                `Competence in ${topicVal} is indispensable for interpreting statistical datasets and architectural spatial layouts.`,
-                `Exploring ${topicVal} bridges theoretical mathematical structures with practical algorithmic computing tasks.`,
-                `The tools found in ${topicVal} provide clear methods for optimizing shapes, paths, and likelihood outcomes.`,
-                `Understanding ${topicVal} fosters precision and clarity in quantitative communication and technical design.`
+                `Investigating ${topicVal} builds foundational mathematical abstraction necessary for higher-level calculus and discrete mathematics.`,
+                `Evaluating ${topicVal} enhances logical structuring, formula derivation capability, and precise analytical computation skills.`,
+                `Apprehending ${topicVal} connects theoretical number structures with practical algorithmic problem-solving techniques.`,
+                `Exploring ${topicVal} fosters critical quantitative literacy needed for evaluating statistical likelihoods and geometric configurations.`,
+                `Inquiry into ${topicVal} cultivates precise mathematical communication through rigorous notation and structured argumentation.`,
+                `Examining ${topicVal} prepares students to model real-world optimization problems using advanced algebraic and spatial tools.`,
+                `Understanding ${topicVal} reinforces foundational arithmetic fluency while introducing sophisticated multi-variable problem-solving approaches.`
             ];
             objectives = [
                 `Students will derive complex geometric theorems, solve multi-step coordinate equations, and compute compound probability distributions.`,
                 `Students will construct rigorous logical proofs, analyze spatial grid coordinates, and calculate statistical likelihoods accurately.`,
-                `Students will apply algebraic formulas to resolve coordinate positioning challenges and interpret probability tree models.`,
-                `Students will calculate perimeter, area, and volume metrics for irregular compound geometric figures.`,
-                `Students will determine theoretical versus empirical probabilities for multi-stage independent events.`,
-                `Students will manipulate algebraic matrices to solve simultaneous linear equation systems efficiently.`,
-                `Students will graph transformed geometric functions accurately on a standard Cartesian plane.`,
-                `Students will evaluate logical arguments and identify flaws in probabilistic reasoning scenarios.`
+                `Students will evaluate matrix transformation operations and solve linear system equations using determinant methods.`,
+                `Students will model real-world probabilistic events using tree diagrams and conditional probability formulas.`,
+                `Students will graph conic sections, identify focal coordinates, and compute eccentricity parameters with precision.`,
+                `Students will execute algebraic factorization algorithms and simplify rational expressions efficiently.`,
+                `Students will measure polygon area and perimeter relationships under varied scale transformation factors.`,
+                `Students will solve trigonometric identity equations and apply sine/cosine rules to non-right triangles.`,
+                `Students will analyze statistical data distributions, compute standard deviation, and interpret variance metrics.`,
+                `Students will synthesize comprehensive mathematical problem sets detailing step-by-step logical derivations.`
             ];
             prereqs = [
-                `Fundamental algebraic factoring, Cartesian coordinate orientation, and basic ratio/proportion principles.`,
-                `Familiarity with angle properties, linear functions, and introductory set theory or counting principles.`,
-                `Basic competency in solving simultaneous equations and plotting points on a 2D plane.`,
-                `Recall of fraction operations, percentages, and basic exponent rules.`,
-                `Understanding of polygon properties, parallel line theorems, and Pythagorean relationships.`,
-                `Prior exposure to probability sample spaces and basic counting multiplication rules.`,
-                `Ability to read table datasets and interpret simple graphical distributions.`,
-                `Familiarity with algebraic notation symbols and substitution techniques.`
+                `Complete mastery of Cartesian coordinate planes, slope-intercept linear equations, and fundamental algebraic factoring rules.`,
+                `Familiarity with polygon angle theorems, Pythagorean distance formulas, and basic multiplicative counting principles.`,
+                `Prior exposure to probability sample spaces, ratio/proportion proportions, and simultaneous equation elimination techniques.`,
+                `Understanding of set theory notation, fractional exponents, and logical deduction structures.`,
+                `Recall of basic arithmetic operations, polynomial expansion rules, and inequality sign conventions.`,
+                `Familiarity with function notation, domain-range definitions, and inverse function concepts.`,
+                `Previous exposure to geometric congruence, similarity criteria, and angle bisector properties.`,
+                `Basic competency in interpreting statistical averages, frequency tables, and bar graph distributions.`,
+                `Understanding of exponential growth laws and logarithmic property transformations.`,
+                `Recall of prime factorization rules, least common multiples, and greatest common divisor calculations.`
+            ];
+            aidsOptions = [
+                `Geometric instrument sets, compasses, protractors, and large whiteboard grid boards.`,
+                `Graphing calculators, dynamic geometry software (GeoGebra), and printed coordinate worksheets.`,
+                `Color-coded probability spinners, card decks for experimental testing, and structured summary handouts.`
             ];
         } else if (t.includes('cell') || t.includes('photosynthesis') || t.includes('genetics') || t.includes('ecosystem') || t.includes('respiratory') || t.includes('biology')) {
             rationales = [
                 `Deep comprehension of ${topicVal} is vital for understanding micro-level energy conversions, hereditary transmission, and complex organism homeostasis.`,
                 `Exploring ${topicVal} provides students with essential biochemical insight into metabolic pathways, cellular organization, and ecological balance.`,
                 `Investigating ${topicVal} connects microscopic cellular structures with macro-level biological survival mechanisms and environmental adaptation.`,
-                `Study of ${topicVal} illuminates how living systems capture, store, and utilize energy efficiently.`,
-                `Knowledge of ${topicVal} underpins modern medical insights, agricultural biotechnology, and ecological conservation practices.`,
-                `Examining ${topicVal} builds appreciation for the structural complexity and interdependent nature of living tissues.`,
-                `The concepts in ${topicVal} clarify how genetic code translates into functional physical traits across generations.`,
-                `Understanding ${topicVal} equips learners to evaluate contemporary bioethical issues and health science reports.`
+                `Studying ${topicVal} builds foundational understanding of life science mechanisms necessary for medical and environmental sciences.`,
+                `Evaluating ${topicVal} enhances critical scientific inquiry regarding cellular respiration, genetic inheritance, and ecosystem dynamics.`,
+                `Apprehending ${topicVal} fosters appreciation for molecular complexity, enzymatic regulation, and biochemical homeostasis.`,
+                `Analyzing ${topicVal} equips learners with precise biological terminology and diagrammatic modeling competencies.`,
+                `Inquiry into ${topicVal} prepares students to evaluate contemporary biotechnological advancements and ecological conservation challenges.`,
+                `Examining ${topicVal} bridges textbook anatomical illustrations with observable microscopic slide specimens.`,
+                `Mastering ${topicVal} cultivates systematic scientific observation and empirical biological data analysis skills.`
             ];
             objectives = [
                 `Students will trace biochemical reaction sequences, label microscopic structural components, and analyze ecological/cellular interdependencies.`,
                 `Students will diagram metabolic cycle stages, differentiate between organelle functions, and evaluate biological adaptation mechanisms.`,
-                `Students will explain hereditary or metabolic processes and interpret experimental biological data accurately.`,
-                `Students will compare aerobic and anaerobic metabolic pathways across different cellular environments.`,
-                `Students will analyze Punnett squares to predict inheritance probabilities for monohybrid and dihybrid crosses.`,
-                `Students will model energy flow through trophic levels within a designated ecosystem framework.`,
-                `Students will identify key phases of cellular division using microscope slide imagery or diagrams.`,
-                `Students will evaluate environmental factors affecting enzyme reaction rates in biological tissues.`
+                `Students will model genetic inheritance patterns using Punnett squares and calculate phenotypic probability ratios.`,
+                `Students will analyze cellular respiration ATP yields and compare aerobic versus anaerobic metabolic pathways.`,
+                `Students will examine microscopic slide specimens under oil immersion and identify cellular sub-structures accurately.`,
+                `Students will evaluate ecosystem trophic pyramids and calculate energy transfer efficiencies across food web levels.`,
+                `Students will describe gas exchange mechanisms across respiratory membranes and measure lung capacity parameters.`,
+                `Students will explain enzyme denaturation kinetics and graph reaction rate responses to temperature variations.`,
+                `Students will investigate osmosis and diffusion rates across artificial semi-permeable membrane models.`,
+                `Students will synthesize comprehensive biological research summaries integrating structural anatomy and metabolic physiology.`
             ];
             prereqs = [
-                `Basic organic chemistry building blocks, cell organelle identification, and introductory ecological definitions.`,
-                `Familiarity with microscopic imaging principles, enzyme action basics, and cell membrane permeability.`,
-                `Preliminary understanding of cellular respiration, energy currencies (ATP), and basic biological terminology.`,
-                `Recall of molecular diffusion, osmosis, and active transport mechanisms across membranes.`,
-                `Basic awareness of DNA structure, chromosome organization, and heredity basics.`,
-                `Familiarity with trophic classifications (producers, consumers, decomposers) in food chains.`,
-                `Understanding of basic chemical formulas for water, carbon dioxide, and glucose.`,
-                `Prior exposure to scientific drawing and biological diagram labeling conventions.`
+                `Solid recall of basic organic chemistry molecules (glucose, water, ATP), cell organelle structures, and membrane permeability rules.`,
+                `Familiarity with microscopic magnification focusing, enzymatic action principles, and diffusion/osmosis transport processes.`,
+                `Prior understanding of DNA molecular scaffolding, chromosomal segregation phases, and elementary trophic web terminology.`,
+                `Comprehension of cellular respiration stages and basic plant/animal tissue taxonomy.`,
+                `Recall of basic chemical bonding rules, pH scale measurements, and macromolecule classifications.`,
+                `Familiarity with ecological habitat terminology, biotic/abiotic factors, and biosphere organization levels.`,
+                `Previous exposure to Mendelian inheritance concepts and basic genetic trait probability ratios.`,
+                `Basic understanding of circulatory system transport functions and gas diffusion principles.`,
+                `Recall of microscope parts, slide preparation protocols, and staining techniques.`,
+                `Comprehension of scientific method inquiry steps and biological data charting conventions.`
+            ];
+            aidsOptions = [
+                `Compound light microscopes, pre-prepared slide kits, and lens cleaning paper.`,
+                `Three-dimensional cellular and molecular models, laminated cross-section posters.`,
+                `Interactive digital cell animation clips, projector displays, and structured labeling booklets.`
             ];
         } else {
             rationales = [
                 `Mastery of ${topicVal} builds essential critical thinking and quantitative analysis skills required for academic progression and practical problem solving.`,
                 `Exploring ${topicVal} provides learners with targeted conceptual tools to investigate real-world applications and solve complex domain challenges.`,
-                `Understanding ${topicVal} fosters deeper analytical inquiry and reinforces core interdisciplinary competencies across the curriculum.`,
-                `Engagement with ${topicVal} broadens intellectual perspectives and supports structured inquiry habits.`,
-                `Proficiency in ${topicVal} serves as a stepping stone for advanced topic specializations and project execution.`,
-                `Analyzing ${topicVal} cultivates systematic troubleshooting methods applicable in diverse professional settings.`,
-                `The core tenets of ${topicVal} offer reliable frameworks for evaluating complex information sources.`,
-                `Study of ${topicVal} enhances cognitive flexibility and synthesis of cross-disciplinary concepts.`
+                `Investigating ${topicVal} fosters comprehensive academic literacy and deep subject-matter comprehension.`,
+                `Studying ${topicVal} cultivates structured reasoning habits and analytical evaluation capabilities.`,
+                `Evaluating ${topicVal} prepares students for advanced curriculum modules and professional domain tasks.`,
+                `Apprehending ${topicVal} bridges foundational theoretical concepts with practical real-world problem scenarios.`,
+                `Analyzing ${topicVal} enhances methodical inquiry, data interpretation, and collaborative problem solving.`,
+                `Inquiry into ${topicVal} develops precise technical vocabulary and clear communicative expression.`,
+                `Examining ${topicVal} equips learners with rigorous analytical frameworks necessary for specialized study.`,
+                `Understanding ${topicVal} strengthens conceptual foundations and sparks ongoing academic curiosity.`
             ];
             objectives = [
                 `Students will analyze key principles, compute domain-specific problem sets, and evaluate theoretical applications of ${topicVal} with accuracy.`,
                 `Students will demonstrate conceptual mastery of ${topicVal} through structured problem-solving and peer-led analytical discussions.`,
-                `Students will evaluate core mechanisms, interpret topical data sets, and synthesize valid conclusions regarding ${topicVal}.`,
-                `Students will design a small-scale project or model illustrating the core mechanisms of ${topicVal}.`,
-                `Students will critique common misconceptions and clarify fundamental definitions related to ${topicVal}.`,
-                `Students will apply learned frameworks to resolve case studies involving ${topicVal}.`,
-                `Students will communicate structured summaries of ${topicVal} through concise oral presentations.`,
-                `Students will construct detailed comparative matrices contrasting ${topicVal} with adjacent concepts.`
+                `Students will investigate core mechanisms of ${topicVal} and present empirical findings clearly.`,
+                `Students will apply theoretical models of ${topicVal} to solve simulated real-world case studies.`,
+                `Students will evaluate alternative problem-solving strategies related to ${topicVal} with critical discernment.`,
+                `Students will synthesize comprehensive summary reports detailing the fundamental principles of ${topicVal}.`,
+                `Students will measure key performance indicators associated with ${topicVal} practical exercises.`,
+                `Students will construct structured concept maps illustrating relationships within ${topicVal}.`,
+                `Students will debate differing theoretical perspectives concerning ${topicVal} applications.`,
+                `Students will successfully complete formative assessment tasks verifying thorough comprehension of ${topicVal}.`
             ];
             prereqs = [
-                `Foundational terminology, baseline conceptual frameworks, and introductory principles from prior academic units.`,
-                `Familiarity with basic inquiry methods, general vocabulary, and preliminary subject matter concepts.`,
-                `Basic competency in prerequisite problem solving and fundamental background definitions related to the module.`,
-                `Recall of general safety guidelines and collaborative group work protocols.`,
-                `Basic information literacy skills required for gathering secondary source data.`,
-                `Familiarity with organizational outlining and structured note-taking methods.`,
-                `Introductory exposure to analytical questioning techniques and hypothesis generation.`,
-                `Basic readiness for independent reading comprehension and task execution.`
+                `Foundational unit terminology, preliminary conceptual frameworks, and baseline competencies from preceding curriculum modules.`,
+                `Familiarity with basic investigative questioning, source literacy, and collaborative group task protocols.`,
+                `Prior exposure to introductory problem sets and core definitions relevant to ${topicVal}.`,
+                `Recall of general academic study skills, information synthesis habits, and critical reading strategies.`,
+                `Basic understanding of prerequisite subject terminology and foundational topic classifications.`,
+                `Familiarity with standard classroom laboratory or discussion protocols and inquiry guidelines.`,
+                `Previous exposure to introductory problem frameworks connected to ${topicVal}.`,
+                `Comprehension of basic analytical logic and structured problem decomposition techniques.`,
+                `Recall of relevant historical or contextual background information supporting the curriculum module.`,
+                `Basic familiarity with peer instruction techniques and collaborative group task sharing.`
+            ];
+            aidsOptions = [
+                `Whiteboards, dry-erase markers, and structured textbook reading chapters.`,
+                `Multimedia projection systems, summary handout packets, and exercise pads.`,
+                `Collaborative chart-making materials, sticky notes, and assessment rubrics.`
             ];
         }
 
-        return { rationales, objectives, prereqs };
+        return { rationales, objectives, prereqs, aidsOptions };
     }
 
     function updateAiOptionsForDay(dayNum) {
@@ -699,6 +801,7 @@
         const ratSelect = document.getElementById(`rationaleSelect${dayNum}`);
         const objSelect = document.getElementById(`objectivesSelect${dayNum}`);
         const preSelect = document.getElementById(`prereqSelect${dayNum}`);
+        const aidsSelect = document.getElementById(`aidsSelect${dayNum}`);
 
         if (ratSelect) {
             ratSelect.innerHTML = alternatives.rationales.map((r, idx) => `<option value="${escapeHtml(r)}">Option ${idx + 1}: ${escapeHtml(r)}</option>`).join('');
@@ -709,6 +812,9 @@
         if (preSelect) {
             preSelect.innerHTML = alternatives.prereqs.map((p, idx) => `<option value="${escapeHtml(p)}">Option ${idx + 1}: ${escapeHtml(p)}</option>`).join('');
         }
+        if (aidsSelect) {
+            aidsSelect.innerHTML = alternatives.aidsOptions.map((a, idx) => `<option value="${escapeHtml(a)}">Option ${idx + 1}: ${escapeHtml(a)}</option>`).join('');
+        }
     }
 
     function escapeHtml(str) {
@@ -718,7 +824,7 @@
     function getIntelligentLessonContent(topicVal) {
         const t = topicVal.trim().toLowerCase();
         
-        let subtopic = `Core Structural Mechanisms, Analytical Properties, and Applied Problem Solving in ${topicVal}`;
+        let subtopic = `Core Structural Mechanisms,\nAnalytical Properties, and\nApplied Problem Solving in\n${topicVal}`;
         let starterContent = `Contextual inquiry and real-world problem provocation regarding ${topicVal}`;
         let starterRole = `Present a targeted conceptual dilemma or practical challenge related directly to ${topicVal}.`;
         let starterAction = `Brainstorm initial hypotheses, share insights in pairs, and formulate focused inquiry questions.`;
@@ -737,28 +843,28 @@
         let aids = `Whiteboard, instructional handouts, specialized reference charts`;
 
         if (t.includes('lens') || t.includes('optic') || t.includes('mirror') || t.includes('refraction')) {
-            subtopic = `Ray Tracing, Snell's Law Derivations, and Focal Length Calculation for ${topicVal}`;
+            subtopic = `Ray Tracing Conventions,\nSnell's Law Derivations, and\nFocal Length Calculation for\n${topicVal}`;
             starterContent = `Optical bench refraction anomaly & focal point discovery puzzle`;
             starterRole = `Demonstrate light bending through varied curved glass surfaces to provoke cognitive inquiry.`;
             starterAction = `Observe focal convergence and record initial hypotheses regarding focal length variance.`;
             mainContent = `Rigorous step-by-step application of mirror and lens formulas ($1/f = 1/d_o + 1/d_i$), ray tracing drills, and laboratory simulation verification.`;
             aids = `Optical benches, laser boxes, convex and concave lenses, precision rulers`;
         } else if (t.includes('wave') || t.includes('momentum') || t.includes('force') || t.includes('newton') || t.includes('motion')) {
-            subtopic = `Vector Decomposition, Impulse-Momentum Theorem, and Energy Conservation in ${topicVal}`;
+            subtopic = `Vector Decomposition Analysis,\nImpulse-Momentum Theorem, and\nEnergy Conservation Principles in\n${topicVal}`;
             starterContent = `Momentum collision simulation and impact force teaser`;
             starterRole = `Pose a discrepant event involving inelastic versus elastic collisions to stimulate critical thinking.`;
             starterAction = `Analyze collision velocities and debate momentum conservation outcomes in pairs.`;
             mainContent = `Intensive quantitative problem solving focused on momentum conservation ($p = mv$), kinetic energy transformations, and graphical impulse integration.`;
             aids = `Air track apparatus, ticker timers, mass sets, dynamic carts`;
         } else if (t.includes('geometry') || t.includes('probability') || t.includes('algebra') || t.includes('coordinate') || t.includes('matrix') || t.includes('math')) {
-            subtopic = `Algorithmic Derivation, Spatial Coordinate Mapping, and Analytical Proofs for ${topicVal}`;
+            subtopic = `Algorithmic Formula Derivations,\nSpatial Coordinate Mapping, and\nAnalytical Proof Structures for\n${topicVal}`;
             starterContent = `Spatial paradox teaser & probability distribution hook`;
             starterRole = `Introduce a counter-intuitive probability or coordinate puzzle to capture student curiosity.`;
             starterAction = `Brainstorm initial problem-solving strategies and sketch rough coordinate coordinates.`;
             mainContent = `Systematic theorem proof walkthroughs, coordinate geometry derivation drills, and structured probability tree computations.`;
             aids = `Whiteboard graph boards, geometric instrument sets, scientific calculators`;
         } else if (t.includes('cell') || t.includes('photosynthesis') || t.includes('genetics') || t.includes('ecosystem') || t.includes('respiratory') || t.includes('biology')) {
-            subtopic = `Biochemical Pathway Mapping, Cellular Structural Analysis, and Metabolic Dynamics of ${topicVal}`;
+            subtopic = `Biochemical Pathway Mapping,\nMicroscopic Structural Analysis,\nand Metabolic Dynamics of\n${topicVal}`;
             starterContent = `Microscopic specimen projection & metabolic cycle teaser`;
             starterRole = `Display high-magnification cellular slide imagery to spark investigative questions.`;
             starterAction = `Examine structural anomalies and articulate initial observations in collaborative groups.`;
@@ -798,7 +904,38 @@
         const teacherName = document.getElementById('teacherNameInput').value || "Teacher";
         const subject = document.getElementById('subjectInput').value || "Subject";
         const gradeSection = document.getElementById('gradeInput').value || "Grade";
+        const schoolName = document.getElementById('schoolNameSelect').value || "Adika Youth Academy";
         const startDateStr = document.getElementById('startDateInput').value;
+
+        // Logo configurations
+        const logoUrl = document.getElementById('logoUrlInput').value.trim();
+        const logoPosition = document.getElementById('logoPositionSelect').value;
+        const watermarkOpacity = document.getElementById('watermarkOpacityInput').value || "0.08";
+
+        let watermarkHtml = "";
+        let topLogoHtml = "";
+        let bottomLogoHtml = "";
+
+        if (logoUrl && logoPosition !== 'none') {
+            if (logoPosition === 'watermark') {
+                watermarkHtml = `<img src="${logoUrl}" class="plan-watermark" style="opacity: ${watermarkOpacity};" alt="Adika Youth Academy Logo">`;
+            } else if (logoPosition === 'top') {
+                topLogoHtml = `
+                    <div class="plan-header-logo">
+                        <img src="${logoUrl}" alt="Adika Youth Academy Logo">
+                        <div style="text-align: center;">
+                            <h3 style="margin:0; font-size:14px; color:#555;">${schoolName}</h3>
+                            <h2 style="margin:2px 0 0 0; font-size:18px; text-transform:uppercase;">Daily Lesson Framework</h2>
+                        </div>
+                    </div>`;
+            } else if (logoPosition === 'bottom') {
+                bottomLogoHtml = `
+                    <div class="plan-footer-logo">
+                        <img src="${logoUrl}" alt="Adika Youth Academy Logo">
+                        <div style="font-size:10px; color:#666;">${schoolName} - Official Lesson Plan Document</div>
+                    </div>`;
+            }
+        }
 
         let baseDate = startDateStr ? new Date(startDateStr) : new Date();
 
@@ -815,6 +952,7 @@
             const selectedRationale = document.getElementById(`rationaleSelect${dayNum}`)?.value || "Standard instructional rationale.";
             const selectedObjectives = document.getElementById(`objectivesSelect${dayNum}`)?.value || "Standard learning objectives.";
             const selectedPrereq = document.getElementById(`prereqSelect${dayNum}`)?.value || "Standard prerequisite knowledge.";
+            const selectedAidsOption = document.getElementById(`aidsSelect${dayNum}`)?.value || "";
 
             const sMin = document.getElementById(`starterMin${dayNum}`)?.value || "5";
             const mMin = document.getElementById(`mainMin${dayNum}`)?.value || "32";
@@ -827,7 +965,10 @@
             const assessText = checkedAssess.length > 0 ? checkedAssess.join(", ") : "Classwork";
 
             const checkedAids = Array.from(card.querySelectorAll(`input[name^="aids"]:checked`)).map(cb => cb.value);
-            const aidsText = checkedAids.length > 0 ? checkedAids.join(", ") : getIntelligentLessonContent(topicVal).aids;
+            let aidsText = checkedAids.length > 0 ? checkedAids.join(", ") : getIntelligentLessonContent(topicVal).aids;
+            if(selectedAidsOption) {
+                aidsText = selectedAidsOption + "; " + aidsText;
+            }
 
             let currDate = new Date(baseDate);
             currDate.setDate(baseDate.getDate() + (sequenceIndex - 1));
@@ -837,11 +978,14 @@
 
             containerHtml += `
                 <div class="day-plan-page">
+                    ${watermarkHtml}
                     <div class="day-badge">DAY ${sequenceIndex} LESSON PLAN</div>
                     
                     <div class="header-top">
-                        <h3 style="margin:0; font-size:14px; color:#555;">አዲካ youth አካዳሚ &nbsp;&nbsp;|&nbsp;&nbsp; Adika Youth Academy</h3>
-                        <h2 style="margin:5px 0 15px 0; font-size:20px; text-transform:uppercase; border-bottom:2px solid #333; display:inline-block;">Daily Lesson Framework</h2>
+                        ${topLogoHtml ? topLogoHtml : `
+                            <h3 style="margin:0; font-size:14px; color:#555;">${schoolName}</h3>
+                            <h2 style="margin:5px 0 15px 0; font-size:20px; text-transform:uppercase; border-bottom:2px solid #333; display:inline-block;">Daily Lesson Framework</h2>
+                        `}
                     </div>
 
                     <div class="metadata-grid">
@@ -856,7 +1000,7 @@
                     </div>
 
                     <div class="metadata-row"><label>Topic of the lesson:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${topicVal}</textarea></div>
-                    <div class="metadata-row"><label>Subtopic of the lesson:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.subtopic}</textarea></div>
+                    <div class="metadata-row"><label>Subtopic of the lesson:</label><textarea rows="4" style="height: 4.5em;" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.subtopic}</textarea></div>
                     <div class="metadata-row"><label>Rationale of the lesson:</label><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedRationale}</textarea></div>
                     <div class="metadata-row"><label>Learning Objectives:</label><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedObjectives}</textarea></div>
                     <div class="metadata-row"><label>Pre-requisite Knowledge:</label><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedPrereq}</textarea></div>
@@ -913,6 +1057,7 @@
                         </tbody>
                     </table>
 
+                    ${bottomLogoHtml}
                     <div class="footer-section"><label><strong>Teaching Aids:</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${aidsText}</textarea></div>
                     <div class="footer-section" style="margin-top:10px;"><label><strong>Reflection Metric:</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">Evaluated strategy efficiency (${stratText}) versus target cognitive outcomes for ${topicVal}.</textarea></div>
                 </div>
@@ -925,8 +1070,10 @@
         // Auto-adjust heights for rendered textareas
         setTimeout(() => {
             document.querySelectorAll('#plansContainer textarea').forEach(ta => {
-                ta.style.height = '';
-                ta.style.height = ta.scrollHeight + 'px';
+                if(!ta.closest('.metadata-row') || !ta.previousElementSibling || ta.previousElementSibling.innerText !== 'Subtopic of the lesson:') {
+                    ta.style.height = '';
+                    ta.style.height = ta.scrollHeight + 'px';
+                }
             });
         }, 50);
     }
@@ -996,8 +1143,8 @@
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
                 <head><meta charset='utf-8'><title>Lesson Plans</title>
                 <style>
-                    body { font-family: 'Arial', sans-serif; color: #333; }
-                    .day-plan { page-break-after: always; break-after: page; margin-bottom: 40px; }
+                    body { font-family: 'Times New Roman', Times, serif !important; color: #333; }
+                    .day-plan { page-break-after: always; break-after: page; margin-bottom: 40px; position: relative; }
                     table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; table-layout: fixed; }
                     th, td { border: 1px solid #333; padding: 6px; vertical-align: top; font-size: 11px; word-wrap: break-word; overflow-wrap: break-word; }
                     th { background-color: #f2f2f2; text-align: center; }
