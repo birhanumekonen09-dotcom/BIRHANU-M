@@ -479,8 +479,9 @@
                     <span>Day ${dayNum} Configuration</span>
                     <button type="button" class="secondary-btn" style="background-color:#dc3545;" onclick="omitDay(${dayNum})">Omit / Remove</button>
                 </h3>
-                <div class="controls-row" style="margin-bottom: 10px;">
-                    <input type="text" id="topic${dayNum}" placeholder="Topic Name" value="${defaultTopic}" oninput="updateAiOptionsForDay(${dayNum})">
+                <div class="controls-row" style="margin-bottom: 10px; gap: 10px;">
+                    <input type="text" id="topic${dayNum}" placeholder="Topic Name" value="${defaultTopic}" style="flex: 2;" oninput="updateAiOptionsForDay(${dayNum})">
+                    <input type="text" id="unitTrack${dayNum}" placeholder="Unit Track (e.g., Unit 2, Module 1)" value="Unit ${dayNum} - Module Sequence" style="flex: 1;">
                 </div>
                 
                 <div style="margin-bottom: 10px; background: #fdfdfd; padding: 10px; border: 1px solid #e2e8f0; border-radius: 4px;">
@@ -972,6 +973,9 @@
             const topicInputElem = card.querySelector(`input[id^="topic"]`);
             const topicVal = topicInputElem ? topicInputElem.value.trim() : "Core Lesson Subject";
 
+            const unitTrackInputElem = card.querySelector(`input[id^="unitTrack"]`);
+            const unitTrackVal = unitTrackInputElem ? unitTrackInputElem.value.trim() : `Unit ${sequenceIndex} - Module Sequence`;
+
             const selectedRationale = document.getElementById(`rationaleSelect${dayNum}`)?.value || "Standard instructional rationale.";
             const selectedObjectives = document.getElementById(`objectivesSelect${dayNum}`)?.value || "Standard learning objectives.";
             const selectedPrereq = document.getElementById(`prereqSelect${dayNum}`)?.value || "Standard prerequisite knowledge.";
@@ -1019,7 +1023,7 @@
 
                     <div class="metadata-grid">
                         <div><label>Date:</label><input type="text" value="${dateFormatted}"></div>
-                        <div><label>Unit Track:</label><input type="text" value="Module Sequence - Part ${sequenceIndex}"></div>
+                        <div><label>Unit Track:</label><input type="text" value="${unitTrackVal}"></div>
                     </div>
 
                     <div class="metadata-row"><label>Topic of the lesson:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${topicVal}</textarea></div>
