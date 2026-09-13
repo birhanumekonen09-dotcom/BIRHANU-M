@@ -44,10 +44,15 @@
 
         .day-badge { background: #0056b3; color: white; padding: 5px 15px; font-weight: bold; display: inline-block; border-radius: 4px; margin-bottom: 10px; font-size: 15px; }
         .header-top { text-align: center; margin-bottom: 15px; }
-        .metadata-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px; font-size: 14px; }
-        .metadata-row { display: flex; align-items: flex-start; margin-bottom: 10px; font-size: 14px; width: 100%; }
+        
+        .metadata-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 12px; font-size: 14px; width: 100%; box-sizing: border-box; }
+        .metadata-grid > div { flex: 1 1 200px; min-width: 180px; display: flex; flex-direction: column; }
+        .metadata-grid label { font-weight: bold; margin-bottom: 4px; font-size: 13px; }
+        
+        .metadata-row { display: flex; align-items: flex-start; margin-bottom: 10px; font-size: 14px; width: 100%; flex-wrap: wrap; }
         .metadata-row label { font-weight: bold; margin-right: 8px; white-space: nowrap; min-width: 170px; padding-top: 2px; }
-        .metadata-row textarea, .metadata-grid input { flex: 1; border: none; border-bottom: 1px dotted #333; outline: none; font-family: inherit; font-size: 14px; padding: 2px 5px; background: transparent; resize: vertical; overflow: hidden; box-sizing: border-box; width: 100%; }
+        .metadata-row textarea, .metadata-grid input, .metadata-grid select { flex: 1; border: none; border-bottom: 1px dotted #333; outline: none; font-family: inherit; font-size: 14px; padding: 2px 5px; background: transparent; resize: vertical; overflow: hidden; box-sizing: border-box; width: 100%; }
+        
         table { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; font-size: 12px; }
         th, td { border: 1px solid #333; padding: 6px; vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; }
         th { background-color: #f2f2f2; text-align: center; font-size: 11px; }
@@ -181,14 +186,21 @@
                 </div>
             </div>
 
-            <!-- Adika Youth Academy Logo Configuration Controls -->
+            <!-- Logo Configuration Controls with Default Preset -->
             <div class="controls-row" style="background: #f8fafc; padding: 12px; border-radius: 4px; border: 1px solid #cbd5e1;">
                 <div style="flex: 2;">
-                    <label style="font-size:12px; font-weight:bold; display:block;">Logo Image URL / Base64:</label>
-                    <input type="text" id="logoUrlInput" value="https://adikayouthacademy.com/favicon.ico" placeholder="Paste Data URI or image link here">
+                    <label style="font-size:12px; font-weight:bold; display:block;">Logo Image URL / Base64 (Pre-loaded with Default):</label>
+                    <input type="text" id="logoUrlInput" value="1789151578983.jpg" placeholder="Paste custom link or select preset below">
                 </div>
                 <div style="flex: 1;">
-                    <label style="font-size:12px; font-weight:bold; display:block;">Logo Placement Position:</label>
+                    <label style="font-size:12px; font-weight:bold; display:block;">Quick Logo Preset:</label>
+                    <select id="logoPresetSelect" onchange="applyLogoPreset(this.value)">
+                        <option value="default" selected>Adika Youth Academy (Default)</option>
+                        <option value="custom">Custom URL / Clear</option>
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size:12px; font-weight:bold; display:block;">Logo Placement:</label>
                     <select id="logoPositionSelect">
                         <option value="watermark" selected>Watermark Background</option>
                         <option value="top">Top Header</option>
@@ -237,6 +249,17 @@
     const db = firebase.firestore();
 
     let activeUsername = "";
+    const DEFAULT_LOGO_URL = "1789151578983.jpg";
+
+    function applyLogoPreset(val) {
+        const input = document.getElementById('logoUrlInput');
+        if (val === 'default') {
+            input.value = DEFAULT_LOGO_URL;
+        } else if (val === 'custom') {
+            input.value = "";
+            input.focus();
+        }
+    }
 
     const strategiesList = [
         "Think pair share", "Jigsaw", "Brainstorming", "Fishbowl", "Role-play", 
@@ -918,11 +941,11 @@
 
         if (logoUrl && logoPosition !== 'none') {
             if (logoPosition === 'watermark') {
-                watermarkHtml = `<img src="${logoUrl}" class="plan-watermark" style="opacity: ${watermarkOpacity};" alt="Adika Youth Academy Logo">`;
+                watermarkHtml = `<img src="${logoUrl}" class="plan-watermark" style="opacity: ${watermarkOpacity};" alt="Logo">`;
             } else if (logoPosition === 'top') {
                 topLogoHtml = `
                     <div class="plan-header-logo">
-                        <img src="${logoUrl}" alt="Adika Youth Academy Logo">
+                        <img src="${logoUrl}" alt="Logo">
                         <div style="text-align: center;">
                             <h3 style="margin:0; font-size:14px; color:#555;">${schoolName}</h3>
                             <h2 style="margin:2px 0 0 0; font-size:18px; text-transform:uppercase;">Daily Lesson Framework</h2>
@@ -931,7 +954,7 @@
             } else if (logoPosition === 'bottom') {
                 bottomLogoHtml = `
                     <div class="plan-footer-logo">
-                        <img src="${logoUrl}" alt="Adika Youth Academy Logo">
+                        <img src="${logoUrl}" alt="Logo">
                         <div style="font-size:10px; color:#666;">${schoolName} - Official Lesson Plan Document</div>
                     </div>`;
             }
@@ -989,12 +1012,12 @@
                     </div>
 
                     <div class="metadata-grid">
-                        <div style="grid-column: span 2;"><label>Teacher:</label><input type="text" value="${teacherName}"></div>
+                        <div><label>Teacher:</label><input type="text" value="${teacherName}"></div>
                         <div><label>Subject:</label><input type="text" value="${subject}"></div>
                         <div><label>Grade:</label><input type="text" value="${gradeSection}"></div>
                     </div>
 
-                    <div class="metadata-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="metadata-grid">
                         <div><label>Date:</label><input type="text" value="${dateFormatted}"></div>
                         <div><label>Unit Track:</label><input type="text" value="Module Sequence - Part ${sequenceIndex}"></div>
                     </div>
