@@ -185,7 +185,6 @@
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eef2f7; padding-bottom: 10px; margin-bottom: 15px;">
             <div>
                 <h2 style="margin:0; color:#0056b3; font-size: 18px;">Lesson Plan Generator Workspace (Max 5 Days)</h2>
-                <span id="quotaDisplay" style="font-size: 12px; color: #555; font-weight: bold;"></span>
             </div>
             <button class="secondary-btn" onclick="handleLogout()">Log Out</button>
         </div>
@@ -205,6 +204,14 @@
                         <option value="Adika Primary & Secondary School">Adika Primary & Secondary School</option>
                         <option value="Global Vision Academy">Global Vision Academy</option>
                         <option value="Horizon Excellence School">Horizon Excellence School</option>
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size:12px; font-weight:bold; display:block;">Language / ቋንቋ / Afaan:</label>
+                    <select id="languageSelect" onchange="initDayConfigs()">
+                        <option value="en" selected>English (Default)</option>
+                        <option value="am">አማርኛ (Amharic)</option>
+                        <option value="om">Afaan Oromoo (Oromo)</option>
                     </select>
                 </div>
                 <div>
@@ -282,6 +289,153 @@
     let activeUsername = "";
     const DEFAULT_LOGO_URL = "1789151578983.jpg";
 
+    // Multi-Language Dictionary Translations with Comprehensive Options
+    const langDict = {
+        en: {
+            frameworkTitle: "Daily Lesson Framework",
+            dayPrefix: "DAY",
+            lessonPlanTitle: "LESSON PLAN",
+            teacher: "Teacher:",
+            subject: "Subject:",
+            grade: "Grade:",
+            date: "Date:",
+            unitTrack: "Unit Track:",
+            topic: "Topic of the lesson:",
+            subtopic: "Subtopic of the lesson:",
+            rationale: "Rationale of the lesson:",
+            objectives: "Learning Objectives:",
+            prereq: "Pre-requisite Knowledge:",
+            stage: "Stage",
+            time: "Time",
+            contents: "Contents",
+            teacherRole: "Teacher Role",
+            studentActions: "Student Actions",
+            method: "Method",
+            assessment: "Assessment",
+            starter: "Starter Activity",
+            main: "Main Activity",
+            concluding: "Concluding Activity",
+            teachingAids: "Teaching Aids:",
+            reflection: "Reflection Metric:",
+            prepBy: "Prepared by:",
+            sig: "Sig:",
+            deptHead: "Dep't Head:",
+            vDir: "V. Director:",
+            strategies: [
+                "Think pair share", "Jigsaw", "Brainstorming", "Fishbowl", "Role-play", 
+                "Problem Based learning", "Concept Mapping", "Interactive Simulations and Labs", 
+                "Case study", "Gallery walk", "Peer Instruction"
+            ],
+            assessments: [
+                "Classwork", "Homework", "Exit ticket", "Concept tests", "Two minute papers", "Performance tasks"
+            ],
+            teachingAidsList: [
+                "Blackboards and whiteboards", "Chalk and dry-erase markers", "Textbooks",
+                "Workbooks and exercise pads", "Notebooks", "Pens and pencils", "Handouts and worksheets",
+                "Flashcards", "Charts and posters", "Geographical maps", "Globes", "Projectors",
+                "Computers and laptops", "Interactive flat panels and smartboards", "Educational videos and animations",
+                "Audio recordings and podcasts", "Real objects (realia)", "Physical 3D models",
+                "Educational quiz and gamification software", "Bulletin boards"
+            ]
+        },
+        am: {
+            frameworkTitle: "የዕለት ትምህርት ማዕቀፍ",
+            dayPrefix: "ቀን",
+            lessonPlanTitle: "የክፍል ጊዜ ዕቅድ",
+            teacher: "አስተማሪ:",
+            subject: "ትምህርት ዓይነት:",
+            grade: "ክፍል:",
+            date: "ቀን:",
+            unitTrack: "ምዕራፍ/ክፍል ቅደም ተከተል:",
+            topic: "የትምህርቱ ዋና ርዕስ:",
+            subtopic: "የትምህርቱ ንዑስ ርዕስ:",
+            rationale: "የትምህርቱ አስፈላጊነት ምክንያት:",
+            objectives: "የመማር ዓላማዎች:",
+            prereq: "ቅድመ-ዝግጅት እውቀት:",
+            stage: "ደረጃ",
+            time: "ጊዜ",
+            contents: "ይዘቶች",
+            teacherRole: "የአስተማሪ ሚና",
+            studentActions: "የተማሪዎች ተግባር",
+            method: "ዘዴ",
+            assessment: "ግምገማ",
+            starter: "መነሻ እንቅስቃሴ",
+            main: "ዋና እንቅስቃሴ",
+            concluding: "ማጠቃለያ እንቅስቃሴ",
+            teachingAids: "የማስተማሪያ መርጃ መሳሪያዎች:",
+            reflection: "የማሰላሰያ መለኪያ:",
+            prepBy: "ያዘጋጀው:",
+            sig: "ፊርማ:",
+            deptHead: "የဌቃ ዋና:",
+            vDir: "ምክትል ዳይሬክተር:",
+            strategies: [
+                "አስብ-ተማከር-አጋራ (Think pair share)", "ጅግሶ (Jigsaw)", "ሐሳብ ማፍለቅ (Brainstorming)", 
+                "የዓሳ ጎድጓዳ ሳህን (Fishbowl)", "የሚና ጨዋታ (Role-play)", "በችግር ላይ የተመሠረተ ትምህርት (Problem Based learning)", 
+                "የሐሳብ ካርታ (Concept Mapping)", "ተነጋጋሪ አስመስሎ መስራት (Interactive Simulations)", 
+                "የኬዝ ጥናት (Case study)", "የጋለሪ ጉብኝት (Gallery walk)", "የእኩዮች ማስተማር (Peer Instruction)"
+            ],
+            assessments: [
+                "የክፍል ሥራ", "የቤት ሥራ", "የመውጫ ቲኬት (Exit ticket)", "የጽንሰ-ሐሳብ ፈተናዎች", "የሁለት ደቂቃ ወረቀቶች", "የአፈጻጸም ተግባራት"
+            ],
+            teachingAidsList: [
+                "ጥቁር እና ነጭ ሰሌዳዎች", "ኖራ እና ማርከሮች", "የመማሪያ መጻሕፍት", "የመልመጃ ደብተሮች",
+                "ደብተሮች", "ብዕሮች እና 铅笔", "የማከፋፈያ ወረቀቶች", "ፍላሽ ካርዶች", "ቻርቶች እና ፖስተሮች",
+                "የጂኦግራፊ ካርታዎች", "ግሎብ", "ፕሮጀክተሮች", "ኮምፒውተሮች እና ላፕቶፖች",
+                "ስማርት ቦርዶች", "ትምህርታዊ ቪዲዮዎች", "የድምፅ ቅጂዎች", "ትክክለኛ እቃዎች (Realia)",
+                "አካላዊ 3ዲ ሞዴሎች", "የትምህርት ፈተና ሶፍትዌር", "የማስታወቂያ ሰሌዳዎች"
+            ]
+        },
+        om: {
+            frameworkTitle: "Qajeelcha Barnootaa Guyyaa",
+            dayPrefix: "GUYYAA",
+            lessonPlanTitle: "KAROORA BARNOOTAA",
+            teacher: "Barsiisaa:",
+            subject: "Gosa Barnootaa:",
+            grade: "Kiree/Kutaa:",
+            date: "Guyyaa:",
+            unitTrack: "Kutaa/Boqonnaa:",
+            topic: "Madii Barnooticha:",
+            subtopic: "Mataduree Xiqqaa:",
+            rationale: "Kaayyoo ykn Sababa Barnootichaa:",
+            objectives: "Galmoota Barachuu:",
+            prereq: "Beekumsa Duraan Qabamuu Qabu:",
+            stage: "Sadarkaa",
+            time: "Yeroo",
+            contents: "Qabiyyee",
+            teacherRole: "Gahee Barsiisaa",
+            studentActions: "Gocha Barattootaa",
+            method: "Mala",
+            assessment: "Madaallii",
+            starter: "Sochii Jalqabaa",
+            main: "Sochii Gurguddaa",
+            concluding: "Sochii Xumuraa",
+            teachingAids: "Meeshaalee Gargaarsaa:",
+            reflection: "Safartuu Xiinxalaa:",
+            prepBy: "Kan qopheesse:",
+            sig: "Mallattoo:",
+            deptHead: "Thepha Gosaa:",
+            vDir: "Daariktera Itti-aanaa:",
+            strategies: [
+                "Yaada wal jijjiiruu (Think pair share)", "Jigsoo (Jigsaw)", "Yaada burqisiisuu (Brainstorming)", 
+                "Fishbowilii (Fishbowl)", "Tapha gahee (Role-play)", "Barachuu rakkoon geggeeffamu", 
+                "Kaartaa yaadaa (Concept Mapping)", "Mootelii wal-qunnamtii", "Qorannoo dhimmaa (Case study)", 
+                "Imala gaalarii (Gallery walk)", "Barsiisota hiriyootaa (Peer Instruction)"
+            ],
+            assessments: [
+                "Hojii kutaa", "Hojii mana", "Tikkeetii ba'umsaa", "Qormaata yaada bu'uuraa", 
+                "Waraqaa daqiiqaa lamaa", "Gocha raawwii"
+            ],
+            teachingAidsList: [
+                "Gabatee gurraacha fi adii", "Shokii fi maarkarii", "Macaafota barnootaa", 
+                "Macaafota hojii", "Qabatamaa", "Qalama fi pنسილი", "Waraqota qoodaman", 
+                "Kaardiiwwan ifaa", "Chaartiiwwan fi poostara", "Kaartaa lafaa", "Gloobii", 
+                "Pirojekterii", "Kompiitara fi laaptooppii", "Gabatee smarti", "Viidiyoo barnootaa", 
+                "Sagalee waraabame", "Meeshaalee dhugaa", "Mootelii 3D", "Sofuweerii qormaataa", 
+                "Gabatee beeksisaa"
+            ]
+        }
+    };
+
     function applyLogoPreset(val) {
         const input = document.getElementById('logoUrlInput');
         if (val === 'default') {
@@ -291,39 +445,6 @@
             input.focus();
         }
     }
-
-    const strategiesList = [
-        "Think pair share", "Jigsaw", "Brainstorming", "Fishbowl", "Role-play", 
-        "Problem Based learning", "Concept Mapping", "Interactive Simulations and Labs", 
-        "Case study", "Gallery walk", "Peer Instruction"
-    ];
-
-    const assessmentList = [
-        "Classwork", "Homework", "Exit ticket", "Concept tests", "Two minute papers", "Performance tasks"
-    ];
-
-    const teachingAidsList = [
-        "Blackboards and whiteboards",
-        "Chalk and dry-erase markers",
-        "Textbooks",
-        "Workbooks and exercise pads",
-        "Notebooks",
-        "Pens and pencils",
-        "Handouts and worksheets",
-        "Flashcards",
-        "Charts and posters",
-        "Geographical maps",
-        "Globes",
-        "Projectors",
-        "Computers and laptops",
-        "Interactive flat panels and smartboards",
-        "Educational videos and animations",
-        "Audio recordings and podcasts",
-        "Real objects (realia)",
-        "Physical 3D models",
-        "Educational quiz and gamification software",
-        "Bulletin boards"
-    ];
 
     const defaultTopics = [
         "Cell Structure and Functions",
@@ -405,10 +526,6 @@
         } else {
             document.getElementById('paymentScreen').classList.remove('active-screen');
             document.getElementById('appScreen').classList.add('active-screen');
-            
-            let quotaText = quotaType === 'unlimited' ? 'Unlimited Generations' : `Remaining Generations: ${remaining}`;
-            document.getElementById('quotaDisplay').innerText = quotaText;
-            
             initDayConfigs();
         }
     }
@@ -543,9 +660,12 @@
     }
 
     function getDayConfigHtml(dayNum, defaultTopic) {
-        let stratHtml = strategiesList.map((s, idx) => `<label><input type="checkbox" name="strat${dayNum}" value="${s}" ${idx<2?'checked':''}> ${s}</label>`).join('');
-        let assessHtml = assessmentList.map((a, idx) => `<label><input type="checkbox" name="assess${dayNum}" value="${a}" ${idx===0?'checked':''}> ${a}</label>`).join('');
-        let aidsHtml = teachingAidsList.map((ta, idx) => `<label><input type="checkbox" name="aids${dayNum}" value="${ta}" ${idx<3?'checked':''}> ${ta}</label>`).join('');
+        const selectedLang = document.getElementById('languageSelect')?.value || "en";
+        const tObj = langDict[selectedLang] || langDict.en;
+
+        let stratHtml = tObj.strategies.map((s, idx) => `<label><input type="checkbox" name="strat${dayNum}" value="${s}" ${idx<2?'checked':''}> ${s}</label>`).join('');
+        let assessHtml = tObj.assessments.map((a, idx) => `<label><input type="checkbox" name="assess${dayNum}" value="${a}" ${idx===0?'checked':''}> ${a}</label>`).join('');
+        let aidsHtml = tObj.teachingAidsList.map((ta, idx) => `<label><input type="checkbox" name="aids${dayNum}" value="${ta}" ${idx<3?'checked':''}> ${ta}</label>`).join('');
 
         return `
             <div class="day-config-card" id="configCard_${dayNum}" data-day="${dayNum}">
@@ -668,179 +788,53 @@
 
     function getAiAlternatives(topicVal) {
         const t = topicVal.trim().toLowerCase();
+        const selectedLang = document.getElementById('languageSelect')?.value || "en";
 
         let rationales = [];
         let objectives = [];
         let prereqs = [];
         let aidsOptions = [];
 
-        if (t.includes('lens') || t.includes('optic') || t.includes('mirror') || t.includes('refraction')) {
+        if (selectedLang === 'am') {
             rationales = [
-                `Mastery of ${topicVal} provides critical optical engineering foundations necessary for designing precision imaging instruments and corrective laser systems.`,
-                `Understanding ${topicVal} enables learners to calculate focal behaviors, trace light paths accurately, and solve advanced physics board examination items.`,
-                `Exploring ${topicVal} bridges theoretical wave mechanics with real-world optical technology applications used in cameras, microscopes, and telescopes.`,
-                `Inquiry into ${topicVal} builds spatial reasoning regarding light propagation and interface transitions across diverse transparent media.`,
-                `Analyzing ${topicVal} deepens comprehension of optical phenomena, wavefront deviations, and image distortion factors in scientific equipment.`,
-                `Investigating ${topicVal} fosters critical scientific observation, empirical data logging, and advanced optical physics problem-solving competency.`,
-                `Apprehending ${topicVal} connects fundamental physics laws with modern telecommunication fibers and photonic device engineering.`,
-                `Studying ${topicVal} cultivates structured reasoning about focal points, virtual image formation, and lens aberration correction.`,
-                `Evaluating ${topicVal} prepares students to understand human vision corrections, optical instruments, and precision laser applications.`,
-                `Examining ${topicVal} equips learners with rigorous mathematical modeling skills required for optical physics design and analysis.`
+                `የ${topicVal} ጥልቅ እውቀት ለዘመናዊ የምህንድስና ንድፎች እና ለሳይንሳዊ ምርምሮች ወሳኝ መሠረት ይጥላል።`,
+                `ይህንን ርዕስ ማጥናት ተማሪዎች ውስብስብ እውነታዎችን በሂሳብ እና በፊዚክስ ቀመሮች እንዲያሰሉ ያስችለዋል።`,
+                `የ${topicVal} ትምህርት ከንድፈ-ሐሳብ ባለፈ በዕለት ተዕለት ሕይወት ውስጥ የሚከናወኑ ተግባራዊ አተገባብዎችን ያገናኛል።`,
+                `በ${topicVal} ላይ መወያየት ተማሪዎች ምክንያታዊ የማሰብ እና የመተንተን ችሎታቸውን እንዲያዳብሩ ይረዳል።`,
+                `ይህ ርዕስ ተማሪዎች የሳይንስ መርሆዎችን ከአካባቢያቸው ጋር እንዲያስተሳስሩ ከፍተኛ አስተዋጽኦ ያበረክታል።`
             ];
             objectives = [
-                `Students will empirically verify lens equations, construct accurate ray diagrams, and calculate image magnification factors with 90% precision.`,
-                `Students will differentiate between concave and convex optical properties, measure focal lengths experimentally, and solve quantitative refraction problems.`,
-                `Students will analyze image formation characteristics under varied object distances and compute image locations using the standard thin lens formula.`,
-                `Students will draw precise principal ray diagrams for diverse mirror arrangements and verify focal point intersections accurately.`,
-                `Students will calculate refractive index ratios and predict ray deviation angles across media interfaces using Snell's law.`,
-                `Students will evaluate optical instrument setups and explain the functional role of convex lenses in magnification systems.`,
-                `Students will measure virtual versus real image distances and construct empirical data comparison charts.`,
-                `Students will solve complex multi-step lens combination problems and interpret focal length curvature relationships.`,
-                `Students will demonstrate practical laboratory safety and precision alignment techniques during optical bench experiments.`,
-                `Students will synthesize theoretical optics principles into comprehensive explanatory reports detailing image formation behavior.`
+                `ተማሪዎች ስለ ${topicVal} መሰረታዊ ሃሳቦች በመገንዘብ ትክክለኛ መደምደሚያ ላይ ይደርሳሉ።`,
+                `ተማሪዎች የቀረቡትን የሂሳብና የሳይንስ ስሌቶች 90 በመቶ በሆነ ትክክለኛነት ይሰራሉ።`,
+                `ተማሪዎች የ${topicVal}ን ፅንሰ-ሐሳብ በተግባራዊ ሙከራዎች ወይም በምሳሌዎች ያሳያሉ።`
             ];
             prereqs = [
-                `Precise recall of the laws of reflection, geometric angles of incidence, and standard Cartesian linear graphing conventions.`,
-                `Familiarity with electromagnetic wave propagation velocities, refractive index ratios, and algebraic fraction manipulation.`,
-                `Prior mastery of focal point principles, principal axis alignments, and right-triangle trigonometry applications.`,
-                `Understanding of optical density contrasts, medium interface speeds, and inverse-proportional mathematical relationships.`,
-                `Competency in plotting coordinate points, analyzing linear equations, and interpreting graphical slope trends.`,
-                `Basic knowledge of transverse wave behaviors, frequency, wavelength, and wave propagation energy.`,
-                `Familiarity with algebraic substitution techniques and quadratic equation roots in physics applications.`,
-                `Previous exposure to light ray behavior, shadows, and pinhole camera image projection concepts.`,
-                `Understanding of scalar and vector quantities as applied to directional light propagation vectors.`,
-                `Recall of foundational geometry axioms concerning similar triangles and intersecting geometric lines.`
+                `የቀድሞ የሂሳብ እና የሳይንስ መርሆዎች መሰረታዊ ግንዛቤ።`,
+                `መሰረታዊ የአልጀብራ ቀመሮችን እና የግራፍ ንባብ ክህሎት።`
             ];
             aidsOptions = [
-                `Optical benches, ray boxes, convex/concave lenses, and precision measuring scales.`,
-                `Laser light sources, glass prisms, white plotting sheets, and protractors.`,
-                `Interactive ray-tracing simulation software, projector displays, and guided worksheet packets.`
+                `የክፍል ሰሌዳ፣ ማርከሮች እና የመማሪያ መጽሐፍት።`,
+                `ዲጂታል ፕሮጀክተር እና የማስተማሪያ ቻርቶች።`
             ];
-        } else if (t.includes('wave') || t.includes('momentum') || t.includes('force') || t.includes('newton') || t.includes('motion')) {
+        } else if (selectedLang === 'om') {
             rationales = [
-                `A rigorous understanding of ${topicVal} enables learners to quantify dynamic collision forces and mechanical energy conservation in physical systems.`,
-                `Analyzing ${topicVal} is crucial for students to model real-world kinetic interactions, vehicle safety mechanics, and dynamic vector systems.`,
-                `Mastering ${topicVal} equips learners with essential mathematical modeling techniques for calculating velocity shifts and force distributions.`,
-                `Studying ${topicVal} builds foundational competence in classical mechanics required for advanced engineering and aerospace calculations.`,
-                `Evaluating ${topicVal} develops critical analytical skills regarding momentum transfer, impulse duration, and acceleration forces.`,
-                `Investigating ${topicVal} connects theoretical physics laws with practical structural impact testing and vehicle crash dynamics.`,
-                `Apprehending ${topicVal} fosters structured problem-solving habits for handling complex multi-body dynamic interaction problems.`,
-                `Exploring ${topicVal} enhances quantitative reasoning concerning kinetic energy conservation and vector component resolutions.`,
-                `Inquiry into ${topicVal} prepares students for higher-level studies in mechanical engineering, robotics, and particle physics.`,
-                `Examining ${topicVal} bridges abstract kinematic formulas with observable physical phenomena in everyday motion.`
+                `Qorannoon ${topicVal} bu'uura guddaa ijaarsa teeknolojii ammayyaa fi qorannoo saayinsii tiif kenna.`,
+                `Barachuun ${topicVal} barattoonni adeemsa uumamaa qajeeltoowwan herregaa fi fizikii irratti hundaa'uun akka shallagan gargaara.`,
+                `Qorannoon ${topicVal} hubannoo teessoo barnootaa fi jireenya keessatti hojiirra oolmaa walitti hidha.`,
+                `Mariin ${topicVal} irratti taasifamu dandeettii xiinxalaafi yaada bu'uuraa barattootaa gabbisa.`
             ];
             objectives = [
-                `Students will compute vector resultants, apply conservation of momentum equations, and analyze velocity-time graphs accurately.`,
-                `Students will solve multi-step force equations, calculate kinetic energy transfers, and interpret dynamic system graphs with precision.`,
-                `Students will measure collision times, calculate impulse forces, and verify momentum conservation laws experimentally.`,
-                `Students will derive dynamic motion equations and evaluate acceleration forces across variable mass configurations.`,
-                `Students will construct free-body force diagrams and apply Newton's laws to complex inclined plane systems.`,
-                `Students will analyze energy transformation efficiency in mechanical systems and compute work-energy theorem values.`,
-                `Students will evaluate velocity vector components and solve relative motion problems under uniform acceleration.`,
-                `Students will design empirical friction testing setups and compute static versus kinetic coefficient values.`,
-                `Students will interpret dynamic graphs depicting momentum-time relationships and calculate area-under-curve values.`,
-                `Students will synthesize comprehensive kinetic analysis reports integrating theoretical calculations and experimental results.`
+                `Barattoonni bu'uura ${topicVal} hubachuun sirnaan ibsuu danda'u.`,
+                `Barattoonni shallaggiiwwan walqabatan dhibbeentaa 90n hojjechuu danda'u.`,
+                `Barattoonni yaad-rimee ${topicVal} qorannoo qabatamaadhaan ni mirkaneessu.`
             ];
             prereqs = [
-                `Thorough command of vector addition methods, trigonometric components (sin, cos), and Newton's first and second laws of motion.`,
-                `Familiarity with kinematic equations for constant acceleration, mass-velocity proportional units, and standard SI conversions.`,
-                `Prior understanding of free-body diagrams, friction forces, and basic scalar versus vector multiplication rules.`,
-                `Competency in rearranging algebraic formulas to isolate unknown variables like acceleration, force, or time intervals.`,
-                `Recall of work, energy, and power definitions along with corresponding joule and watt unit conversions.`,
-                `Understanding of gravitational acceleration constants, mass weight distinctions, and normal force interactions.`,
-                `Familiarity with Cartesian coordinate systems and graphical interpretation of slope and area under curves.`,
-                `Previous exposure to elastic versus inelastic collision concepts in introductory science modules.`,
-                `Basic competency in solving simultaneous linear equations derived from physical constraint conditions.`,
-                `Recall of fundamental trigonometric ratios and Pythagorean theorem applications for vector triangles.`
+                `Hubannoo bu'uuraa beekumsa herregaafi fizikii duraanii.`,
+                `Dandeettii shallaggii aljibraafi dubbisa giraafii.`
             ];
             aidsOptions = [
-                `Air tracks, dynamic carts, slotted mass sets, and ticker-tape timers.`,
-                `Force tables, spring balances, vector charts, and whiteboard markers.`,
-                `Physics simulation software, digital motion sensors, and graphical analysis handouts.`
-            ];
-        } else if (t.includes('geometry') || t.includes('probability') || t.includes('algebra') || t.includes('coordinate') || t.includes('matrix') || t.includes('math')) {
-            rationales = [
-                `Proficiency in ${topicVal} equips students with essential spatial reasoning and quantitative modeling frameworks required for advanced data science and spatial design.`,
-                `Studying ${topicVal} develops rigorous deductive logic and systematic problem-solving strategies applicable across engineering and financial sectors.`,
-                `Mastering ${topicVal} enables learners to decode complex spatial patterns, calculate probabilistic risks, and structure logical mathematical proofs.`,
-                `Investigating ${topicVal} builds foundational mathematical abstraction necessary for higher-level calculus and discrete mathematics.`,
-                `Evaluating ${topicVal} enhances logical structuring, formula derivation capability, and precise analytical computation skills.`,
-                `Apprehending ${topicVal} connects theoretical number structures with practical algorithmic problem-solving techniques.`,
-                `Exploring ${topicVal} fosters critical quantitative literacy needed for evaluating statistical likelihoods and geometric configurations.`,
-                `Inquiry into ${topicVal} cultivates precise mathematical communication through rigorous notation and structured argumentation.`,
-                `Examining ${topicVal} prepares students to model real-world optimization problems using advanced algebraic and spatial tools.`,
-                `Understanding ${topicVal} reinforces foundational arithmetic fluency while introducing sophisticated multi-variable problem-solving approaches.`
-            ];
-            objectives = [
-                `Students will derive complex geometric theorems, solve multi-step coordinate equations, and compute compound probability distributions.`,
-                `Students will construct rigorous logical proofs, analyze spatial grid coordinates, and calculate statistical likelihoods accurately.`,
-                `Students will evaluate matrix transformation operations and solve linear system equations using determinant methods.`,
-                `Students will model real-world probabilistic events using tree diagrams and conditional probability formulas.`,
-                `Students will graph conic sections, identify focal coordinates, and compute eccentricity parameters with precision.`,
-                `Students will execute algebraic factorization algorithms and simplify rational expressions efficiently.`,
-                `Students will measure polygon area and perimeter relationships under varied scale transformation factors.`,
-                `Students will solve trigonometric identity equations and apply sine/cosine rules to non-right triangles.`,
-                `Students will analyze statistical data distributions, compute standard deviation, and interpret variance metrics.`,
-                `Students will synthesize comprehensive mathematical problem sets detailing step-by-step logical derivations.`
-            ];
-            prereqs = [
-                `Complete mastery of Cartesian coordinate planes, slope-intercept linear equations, and fundamental algebraic factoring rules.`,
-                `Familiarity with polygon angle theorems, Pythagorean distance formulas, and basic multiplicative counting principles.`,
-                `Prior exposure to probability sample spaces, ratio/proportion proportions, and simultaneous equation elimination techniques.`,
-                `Understanding of set theory notation, fractional exponents, and logical deduction structures.`,
-                `Recall of basic arithmetic operations, polynomial expansion rules, and inequality sign conventions.`,
-                `Familiarity with function notation, domain-range definitions, and inverse function concepts.`,
-                `Previous exposure to geometric congruence, similarity criteria, and angle bisector properties.`,
-                `Basic competency in interpreting statistical averages, frequency tables, and bar graph distributions.`,
-                `Understanding of exponential growth laws and logarithmic property transformations.`,
-                `Recall of prime factorization rules, least common multiples, and greatest common divisor calculations.`
-            ];
-            aidsOptions = [
-                `Geometric instrument sets, compasses, protractors, and large whiteboard grid boards.`,
-                `Graphing calculators, dynamic geometry software (GeoGebra), and printed coordinate worksheets.`,
-                `Color-coded probability spinners, card decks for experimental testing, and structured summary handouts.`
-            ];
-        } else if (t.includes('cell') || t.includes('photosynthesis') || t.includes('genetics') || t.includes('ecosystem') || t.includes('respiratory') || t.includes('biology')) {
-            rationales = [
-                `Deep comprehension of ${topicVal} is vital for understanding micro-level energy conversions, hereditary transmission, and complex organism homeostasis.`,
-                `Exploring ${topicVal} provides students with essential biochemical insight into metabolic pathways, cellular organization, and ecological balance.`,
-                `Investigating ${topicVal} connects microscopic cellular structures with macro-level biological survival mechanisms and environmental adaptation.`,
-                `Studying ${topicVal} builds foundational understanding of life science mechanisms necessary for medical and environmental sciences.`,
-                `Evaluating ${topicVal} enhances critical scientific inquiry regarding cellular respiration, genetic inheritance, and ecosystem dynamics.`,
-                `Apprehending ${topicVal} fosters appreciation for molecular complexity, enzymatic regulation, and biochemical homeostasis.`,
-                `Analyzing ${topicVal} equips learners with precise biological terminology and diagrammatic modeling competencies.`,
-                `Inquiry into ${topicVal} prepares students to evaluate contemporary biotechnological advancements and ecological conservation challenges.`,
-                `Examining ${topicVal} bridges textbook anatomical illustrations with observable microscopic slide specimens.`,
-                `Mastering ${topicVal} cultivates systematic scientific observation and empirical biological data analysis skills.`
-            ];
-            objectives = [
-                `Students will trace biochemical reaction sequences, label microscopic structural components, and analyze ecological/cellular interdependencies.`,
-                `Students will diagram metabolic cycle stages, differentiate between organelle functions, and evaluate biological adaptation mechanisms.`,
-                `Students will model genetic inheritance patterns using Punnett squares and calculate phenotypic probability ratios.`,
-                `Students will analyze cellular respiration ATP yields and compare aerobic versus anaerobic metabolic pathways.`,
-                `Students will examine microscopic slide specimens under oil immersion and identify cellular sub-structures accurately.`,
-                `Students will evaluate ecosystem trophic pyramids and calculate energy transfer efficiencies across food web levels.`,
-                `Students will describe gas exchange mechanisms across respiratory membranes and measure lung capacity parameters.`,
-                `Students will explain enzyme denaturation kinetics and graph reaction rate responses to temperature variations.`,
-                `Students will investigate osmosis and diffusion rates across artificial semi-permeable membrane models.`,
-                `Students will synthesize comprehensive biological research summaries integrating structural anatomy and metabolic physiology.`
-            ];
-            prereqs = [
-                `Solid recall of basic organic chemistry molecules (glucose, water, ATP), cell organelle structures, and membrane permeability rules.`,
-                `Familiarity with microscopic magnification focusing, enzymatic action principles, and diffusion/osmosis transport processes.`,
-                `Prior understanding of DNA molecular scaffolding, chromosomal segregation phases, and elementary trophic web terminology.`,
-                `Comprehension of cellular respiration stages and basic plant/animal tissue taxonomy.`,
-                `Recall of basic chemical bonding rules, pH scale measurements, and macromolecule classifications.`,
-                `Familiarity with ecological habitat terminology, biotic/abiotic factors, and biosphere organization levels.`,
-                `Previous exposure to Mendelian inheritance concepts and basic genetic trait probability ratios.`,
-                `Basic understanding of circulatory system transport functions and gas diffusion principles.`,
-                `Recall of microscope parts, slide preparation protocols, and staining techniques.`,
-                `Comprehension of scientific method inquiry steps and biological data charting conventions.`
-            ];
-            aidsOptions = [
-                `Compound light microscopes, pre-prepared slide kits, and lens cleaning paper.`,
-                `Three-dimensional cellular and molecular models, laminated cross-section posters.`,
-                `Interactive digital cell animation clips, projector displays, and structured labeling booklets.`
+                `Gabatee barnootaa, maarkarii fi macaafota barnootaa.`,
+                `Pirojekterii dijiitalaa fi chaartiiwwan qajeelchaa.`
             ];
         } else {
             rationales = [
@@ -919,64 +913,70 @@
         return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
-    function getIntelligentLessonContent(topicVal) {
-        const t = topicVal.trim().toLowerCase();
-        
-        let subtopic = `Core Structural Mechanisms,\nAnalytical Properties, and\nApplied Problem Solving in\n${topicVal}`;
-        let starterContent = `Contextual inquiry and real-world problem provocation regarding ${topicVal}`;
-        let starterRole = `Present a targeted conceptual dilemma or practical challenge related directly to ${topicVal}.`;
-        let starterAction = `Brainstorm initial hypotheses, share insights in pairs, and formulate focused inquiry questions.`;
-        let starterMethod = "Brainstorming";
-        let starterAssessment = "Formative Check";
-        
-        let mainContent = `Comprehensive exploration, step-by-step analytical breakdown, and guided problem-solving drills specific to ${topicVal}.`;
-        let mainRole = `Facilitate interactive learning structures, monitor student progress, and provide targeted technical scaffolding.`;
-        let mainAction = `Collaborate in small peer groups to complete structured task sheets, solve equations, and analyze models.`;
-        
-        let plenaryContent = `Summary review, conceptual debrief, and misconception resolution`;
-        let plenaryRole = `Synthesize main takeaways, clarify specific hurdles, and direct closing evaluations.`;
-        let plenaryAction = `Complete exit assessment and summarize key conceptual insights.`;
-        let plenaryMethod = "Peer Instruction";
-        let plenaryAssessment = "Exit ticket";
-        let aids = `Whiteboard, instructional handouts, specialized reference charts`;
+    function getIntelligentLessonContent(topicVal, lang) {
+        const selectedLang = lang || "en";
 
-        if (t.includes('lens') || t.includes('optic') || t.includes('mirror') || t.includes('refraction')) {
-            subtopic = `Ray Tracing Conventions,\nSnell's Law Derivations, and\nFocal Length Calculation for\n${topicVal}`;
-            starterContent = `Optical bench refraction anomaly & focal point discovery puzzle`;
-            starterRole = `Demonstrate light bending through varied curved glass surfaces to provoke cognitive inquiry.`;
-            starterAction = `Observe focal convergence and record initial hypotheses regarding focal length variance.`;
-            mainContent = `Rigorous step-by-step application of mirror and lens formulas ($1/f = 1/d_o + 1/d_i$), ray tracing drills, and laboratory simulation verification.`;
-            aids = `Optical benches, laser boxes, convex and concave lenses, precision rulers`;
-        } else if (t.includes('wave') || t.includes('momentum') || t.includes('force') || t.includes('newton') || t.includes('motion')) {
-            subtopic = `Vector Decomposition Analysis,\nImpulse-Momentum Theorem, and\nEnergy Conservation Principles in\n${topicVal}`;
-            starterContent = `Momentum collision simulation and impact force teaser`;
-            starterRole = `Pose a discrepant event involving inelastic versus elastic collisions to stimulate critical thinking.`;
-            starterAction = `Analyze collision velocities and debate momentum conservation outcomes in pairs.`;
-            mainContent = `Intensive quantitative problem solving focused on momentum conservation ($p = mv$), kinetic energy transformations, and graphical impulse integration.`;
-            aids = `Air track apparatus, ticker timers, mass sets, dynamic carts`;
-        } else if (t.includes('geometry') || t.includes('probability') || t.includes('algebra') || t.includes('coordinate') || t.includes('matrix') || t.includes('math')) {
-            subtopic = `Algorithmic Formula Derivations,\nSpatial Coordinate Mapping, and\nAnalytical Proof Structures for\n${topicVal}`;
-            starterContent = `Spatial paradox teaser & probability distribution hook`;
-            starterRole = `Introduce a counter-intuitive probability or coordinate puzzle to capture student curiosity.`;
-            starterAction = `Brainstorm initial problem-solving strategies and sketch rough coordinate coordinates.`;
-            mainContent = `Systematic theorem proof walkthroughs, coordinate geometry derivation drills, and structured probability tree computations.`;
-            aids = `Whiteboard graph boards, geometric instrument sets, scientific calculators`;
-        } else if (t.includes('cell') || t.includes('photosynthesis') || t.includes('genetics') || t.includes('ecosystem') || t.includes('respiratory') || t.includes('biology')) {
-            subtopic = `Biochemical Pathway Mapping,\nMicroscopic Structural Analysis,\nand Metabolic Dynamics of\n${topicVal}`;
-            starterContent = `Microscopic specimen projection & metabolic cycle teaser`;
-            starterRole = `Display high-magnification cellular slide imagery to spark investigative questions.`;
-            starterAction = `Examine structural anomalies and articulate initial observations in collaborative groups.`;
-            mainContent = `Detailed process mapping of metabolic pathways, structural-functional tabular analysis, and interactive diagrammatic breakdowns.`;
-            aids = `Compound microscopes, 3D anatomical models, laminated cellular charts`;
+        if (selectedLang === 'am') {
+            return {
+                subtopic: `የ${topicVal} ዋና ዋና መዋቅራዊ ንድፎች፣\nትንተናዊ ንብረቶች እና\nተግባራዊ የችግር አፈታት ዘዴዎች`,
+                starterContent: `ስለ ${topicVal} ዙሪያ አውዳዊ ጥያቄዎች እና ተግባራዊ ችግር ማቅረብ`,
+                starterRole: `ከ${topicVal} ጋር በቀጥታ የተያያዘ ፅንሰ-ሀሳባዊ ፈተና ወይም ተግባራዊ ፈተና ማቅረብ።`,
+                starterAction: `መነሻ ሐሳቦችን ማፍለቅ፣ በጥንድ ሆኖ መወያየት እና ጥያቄዎችን ማዘጋጀት።`,
+                starterMethod: "ሐሳብ ማፍለቅ (Brainstorming)",
+                starterAssessment: "የመጀመሪያ ደረጃ ግምገማ",
+                
+                mainContent: `ጥልቅ ዳሰሳ፣ የደረጃ በደረጃ ትንተና እና ከ${topicVal} ጋር የተያያዙ የተግባር መልመጃዎች።`,
+                mainRole: `ተከታታይ የመማሪያ ዘዴዎችን ማቀናጀት፣ የተማሪዎችን ሂደት መከታተል እና አስፈላጊውን ድጋፍ መስጠት።`,
+                mainAction: `በንዑስ ቡድን ሆኖ የተሰጡ ሉሆችን ማጠናቀቅ፣ ቀመሮችን መስራት እና ሞዴሎችን መተንተን።`,
+                
+                plenaryContent: `ማጠቃለያ ክለሳ፣ የፅንሰ-ሀሳብ ማብራሪያ እና ክፍተቶችን ማጥበብ`,
+                plenaryRole: `ዋ ዋና ነጥቦችን ማጠቃለል፣ የተማሪዎችን ጥያቄዎች መመለስ እና ማጠቃለያ ግምገማዎችን መምራት።`,
+                plenaryAction: `የመውጫ ግምገማዎችን ማጠናቀቅ እና ዋና ዋና ግንዛቤዎችን ማጠቃለል።`,
+                plenaryMethod: "የእኩዮች ማስተማር (Peer Instruction)",
+                plenaryAssessment: "የመውጫ ቲኬት (Exit ticket)",
+                aids: `የክፍል ሰሌዳ፣ የማስተማሪያ ሉሆች፣ የማጣቀሻ ቻርቶች`
+            };
+        } else if (selectedLang === 'om') {
+            return {
+                subtopic: `Caasaalee bu'uuraa ${topicVal},\nAmala xiinxalaa, fi\nHojii irra oolmaa shallaggii`,
+                starterContent: `Gaaffiiwwan haala qabatamaa fi qormaata ${topicVal} wajjin walqabatu`,
+                starterRole: `Rakkoo yaad-rimee ykn qormaata qabatamaa ${topicVal} wajjin walqabatu dhiheessuu.`,
+                starterAction: `Yaadota jalqabaa kaasuun, hiriyoota wajjin mari’achuun gaaffiiwwan qopheessuu.`,
+                starterMethod: "Yaada burqisiisuu (Brainstorming)",
+                starterAssessment: "Madaallii Jalqabaa",
+                
+                mainContent: `Qorannoo bal’aa, adeemsa tarkaanfiidhaan fi shaakala shallaggii ${topicVal} wajjin walqabatu.`,
+                mainContentRole: `Mala barnootaa wal-qunnamtii mijeessuu, adeemsa barattootaa hordofuu fi gargaarsa kennuu.`,
+                mainAction: `Garee xixiqqoon ta’uun waraqota hojii guutuu, shallaggii hojjechuu fi mooteelii xiinxaluu.`,
+                
+                plenaryContent: `Gabaabumatti deebi’anii ilaaluu, ibsa yaad-rimee fi hiika rakkoolee`,
+                plenaryRole: `Yaadota ijoo cuunfuu, rakkoolee ibsuu fi madaallii xumuraa geggeessuu.`,
+                plenaryAction: `Madaallii ba’umsaa xumuruun hubannoo ijoo dhiheessuu.`,
+                plenaryMethod: "Barsiisota hiriyootaa (Peer Instruction)",
+                plenaryAssessment: "Tikkeetii ba'umsaa",
+                aids: `Gabatee, waraqota qajeelchaa, chaartiiwwan wabii`
+            };
+        } else {
+            return {
+                subtopic: `Core Structural Mechanisms,\nAnalytical Properties, and\nApplied Problem Solving in\n${topicVal}`,
+                starterContent: `Contextual inquiry and real-world problem provocation regarding ${topicVal}`,
+                starterRole: `Present a targeted conceptual dilemma or practical challenge related directly to ${topicVal}.`,
+                starterAction: `Brainstorm initial hypotheses, share insights in pairs, and formulate focused inquiry questions.`,
+                starterMethod: "Brainstorming",
+                starterAssessment: "Formative Check",
+                
+                mainContent: `Comprehensive exploration, step-by-step analytical breakdown, and guided problem-solving drills specific to ${topicVal}.`,
+                mainRole: `Facilitate interactive learning structures, monitor student progress, and provide targeted technical scaffolding.`,
+                mainAction: `Collaborate in small peer groups to complete structured task sheets, solve equations, and analyze models.`,
+                
+                plenaryContent: `Summary review, conceptual debrief, and misconception resolution`,
+                plenaryRole: `Synthesize main takeaways, clarify specific hurdles, and direct closing evaluations.`,
+                plenaryAction: `Complete exit assessment and summarize key conceptual insights.`,
+                plenaryMethod: "Peer Instruction",
+                plenaryAssessment: "Exit ticket",
+                aids: `Whiteboard, instructional handouts, specialized reference charts`
+            };
         }
-
-        return {
-            subtopic,
-            starterContent, starterRole, starterAction, starterMethod, starterAssessment,
-            mainContent, mainRole, mainAction,
-            plenaryContent, plenaryRole, plenaryAction, plenaryMethod, plenaryAssessment,
-            aids
-        };
     }
 
     async function generateLessonPlans() {
@@ -996,7 +996,6 @@
             }
             remaining--;
             await userDocRef.update({ quotaLeft: remaining });
-            document.getElementById('quotaDisplay').innerText = `Remaining Generations: ${remaining}`;
         }
 
         const teacherName = document.getElementById('teacherNameInput').value || "Teacher";
@@ -1004,6 +1003,8 @@
         const gradeSection = document.getElementById('gradeInput').value || "Grade";
         const schoolName = document.getElementById('schoolNameSelect').value || "Adika Youth Academy";
         const startDateStr = document.getElementById('startDateInput').value;
+        const selectedLang = document.getElementById('languageSelect').value || "en";
+        const tObj = langDict[selectedLang] || langDict.en;
 
         // Logo configurations
         const logoUrl = document.getElementById('logoUrlInput').value.trim();
@@ -1023,7 +1024,7 @@
                         <img src="${logoUrl}" alt="Logo">
                         <div style="text-align: center;">
                             <h3 style="margin:0; font-size:13px; color:#555;">${schoolName}</h3>
-                            <h2 style="margin:2px 0 0 0; font-size:16px; text-transform:uppercase;">Daily Lesson Framework</h2>
+                            <h2 style="margin:2px 0 0 0; font-size:16px; text-transform:uppercase;">${tObj.frameworkTitle}</h2>
                         </div>
                     </div>`;
             } else if (logoPosition === 'bottom') {
@@ -1061,13 +1062,13 @@
             const cMin = document.getElementById(`conclMin${dayNum}`)?.value || "8";
 
             const checkedStrats = Array.from(card.querySelectorAll(`input[name^="strat"]:checked`)).map(cb => cb.value);
-            const stratText = checkedStrats.length > 0 ? checkedStrats.join(" + ") : "Peer Instruction";
+            const stratText = checkedStrats.length > 0 ? checkedStrats.join(" + ") : tObj.strategies[0];
 
             const checkedAssess = Array.from(card.querySelectorAll(`input[name^="assess"]:checked`)).map(cb => cb.value);
-            const assessText = checkedAssess.length > 0 ? checkedAssess.join(", ") : "Classwork";
+            const assessText = checkedAssess.length > 0 ? checkedAssess.join(", ") : tObj.assessments[0];
 
             const checkedAids = Array.from(card.querySelectorAll(`input[name^="aids"]:checked`)).map(cb => cb.value);
-            let aidsText = checkedAids.length > 0 ? checkedAids.join(", ") : getIntelligentLessonContent(topicVal).aids;
+            let aidsText = checkedAids.length > 0 ? checkedAids.join(", ") : tObj.teachingAidsList[0];
             if(selectedAidsOption) {
                 aidsText = selectedAidsOption + "; " + aidsText;
             }
@@ -1076,21 +1077,21 @@
             currDate.setDate(baseDate.getDate() + (sequenceIndex - 1));
             let dateFormatted = currDate.toISOString().split('T')[0];
 
-            const plan = getIntelligentLessonContent(topicVal);
+            const plan = getIntelligentLessonContent(topicVal, selectedLang);
 
-            // Conditional Admin Signature Block for the 5th (or final) page
+            // Conditional Admin Signature Block appearing ONLY on the final rendered day page
             let adminSigHtml = "";
-            if (sequenceIndex === 5 || (sequenceIndex === totalCards && totalCards >= 5)) {
+            if (sequenceIndex === totalCards) {
                 adminSigHtml = `
                     <div class="admin-sig-block">
                         <div class="admin-sig-row">
-                            <div class="admin-sig-item"><span>Prepared by:</span> <input type="text" value="${teacherName}" style="flex:2;"> <span>Sig:</span> <input type="text" style="flex:1;"> <span>Date:</span> <input type="text" value="${dateFormatted}" style="flex:1;"></div>
+                            <div class="admin-sig-item"><span>${tObj.prepBy}</span> <input type="text" value="${teacherName}" style="flex:2;"> <span>${tObj.sig}</span> <input type="text" style="flex:1;"> <span>${tObj.date}</span> <input type="text" value="${dateFormatted}" style="flex:1;"></div>
                         </div>
                         <div class="admin-sig-row">
-                            <div class="admin-sig-item"><span>Dep't Head:</span> <input type="text" placeholder="Name" style="flex:2;"> <span>Sig:</span> <input type="text" style="flex:1;"> <span>Date:</span> <input type="text" style="flex:1;"></div>
+                            <div class="admin-sig-item"><span>${tObj.deptHead}</span> <input type="text" placeholder="Name" style="flex:2;"> <span>${tObj.sig}</span> <input type="text" style="flex:1;"> <span>${tObj.date}</span> <input type="text" style="flex:1;"></div>
                         </div>
                         <div class="admin-sig-row">
-                            <div class="admin-sig-item"><span>V. Director:</span> <input type="text" placeholder="Name" style="flex:2;"> <span>Sig:</span> <input type="text" style="flex:1;"> <span>Date:</span> <input type="text" style="flex:1;"></div>
+                            <div class="admin-sig-item"><span>${tObj.vDir}</span> <input type="text" placeholder="Name" style="flex:2;"> <span>${tObj.sig}</span> <input type="text" style="flex:1;"> <span>${tObj.date}</span> <input type="text" style="flex:1;"></div>
                         </div>
                     </div>
                 `;
@@ -1099,31 +1100,31 @@
             containerHtml += `
                 <div class="day-plan-page">
                     ${watermarkHtml}
-                    <div class="day-badge">DAY ${sequenceIndex} LESSON PLAN</div>
+                    <div class="day-badge">${tObj.dayPrefix} ${sequenceIndex} ${tObj.lessonPlanTitle}</div>
                     
                     <div class="header-top">
                         ${topLogoHtml ? topLogoHtml : `
                             <h3 style="margin:0; font-size:13px; color:#555;">${schoolName}</h3>
-                            <h2 style="margin:3px 0 10px 0; font-size:18px; text-transform:uppercase; border-bottom:2px solid #333; display:inline-block;">Daily Lesson Framework</h2>
+                            <h2 style="margin:3px 0 10px 0; font-size:18px; text-transform:uppercase; border-bottom:2px solid #333; display:inline-block;">${tObj.frameworkTitle}</h2>
                         `}
                     </div>
 
                     <div class="metadata-grid">
-                        <div><label>Teacher:</label><input type="text" value="${teacherName}"></div>
-                        <div><label>Subject:</label><input type="text" value="${subject}"></div>
-                        <div><label>Grade:</label><input type="text" value="${gradeSection}"></div>
+                        <div><label>${tObj.teacher}</label><input type="text" value="${teacherName}"></div>
+                        <div><label>${tObj.subject}</label><input type="text" value="${subject}"></div>
+                        <div><label>${tObj.grade}</label><input type="text" value="${gradeSection}"></div>
                     </div>
 
                     <div class="metadata-grid">
-                        <div><label>Date:</label><input type="text" value="${dateFormatted}"></div>
-                        <div><label>Unit Track:</label><input type="text" value="${unitTrackVal}"></div>
+                        <div><label>${tObj.date}</label><input type="text" value="${dateFormatted}"></div>
+                        <div><label>${tObj.unitTrack}</label><input type="text" value="${unitTrackVal}"></div>
                     </div>
 
-                    <div class="metadata-row"><label>Topic of the lesson:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${topicVal}</textarea></div>
-                    <div class="metadata-row"><label>Subtopic of the lesson:</label><textarea rows="2" style="height: 2.2em;" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.subtopic}</textarea></div>
-                    <div class="metadata-row"><label>Rationale of the lesson:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedRationale}</textarea></div>
-                    <div class="metadata-row"><label>Learning Objectives:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedObjectives}</textarea></div>
-                    <div class="metadata-row"><label>Pre-requisite Knowledge:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedPrereq}</textarea></div>
+                    <div class="metadata-row"><label>${tObj.topic}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${topicVal}</textarea></div>
+                    <div class="metadata-row"><label>${tObj.subtopic}</label><textarea rows="2" style="height: 2.2em;" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.subtopic}</textarea></div>
+                    <div class="metadata-row"><label>${tObj.rationale}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedRationale}</textarea></div>
+                    <div class="metadata-row"><label>${tObj.objectives}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedObjectives}</textarea></div>
+                    <div class="metadata-row"><label>${tObj.prereq}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedPrereq}</textarea></div>
 
                     <table>
                         <colgroup>
@@ -1137,18 +1138,18 @@
                         </colgroup>
                         <thead>
                             <tr>
-                                <th>Stage</th>
-                                <th>Time</th>
-                                <th>Contents</th>
-                                <th>Teacher Role</th>
-                                <th>Student Actions</th>
-                                <th>Method</th>
-                                <th>Assessment</th>
+                                <th>${tObj.stage}</th>
+                                <th>${tObj.time}</th>
+                                <th>${tObj.contents}</th>
+                                <th>${tObj.teacherRole}</th>
+                                <th>${tObj.studentActions}</th>
+                                <th>${tObj.method}</th>
+                                <th>${tObj.assessment}</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>Starter Activity</strong></td>
+                                <td><strong>${tObj.starter}</strong></td>
                                 <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${sMin} mins</textarea></td>
                                 <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterContent}</textarea></td>
                                 <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterRole}</textarea></td>
@@ -1157,16 +1158,16 @@
                                 <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterAssessment}</textarea></td>
                             </tr>
                             <tr>
-                                <td><strong>Main Activity</strong></td>
+                                <td><strong>${tObj.main}</strong></td>
                                 <td style="background:#fafafa;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${mMin} mins</textarea></td>
                                 <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainContent}</textarea></td>
-                                <td style="background:#fffdf0;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">Facilitates active strategies (${stratText}) and provides technical scaffolding for ${topicVal}.</textarea></td>
+                                <td style="background:#fffdf0;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedLang === 'am' ? 'ንቁ ስልቶችን (' + stratText + ') ያመቻቻል እና ለ' + topicVal + ' ተስማሚ ድጋፍ ይሰጣል።' : (selectedLang === 'om' ? 'Tooftaalee (' + stratText + ') mijeessuun deggersa barbaachisaa kennuu.' : 'Facilitates active strategies (' + stratText + ') and provides technical scaffolding for ' + topicVal + '.')}</textarea></td>
                                 <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainAction}</textarea></td>
                                 <td style="font-weight:bold; color:#b58100;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${stratText}</textarea></td>
                                 <td style="font-weight:bold; color:#0056b3;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${assessText}</textarea></td>
                             </tr>
                             <tr>
-                                <td><strong>Concluding Activity</strong></td>
+                                <td><strong>${tObj.concluding}</strong></td>
                                 <td style="background:#fafafa;"><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${cMin} mins</textarea></td>
                                 <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryContent}</textarea></td>
                                 <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryRole}</textarea></td>
@@ -1178,8 +1179,8 @@
                     </table>
 
                     ${bottomLogoHtml}
-                    <div class="footer-section"><label><strong>Teaching Aids:</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${aidsText}</textarea></div>
-                    <div class="footer-section" style="margin-top:6px;"><label><strong>Reflection Metric:</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">Evaluated strategy efficiency (${stratText}) versus target cognitive outcomes for ${topicVal}.</textarea></div>
+                    <div class="footer-section"><label><strong>${tObj.teachingAids}</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${aidsText}</textarea></div>
+                    <div class="footer-section" style="margin-top:6px;"><label><strong>${tObj.reflection}</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedLang === 'am' ? 'የስልቱን ውጤታማነት (' + stratText + ') ከ' + topicVal + ' የመማር ዓላማዎች ጋር ማመዛዘን።' : (selectedLang === 'om' ? 'Bu’aqabeessummaa tooftichaa (' + stratText + ') kaayyoo barachuu wajjin madaaluu.' : 'Evaluated strategy efficiency (' + stratText + ') versus target cognitive outcomes for ' + topicVal + '.')}</textarea></div>
                     
                     ${adminSigHtml}
                 </div>
@@ -1192,7 +1193,7 @@
         // Auto-adjust heights for rendered textareas
         setTimeout(() => {
             document.querySelectorAll('#plansContainer textarea').forEach(ta => {
-                if(!ta.closest('.metadata-row') || !ta.previousElementSibling || ta.previousElementSibling.innerText !== 'Subtopic of the lesson:') {
+                if(!ta.closest('.metadata-row') || !ta.previousElementSibling || ta.previousElementSibling.innerText !== tObj.subtopic) {
                     ta.style.height = '';
                     ta.style.height = ta.scrollHeight + 'px';
                 }
