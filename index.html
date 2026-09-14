@@ -34,31 +34,39 @@
         .ai-assist-btn:hover { background-color: #0369a1; }
         
         /* Rendered Plan Page & Logo Positioning Styles */
-        .day-plan-page { position: relative; overflow: hidden; margin-bottom: 50px; padding-bottom: 40px; page-break-after: always; break-after: page; width: 100%; box-sizing: border-box; }
+        .day-plan-page { position: relative; overflow: hidden; margin-bottom: 40px; padding-bottom: 20px; page-break-after: always; break-after: page; width: 100%; box-sizing: border-box; }
         .day-plan-page > *:not(.plan-watermark) { position: relative; z-index: 1; }
         .plan-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55%; max-width: 420px; opacity: 0.08; z-index: 0; pointer-events: none; user-select: none; }
-        .plan-header-logo { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 10px; }
-        .plan-header-logo img { width: 55px; height: 55px; object-fit: contain; }
-        .plan-footer-logo { text-align: center; margin-top: 15px; }
-        .plan-footer-logo img { width: 40px; height: 40px; object-fit: contain; }
+        .plan-header-logo { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 8px; }
+        .plan-header-logo img { width: 50px; height: 50px; object-fit: contain; }
+        .plan-footer-logo { text-align: center; margin-top: 10px; }
+        .plan-footer-logo img { width: 35px; height: 35px; object-fit: contain; }
 
-        .day-badge { background: #0056b3; color: white; padding: 5px 15px; font-weight: bold; display: inline-block; border-radius: 4px; margin-bottom: 10px; font-size: 15px; }
-        .header-top { text-align: center; margin-bottom: 15px; }
+        .day-badge { background: #0056b3; color: white; padding: 4px 12px; font-weight: bold; display: inline-block; border-radius: 4px; margin-bottom: 8px; font-size: 14px; }
+        .header-top { text-align: center; margin-bottom: 10px; }
         
-        .metadata-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 12px; font-size: 14px; width: 100%; box-sizing: border-box; }
+        .metadata-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; font-size: 13px; width: 100%; box-sizing: border-box; }
         .metadata-grid > div { flex: 1 1 200px; min-width: 180px; display: flex; flex-direction: column; }
-        .metadata-grid label { font-weight: bold; margin-bottom: 4px; font-size: 13px; }
+        .metadata-grid label { font-weight: bold; margin-bottom: 2px; font-size: 12px; }
         
-        .metadata-row { display: flex; align-items: flex-start; margin-bottom: 10px; font-size: 14px; width: 100%; flex-wrap: wrap; }
+        .metadata-row { display: flex; align-items: flex-start; margin-bottom: 6px; font-size: 13px; width: 100%; flex-wrap: wrap; }
         .metadata-row label { font-weight: bold; margin-right: 8px; white-space: nowrap; min-width: 170px; padding-top: 2px; }
-        .metadata-row textarea, .metadata-grid input, .metadata-grid select { flex: 1; border: none; border-bottom: 1px dotted #333; outline: none; font-family: inherit; font-size: 14px; padding: 2px 5px; background: transparent; resize: vertical; overflow: hidden; box-sizing: border-box; width: 100%; }
+        .metadata-row textarea, .metadata-grid input, .metadata-grid select { flex: 1; border: none; border-bottom: 1px dotted #333; outline: none; font-family: inherit; font-size: 13px; padding: 2px 4px; background: transparent; resize: vertical; overflow: hidden; box-sizing: border-box; width: 100%; }
         
-        table { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; font-size: 12px; }
-        th, td { border: 1px solid #333; padding: 6px; vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; }
+        table { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; font-size: 11px; }
+        th, td { border: 1px solid #333; padding: 5px; vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; }
         th { background-color: #f2f2f2; text-align: center; font-size: 11px; }
         textarea { width: 100%; border: none; resize: vertical; font-family: inherit; font-size: inherit; background: transparent; outline: none; box-sizing: border-box; overflow: hidden; height: auto; word-wrap: break-word; overflow-wrap: break-word; }
-        .footer-section { margin-top: 10px; font-size: 14px; }
-        .footer-section textarea { border-bottom: 1px dotted #333; margin-top: 5px; height: 40px; }
+        .footer-section { margin-top: 6px; font-size: 13px; }
+        .footer-section textarea { border-bottom: 1px dotted #333; margin-top: 3px; height: 30px; }
+        
+        /* Administrative Signature Block Styles */
+        .admin-sig-block { margin-top: 12px; padding-top: 8px; border-top: 1px solid #333; font-size: 11px; display: flex; flex-direction: column; gap: 6px; page-break-inside: avoid; break-inside: avoid; }
+        .admin-sig-row { display: flex; justify-content: space-between; gap: 10px; }
+        .admin-sig-item { flex: 1; display: flex; gap: 5px; align-items: baseline; border-bottom: 1px dotted #666; padding-bottom: 2px; }
+        .admin-sig-item span { font-weight: bold; white-space: nowrap; }
+        .admin-sig-item input { border: none; border-bottom: 1px solid #333; font-size: 11px; padding: 0 3px; background: transparent; outline: none; }
+
         .export-panel { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
         .export-panel button { flex: 1; min-width: 150px; }
         .btn-print { background-color: #28a745; }
@@ -72,11 +80,12 @@
             .container, .day-plan-page, input, textarea, th, td, label { font-family: 'Times New Roman', Times, serif !important; }
             .controls, .export-panel, .secondary-btn, .ai-assist-btn { display: none !important; } 
             .container { box-shadow: none; padding: 0; max-width: 100%; width: 100%; } 
-            .day-plan-page { page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid; margin-bottom: 0; padding-bottom: 20px; width: 100%; }
-            textarea, input { border: none !important; background: transparent !important; resize: none !important; height: auto !important; overflow: visible !important; white-space: pre-wrap !important; word-wrap: break-word !important; font-size: 12px !important; padding: 0 !important; color: #000 !important; }
+            .day-plan-page { page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid; margin-bottom: 0; padding-bottom: 10px; width: 100%; }
+            textarea, input { border: none !important; background: transparent !important; resize: none !important; height: auto !important; overflow: visible !important; white-space: pre-wrap !important; word-wrap: break-word !important; font-size: 11px !important; padding: 0 !important; color: #000 !important; }
             table { page-break-inside: auto; width: 100% !important; table-layout: fixed !important; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             td, th { page-break-inside: avoid; overflow: visible !important; word-wrap: break-word !important; }
+            .admin-sig-block { page-break-inside: avoid; break-inside: avoid; }
         }
     </style>
 </head>
@@ -138,8 +147,8 @@
             
             <div style="background:#fff; padding:15px; border-radius:6px; border:1px solid #cbd5e1; margin-bottom: 10px; font-size:13px; line-height: 1.6;">
                 <h4 style="margin:0 0 8px 0; color:#0056b3;">Transfer Subscription Fee via:</h4>
-                <p style="margin:0;">📱 <b>Telebirr:</b> 0911234567 (Birhanu Mekonen)</p>
-                <p style="margin:5px 0 0 0;">🏦 <b>CBE Account:</b> 1000123456789 (Birhanu Mekonen)</p>
+                <p style="margin:0;">📱 <b>Telebirr:</b> 0986951257 (Birhanu Mekonen)</p>
+                <p style="margin:5px 0 0 0;">🏦 <b>CBE Account:</b> 1000221254717 (Birhanu Mekonen)</p>
                 <p style="margin:10px 0 0 0; color:#b45309;"><b>Next Step:</b> Send your registered username via SMS/Telegram to the owner to unlock your account quota.</p>
             </div>
 
@@ -948,8 +957,8 @@
                     <div class="plan-header-logo">
                         <img src="${logoUrl}" alt="Logo">
                         <div style="text-align: center;">
-                            <h3 style="margin:0; font-size:14px; color:#555;">${schoolName}</h3>
-                            <h2 style="margin:2px 0 0 0; font-size:18px; text-transform:uppercase;">Daily Lesson Framework</h2>
+                            <h3 style="margin:0; font-size:13px; color:#555;">${schoolName}</h3>
+                            <h2 style="margin:2px 0 0 0; font-size:16px; text-transform:uppercase;">Daily Lesson Framework</h2>
                         </div>
                     </div>`;
             } else if (logoPosition === 'bottom') {
@@ -966,6 +975,7 @@
         const cards = document.querySelectorAll('.day-config-card');
         let containerHtml = "";
         let sequenceIndex = 0;
+        let totalCards = cards.length;
 
         cards.forEach((card) => {
             sequenceIndex++;
@@ -1003,6 +1013,24 @@
 
             const plan = getIntelligentLessonContent(topicVal);
 
+            // Conditional Admin Signature Block for the 5th (or final) page
+            let adminSigHtml = "";
+            if (sequenceIndex === 5 || (sequenceIndex === totalCards && totalCards >= 5)) {
+                adminSigHtml = `
+                    <div class="admin-sig-block">
+                        <div class="admin-sig-row">
+                            <div class="admin-sig-item"><span>Prepared by:</span> <input type="text" value="${teacherName}" style="flex:2;"> <span>Sig:</span> <input type="text" style="flex:1;"> <span>Date:</span> <input type="text" value="${dateFormatted}" style="flex:1;"></div>
+                        </div>
+                        <div class="admin-sig-row">
+                            <div class="admin-sig-item"><span>Dep't Head:</span> <input type="text" placeholder="Name" style="flex:2;"> <span>Sig:</span> <input type="text" style="flex:1;"> <span>Date:</span> <input type="text" style="flex:1;"></div>
+                        </div>
+                        <div class="admin-sig-row">
+                            <div class="admin-sig-item"><span>V. Director:</span> <input type="text" placeholder="Name" style="flex:2;"> <span>Sig:</span> <input type="text" style="flex:1;"> <span>Date:</span> <input type="text" style="flex:1;"></div>
+                        </div>
+                    </div>
+                `;
+            }
+
             containerHtml += `
                 <div class="day-plan-page">
                     ${watermarkHtml}
@@ -1010,8 +1038,8 @@
                     
                     <div class="header-top">
                         ${topLogoHtml ? topLogoHtml : `
-                            <h3 style="margin:0; font-size:14px; color:#555;">${schoolName}</h3>
-                            <h2 style="margin:5px 0 15px 0; font-size:20px; text-transform:uppercase; border-bottom:2px solid #333; display:inline-block;">Daily Lesson Framework</h2>
+                            <h3 style="margin:0; font-size:13px; color:#555;">${schoolName}</h3>
+                            <h2 style="margin:3px 0 10px 0; font-size:18px; text-transform:uppercase; border-bottom:2px solid #333; display:inline-block;">Daily Lesson Framework</h2>
                         `}
                     </div>
 
@@ -1027,10 +1055,10 @@
                     </div>
 
                     <div class="metadata-row"><label>Topic of the lesson:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${topicVal}</textarea></div>
-                    <div class="metadata-row"><label>Subtopic of the lesson:</label><textarea rows="4" style="height: 4.5em;" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.subtopic}</textarea></div>
-                    <div class="metadata-row"><label>Rationale of the lesson:</label><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedRationale}</textarea></div>
-                    <div class="metadata-row"><label>Learning Objectives:</label><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedObjectives}</textarea></div>
-                    <div class="metadata-row"><label>Pre-requisite Knowledge:</label><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedPrereq}</textarea></div>
+                    <div class="metadata-row"><label>Subtopic of the lesson:</label><textarea rows="2" style="height: 2.2em;" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.subtopic}</textarea></div>
+                    <div class="metadata-row"><label>Rationale of the lesson:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedRationale}</textarea></div>
+                    <div class="metadata-row"><label>Learning Objectives:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedObjectives}</textarea></div>
+                    <div class="metadata-row"><label>Pre-requisite Knowledge:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedPrereq}</textarea></div>
 
                     <table>
                         <colgroup>
@@ -1056,37 +1084,39 @@
                         <tbody>
                             <tr>
                                 <td><strong>Starter Activity</strong></td>
-                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${sMin} mins</textarea></td>
-                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterContent}</textarea></td>
-                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterRole}</textarea></td>
-                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterAction}</textarea></td>
-                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterMethod}</textarea></td>
-                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterAssessment}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${sMin} mins</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterContent}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterRole}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterAction}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterMethod}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterAssessment}</textarea></td>
                             </tr>
                             <tr>
                                 <td><strong>Main Activity</strong></td>
-                                <td style="background:#fafafa;"><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${mMin} mins</textarea></td>
-                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainContent}</textarea></td>
-                                <td style="background:#fffdf0;"><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">Facilitates active strategies (${stratText}) and provides technical scaffolding for ${topicVal}.</textarea></td>
-                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainAction}</textarea></td>
-                                <td style="font-weight:bold; color:#b58100;"><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${stratText}</textarea></td>
-                                <td style="font-weight:bold; color:#0056b3;"><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${assessText}</textarea></td>
+                                <td style="background:#fafafa;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${mMin} mins</textarea></td>
+                                <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainContent}</textarea></td>
+                                <td style="background:#fffdf0;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">Facilitates active strategies (${stratText}) and provides technical scaffolding for ${topicVal}.</textarea></td>
+                                <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainAction}</textarea></td>
+                                <td style="font-weight:bold; color:#b58100;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${stratText}</textarea></td>
+                                <td style="font-weight:bold; color:#0056b3;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${assessText}</textarea></td>
                             </tr>
                             <tr>
                                 <td><strong>Concluding Activity</strong></td>
-                                <td style="background:#fafafa;"><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${cMin} mins</textarea></td>
-                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryContent}</textarea></td>
-                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryRole}</textarea></td>
-                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryAction}</textarea></td>
-                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryMethod}</textarea></td>
-                                <td><textarea rows="6" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryAssessment}</textarea></td>
+                                <td style="background:#fafafa;"><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${cMin} mins</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryContent}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryRole}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryAction}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryMethod}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryAssessment}</textarea></td>
                             </tr>
                         </tbody>
                     </table>
 
                     ${bottomLogoHtml}
                     <div class="footer-section"><label><strong>Teaching Aids:</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${aidsText}</textarea></div>
-                    <div class="footer-section" style="margin-top:10px;"><label><strong>Reflection Metric:</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">Evaluated strategy efficiency (${stratText}) versus target cognitive outcomes for ${topicVal}.</textarea></div>
+                    <div class="footer-section" style="margin-top:6px;"><label><strong>Reflection Metric:</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">Evaluated strategy efficiency (${stratText}) versus target cognitive outcomes for ${topicVal}.</textarea></div>
+                    
+                    ${adminSigHtml}
                 </div>
             `;
         });
@@ -1172,8 +1202,8 @@
                 <style>
                     body { font-family: 'Times New Roman', Times, serif !important; color: #333; }
                     .day-plan { page-break-after: always; break-after: page; margin-bottom: 40px; position: relative; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; table-layout: fixed; }
-                    th, td { border: 1px solid #333; padding: 6px; vertical-align: top; font-size: 11px; word-wrap: break-word; overflow-wrap: break-word; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; table-layout: fixed; }
+                    th, td { border: 1px solid #333; padding: 5px; vertical-align: top; font-size: 11px; word-wrap: break-word; overflow-wrap: break-word; }
                     th { background-color: #f2f2f2; text-align: center; }
                 </style>
                 </head>
