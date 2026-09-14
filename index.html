@@ -137,6 +137,27 @@
                 <button class="secondary-btn" onclick="backToAuth()" style="width:100%;">Back to Login</button>
             </div>
             <div id="ownerMessage" style="font-size: 13px; color: green; text-align: center; font-weight: bold;"></div>
+
+            <!-- Registered Users Directory Table -->
+            <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #cbd5e1; margin-top: 15px;">
+                <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #0056b3;">Registered Users Directory</h3>
+                <div style="max-height: 250px; overflow-y: auto;">
+                    <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f1f5f9;">
+                                <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: left;">Username</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">Status</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">Quota</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ownerUserTableBody">
+                            <!-- Dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
+                <button class="secondary-btn" onclick="loadRegisteredUsers()" style="margin-top: 10px; width: 100%;">🔄 Refresh User List</button>
+            </div>
         </div>
     </div>
 
@@ -397,9 +418,50 @@
         if (pass === "Owner382") {
             document.getElementById('authScreen').classList.remove('active-screen');
             document.getElementById('ownerScreen').classList.add('active-screen');
+            loadRegisteredUsers();
         } else if (pass !== null) {
             alert("Incorrect owner password.");
         }
+    }
+
+    async function loadRegisteredUsers() {
+        const tbody = document.getElementById('ownerUserTableBody');
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:10px;">Loading users...</td></tr>`;
+
+        try {
+            const snapshot = await db.collection("users").orderBy("createdAt", "desc").get();
+            if (snapshot.empty) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:10px; color:#666;">No registered users found.</td></tr>`;
+                return;
+            }
+
+            let html = "";
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const username = data.username || doc.id;
+                const isPaid = data.isPaid ? `<span style="color:green; font-weight:bold;">Active</span>` : `<span style="color:red; font-weight:bold;">Pending</span>`;
+                const quotaDisplay = data.quotaType === 'unlimited' ? 'Unlimited' : `${data.quotaLeft || 0} left`;
+
+                html += `
+                    <tr>
+                        <td style="border: 1px solid #cbd5e1; padding: 6px;">${escapeHtml(username)}</td>
+                        <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">${isPaid}</td>
+                        <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">${quotaDisplay}</td>
+                        <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">
+                            <button type="button" class="ai-assist-btn" style="background-color: #0056b3;" onclick="selectUserForQuickAction('${escapeHtml(username)}')">Select</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        } catch (error) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:10px; color:red;">Error loading users: ${error.message}</td></tr>`;
+        }
+    }
+
+    function selectUserForQuickAction(username) {
+        document.getElementById('ownerTargetUser').value = username;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async function grantUserAccess() {
@@ -421,6 +483,7 @@
             msg.style.color = 'green';
             msg.innerText = `Success! Account approved with ${quotaVal === 'unlimited' ? 'Unlimited' : quotaVal + ' uses'} for: ${target}`;
             document.getElementById('ownerTargetUser').value = "";
+            loadRegisteredUsers();
         } catch (error) {
             alert("Error updating user access: " + error.message);
         }
@@ -441,6 +504,7 @@
             msg.style.color = 'red';
             msg.innerText = `Access revoked for user: ${target}`;
             document.getElementById('ownerTargetUser').value = "";
+            loadRegisteredUsers();
         } catch (error) {
             alert("Error revoking access: " + error.message);
         }
