@@ -11,63 +11,64 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 1200px; background: #fff; margin: auto; padding: 30px; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; }
+        body { font-family: Arial, Helvetica, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; color: #333; -webkit-text-size-adjust: 100%; }
+        .container { max-width: 1200px; background: #fff; margin: auto; padding: 25px; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; box-sizing: border-box; }
         .auth-screen, .app-screen, .payment-screen, .owner-screen { display: none; }
         .active-screen { display: block; }
-        .controls, .auth-box, .payment-box, .owner-box { background: #eef2f7; padding: 20px; border-radius: 6px; margin-bottom: 25px; display: flex; flex-direction: column; gap: 15px; }
-        .controls-row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
-        input[type="text"], input[type="password"], input[type="date"], input[type="number"], select { flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; min-width: 140px; background: #fff; }
-        .day-config-card { background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 15px; margin-bottom: 15px; }
+        .controls, .auth-box, .payment-box, .owner-box { background: #eef2f7; padding: 20px; border-radius: 6px; margin-bottom: 25px; display: flex; flex-direction: column; gap: 15px; box-sizing: border-box; }
+        .controls-row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; width: 100%; box-sizing: border-box; }
+        input[type="text"], input[type="password"], input[type="date"], input[type="number"], select { flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; min-width: 140px; background: #fff; box-sizing: border-box; }
+        .day-config-card { background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 15px; margin-bottom: 15px; box-sizing: border-box; }
         .day-config-card h3 { margin: 0 0 10px 0; font-size: 15px; color: #0056b3; border-bottom: 2px solid #eef2f7; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
-        .day-config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .ai-select-group { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 4px; display: flex; flex-direction: column; gap: 5px; }
+        .day-config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; box-sizing: border-box; }
+        .ai-select-group { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 4px; display: flex; flex-direction: column; gap: 5px; box-sizing: border-box; }
         .ai-select-group label { font-size: 12px; font-weight: bold; color: #1e293b; display: flex; justify-content: space-between; align-items: center; }
-        .ai-select-group select { width: 100%; padding: 8px; font-size: 13px; background: #fff; }
+        .ai-select-group select { width: 100%; padding: 8px; font-size: 13px; background: #fff; box-sizing: border-box; }
         .checkbox-scroll { max-height: 120px; overflow-y: auto; border: 1px solid #ddd; padding: 5px; border-radius: 4px; background: #fafafa; }
         .checkbox-scroll label { display: block; font-size: 12px; margin-bottom: 4px; cursor: pointer; }
-        button { padding: 12px 25px; background-color: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; }
+        button { padding: 12px 25px; background-color: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; box-sizing: border-box; }
         button:hover { background-color: #004085; }
         .secondary-btn { background-color: #6c757d; width: auto; padding: 6px 12px; font-size: 12px; }
         .secondary-btn:hover { background-color: #5a6268; }
-        .ai-assist-btn { background-color: #0284c7; color: white; border: none; padding: 3px 8px; font-size: 11px; border-radius: 3px; cursor: pointer; font-weight: normal; }
+        .ai-assist-btn { background-color: #0284c7; color: white; border: none; padding: 3px 8px; font-size: 11px; border-radius: 3px; cursor: pointer; font-weight: normal; width: auto; }
         .ai-assist-btn:hover { background-color: #0369a1; }
         
-        /* Rendered Plan Page & Logo Positioning Styles */
-        .day-plan-page { position: relative; overflow: hidden; margin-bottom: 40px; padding-bottom: 20px; page-break-after: always; break-after: page; width: 100%; box-sizing: border-box; }
+        /* Rendered Plan Page & Logo Positioning Styles - Maximized Width & Single Page Containment */
+        .day-plan-page { position: relative; overflow: hidden; margin-bottom: 20px; padding-bottom: 5px; page-break-after: always; break-after: page; width: 100%; box-sizing: border-box; }
         .day-plan-page > *:not(.plan-watermark) { position: relative; z-index: 1; }
         .plan-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55%; max-width: 420px; opacity: 0.08; z-index: 0; pointer-events: none; user-select: none; }
-        .plan-header-logo { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 8px; }
-        .plan-header-logo img { width: 50px; height: 50px; object-fit: contain; }
-        .plan-footer-logo { text-align: center; margin-top: 10px; }
-        .plan-footer-logo img { width: 35px; height: 35px; object-fit: contain; }
+        .plan-header-logo { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 2px; }
+        .plan-header-logo img { width: 38px; height: 38px; object-fit: contain; }
+        .plan-footer-logo { text-align: center; margin-top: 2px; }
+        .plan-footer-logo img { width: 28px; height: 28px; object-fit: contain; }
 
-        .day-badge { background: #0056b3; color: white; padding: 4px 12px; font-weight: bold; display: inline-block; border-radius: 4px; margin-bottom: 8px; font-size: 14px; }
-        .header-top { text-align: center; margin-bottom: 10px; }
+        .day-badge { background: #0056b3; color: white; padding: 2px 8px; font-weight: bold; display: inline-block; border-radius: 4px; margin-bottom: 2px; font-size: 12px; }
+        .header-top { text-align: center; margin-bottom: 4px; }
         
-        .metadata-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; font-size: 13px; width: 100%; box-sizing: border-box; }
-        .metadata-grid > div { flex: 1 1 200px; min-width: 180px; display: flex; flex-direction: column; }
-        .metadata-grid label { font-weight: bold; margin-bottom: 2px; font-size: 12px; }
+        .metadata-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 3px; font-size: 11.5px; width: 100%; box-sizing: border-box; }
+        .metadata-grid > div { flex: 1 1 180px; min-width: 160px; display: flex; flex-direction: column; }
+        .metadata-grid label { font-weight: bold; margin-bottom: 1px; font-size: 10.5px; }
         
-        .metadata-row { display: flex; align-items: flex-start; margin-bottom: 6px; font-size: 13px; width: 100%; flex-wrap: wrap; }
-        .metadata-row label { font-weight: bold; margin-right: 8px; white-space: nowrap; min-width: 170px; padding-top: 2px; }
-        .metadata-row textarea, .metadata-grid input, .metadata-grid select { flex: 1; border: none; border-bottom: 1px dotted #333; outline: none; font-family: inherit; font-size: 13px; padding: 2px 4px; background: transparent; resize: vertical; overflow: hidden; box-sizing: border-box; width: 100%; }
+        .metadata-row { display: flex; align-items: flex-start; margin-bottom: 3px; font-size: 11.5px; width: 100%; flex-wrap: wrap; box-sizing: border-box; }
+        .metadata-row label { font-weight: bold; margin-right: 6px; white-space: nowrap; min-width: 150px; padding-top: 1px; font-size: 10.5px; }
+        .metadata-row textarea, .metadata-grid input, .metadata-grid select { flex: 1; border: none; border-bottom: 1px dotted #333; outline: none; font-family: inherit; font-size: 11.5px; padding: 1px 3px; background: transparent; resize: vertical; overflow: hidden; box-sizing: border-box; width: 100%; }
         
-        table { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; font-size: 11px; }
-        th, td { border: 1px solid #333; padding: 5px; vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; }
-        th { background-color: #f2f2f2; text-align: center; font-size: 11px; }
+        /* Maximized Width Table Styles with Tight Padding to Prevent Vertical Page Spill */
+        table { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 4px; margin-bottom: 4px; font-size: 10.5px; box-sizing: border-box; }
+        th, td { border: 1px solid #333; padding: 3px 3px; vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; box-sizing: border-box; }
+        th { background-color: #f2f2f2; text-align: center; font-size: 10.5px; }
         textarea { width: 100%; border: none; resize: vertical; font-family: inherit; font-size: inherit; background: transparent; outline: none; box-sizing: border-box; overflow: hidden; height: auto; word-wrap: break-word; overflow-wrap: break-word; }
-        .footer-section { margin-top: 6px; font-size: 13px; }
-        .footer-section textarea { border-bottom: 1px dotted #333; margin-top: 3px; height: 30px; }
+        .footer-section { margin-top: 3px; font-size: 11px; box-sizing: border-box; }
+        .footer-section textarea { border-bottom: 1px dotted #333; margin-top: 1px; height: 20px; }
         
         /* Administrative Signature Block Styles */
-        .admin-sig-block { margin-top: 12px; padding-top: 8px; border-top: 1px solid #333; font-size: 11px; display: flex; flex-direction: column; gap: 6px; page-break-inside: avoid; break-inside: avoid; }
-        .admin-sig-row { display: flex; justify-content: space-between; gap: 10px; }
-        .admin-sig-item { flex: 1; display: flex; gap: 5px; align-items: baseline; border-bottom: 1px dotted #666; padding-bottom: 2px; }
+        .admin-sig-block { margin-top: 5px; padding-top: 3px; border-top: 1px solid #333; font-size: 10px; display: flex; flex-direction: column; gap: 2px; page-break-inside: avoid; break-inside: avoid; box-sizing: border-box; }
+        .admin-sig-row { display: flex; justify-content: space-between; gap: 10px; width: 100%; box-sizing: border-box; }
+        .admin-sig-item { flex: 1; display: flex; gap: 4px; align-items: baseline; border-bottom: 1px dotted #666; padding-bottom: 1px; box-sizing: border-box; }
         .admin-sig-item span { font-weight: bold; white-space: nowrap; }
-        .admin-sig-item input { border: none; border-bottom: 1px solid #333; font-size: 11px; padding: 0 3px; background: transparent; outline: none; }
+        .admin-sig-item input { border: none; border-bottom: 1px solid #333; font-size: 10px; padding: 0 2px; background: transparent; outline: none; box-sizing: border-box; }
 
-        .export-panel { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .export-panel { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; box-sizing: border-box; }
         .export-panel button { flex: 1; min-width: 150px; }
         .btn-print { background-color: #28a745; }
         .btn-print:hover { background-color: #218838; }
@@ -75,14 +76,15 @@
         .btn-doc:hover { background-color: #138496; }
         .btn-txt { background-color: #6c757d; }
         .btn-txt:hover { background-color: #5a6268; }
+
         @media print { 
-            body { background: #fff; padding: 0; color: #000; font-family: 'Times New Roman', Times, serif !important; } 
+            body { background: #fff; padding: 0; color: #000; font-family: 'Times New Roman', Times, serif !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
             .container, .day-plan-page, input, textarea, th, td, label { font-family: 'Times New Roman', Times, serif !important; }
             .controls, .export-panel, .secondary-btn, .ai-assist-btn { display: none !important; } 
             .container { box-shadow: none; padding: 0; max-width: 100%; width: 100%; } 
-            .day-plan-page { page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid; margin-bottom: 0; padding-bottom: 10px; width: 100%; }
-            textarea, input { border: none !important; background: transparent !important; resize: none !important; height: auto !important; overflow: visible !important; white-space: pre-wrap !important; word-wrap: break-word !important; font-size: 11px !important; padding: 0 !important; color: #000 !important; }
-            table { page-break-inside: auto; width: 100% !important; table-layout: fixed !important; }
+            .day-plan-page { page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid; margin-bottom: 0; padding-bottom: 0; width: 100%; max-height: 272mm; box-sizing: border-box; }
+            textarea, input { border: none !important; background: transparent !important; resize: none !important; height: auto !important; overflow: visible !important; white-space: pre-wrap !important; word-wrap: break-word !important; font-size: 10.5px !important; padding: 0 !important; color: #000 !important; }
+            table { page-break-inside: avoid; width: 100% !important; table-layout: fixed !important; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             td, th { page-break-inside: avoid; overflow: visible !important; word-wrap: break-word !important; }
             .admin-sig-block { page-break-inside: avoid; break-inside: avoid; }
@@ -918,18 +920,18 @@
 
         if (selectedLang === 'am') {
             return {
-                subtopic: `የ${topicVal} ዋና ዋና መዋቅራዊ ንድፎች፣\nትንተናዊ ንብረቶች እና\nተግባራዊ የችግር አፈታት ዘዴዎች`,
-                starterContent: `ስለ ${topicVal} ዙሪያ አውዳዊ ጥያቄዎች እና ተግባራዊ ችግር ማቅረብ`,
+                subtopic: `የ${topicVal} ዋና ዋና መዋቅራዊ ንድፎች፣ ትንተናዊ ንብረቶች እና ተግባራዊ የችግር አፈታት ዘዴዎች`,
+                starterContent: `ስለ ${topicVal} ዙሪያ አውዳዊ ጥያቄዎች እና ተግባራዊ ችግር ማቅረብ\n\n`,
                 starterRole: `ከ${topicVal} ጋር በቀጥታ የተያያዘ ፅንሰ-ሀሳባዊ ፈተና ወይም ተግባራዊ ፈተና ማቅረብ።`,
                 starterAction: `መነሻ ሐሳቦችን ማፍለቅ፣ በጥንድ ሆኖ መወያየት እና ጥያቄዎችን ማዘጋጀት።`,
                 starterMethod: "ሐሳብ ማፍለቅ (Brainstorming)",
                 starterAssessment: "የመጀመሪያ ደረጃ ግምገማ",
                 
-                mainContent: `ጥልቅ ዳሰሳ፣ የደረጃ በደረጃ ትንተና እና ከ${topicVal} ጋር የተያያዙ የተግባር መልመጃዎች።`,
+                mainContent: `ጥልቅ ዳሰሳ፣ የደረጃ በደረጃ ትንተና እና ከ${topicVal} ጋር የተያያዙ የተግባር መልመጃዎች።\n\n\n`,
                 mainRole: `ተከታታይ የመማሪያ ዘዴዎችን ማቀናጀት፣ የተማሪዎችን ሂደት መከታተል እና አስፈላጊውን ድጋፍ መስጠት።`,
                 mainAction: `በንዑስ ቡድን ሆኖ የተሰጡ ሉሆችን ማጠናቀቅ፣ ቀመሮችን መስራት እና ሞዴሎችን መተንተን።`,
                 
-                plenaryContent: `ማጠቃለያ ክለሳ፣ የፅንሰ-ሀሳብ ማብራሪያ እና ክፍተቶችን ማጥበብ`,
+                plenaryContent: `ማጠቃለያ ክለሳ፣ የፅንሰ-ሀሳብ ማብራሪያ እና ክፍተቶችን ማጥበብ\n\n`,
                 plenaryRole: `ዋ ዋና ነጥቦችን ማጠቃለል፣ የተማሪዎችን ጥያቄዎች መመለስ እና ማጠቃለያ ግምገማዎችን መምራት።`,
                 plenaryAction: `የመውጫ ግምገማዎችን ማጠናቀቅ እና ዋና ዋና ግንዛቤዎችን ማጠቃለል።`,
                 plenaryMethod: "የእኩዮች ማስተማር (Peer Instruction)",
@@ -938,18 +940,18 @@
             };
         } else if (selectedLang === 'om') {
             return {
-                subtopic: `Caasaalee bu'uuraa ${topicVal},\nAmala xiinxalaa, fi\nHojii irra oolmaa shallaggii`,
-                starterContent: `Gaaffiiwwan haala qabatamaa fi qormaata ${topicVal} wajjin walqabatu`,
+                subtopic: `Caasaalee bu'uuraa ${topicVal}, Amala xiinxalaa, fi Hojii irra oolmaa shallaggii`,
+                starterContent: `Gaaffiiwwan haala qabatamaa fi qormaata ${topicVal} wajjin walqabatu\n\n`,
                 starterRole: `Rakkoo yaad-rimee ykn qormaata qabatamaa ${topicVal} wajjin walqabatu dhiheessuu.`,
                 starterAction: `Yaadota jalqabaa kaasuun, hiriyoota wajjin mari’achuun gaaffiiwwan qopheessuu.`,
                 starterMethod: "Yaada burqisiisuu (Brainstorming)",
                 starterAssessment: "Madaallii Jalqabaa",
                 
-                mainContent: `Qorannoo bal’aa, adeemsa tarkaanfiidhaan fi shaakala shallaggii ${topicVal} wajjin walqabatu.`,
+                mainContent: `Qorannoo bal’aa, adeemsa tarkaanfiidhaan fi shaakala shallaggii ${topicVal} wajjin walqabatu.\n\n\n`,
                 mainContentRole: `Mala barnootaa wal-qunnamtii mijeessuu, adeemsa barattootaa hordofuu fi gargaarsa kennuu.`,
                 mainAction: `Garee xixiqqoon ta’uun waraqota hojii guutuu, shallaggii hojjechuu fi mooteelii xiinxaluu.`,
                 
-                plenaryContent: `Gabaabumatti deebi’anii ilaaluu, ibsa yaad-rimee fi hiika rakkoolee`,
+                plenaryContent: `Gabaabumatti deebi’anii ilaaluu, ibsa yaad-rimee fi hiika rakkoolee\n\n`,
                 plenaryRole: `Yaadota ijoo cuunfuu, rakkoolee ibsuu fi madaallii xumuraa geggeessuu.`,
                 plenaryAction: `Madaallii ba’umsaa xumuruun hubannoo ijoo dhiheessuu.`,
                 plenaryMethod: "Barsiisota hiriyootaa (Peer Instruction)",
@@ -958,18 +960,18 @@
             };
         } else {
             return {
-                subtopic: `Core Structural Mechanisms,\nAnalytical Properties, and\nApplied Problem Solving in\n${topicVal}`,
-                starterContent: `Contextual inquiry and real-world problem provocation regarding ${topicVal}`,
+                subtopic: `Core Structural Mechanisms, Analytical Properties, and Applied Problem Solving in ${topicVal}`,
+                starterContent: `Contextual inquiry and real-world problem provocation regarding ${topicVal}\n\n`,
                 starterRole: `Present a targeted conceptual dilemma or practical challenge related directly to ${topicVal}.`,
                 starterAction: `Brainstorm initial hypotheses, share insights in pairs, and formulate focused inquiry questions.`,
                 starterMethod: "Brainstorming",
                 starterAssessment: "Formative Check",
                 
-                mainContent: `Comprehensive exploration, step-by-step analytical breakdown, and guided problem-solving drills specific to ${topicVal}.`,
+                mainContent: `Comprehensive exploration, step-by-step analytical breakdown, and guided problem-solving drills specific to ${topicVal}.\n\n\n`,
                 mainRole: `Facilitate interactive learning structures, monitor student progress, and provide targeted technical scaffolding.`,
                 mainAction: `Collaborate in small peer groups to complete structured task sheets, solve equations, and analyze models.`,
                 
-                plenaryContent: `Summary review, conceptual debrief, and misconception resolution`,
+                plenaryContent: `Summary review, conceptual debrief, and misconception resolution\n\n`,
                 plenaryRole: `Synthesize main takeaways, clarify specific hurdles, and direct closing evaluations.`,
                 plenaryAction: `Complete exit assessment and summarize key conceptual insights.`,
                 plenaryMethod: "Peer Instruction",
@@ -1023,15 +1025,15 @@
                     <div class="plan-header-logo">
                         <img src="${logoUrl}" alt="Logo">
                         <div style="text-align: center;">
-                            <h3 style="margin:0; font-size:13px; color:#555;">${schoolName}</h3>
-                            <h2 style="margin:2px 0 0 0; font-size:16px; text-transform:uppercase;">${tObj.frameworkTitle}</h2>
+                            <h3 style="margin:0; font-size:11px; color:#555;">${schoolName}</h3>
+                            <h2 style="margin:1px 0 0 0; font-size:14px; text-transform:uppercase;">${tObj.frameworkTitle}</h2>
                         </div>
                     </div>`;
             } else if (logoPosition === 'bottom') {
                 bottomLogoHtml = `
                     <div class="plan-footer-logo">
                         <img src="${logoUrl}" alt="Logo">
-                        <div style="font-size:10px; color:#666;">${schoolName} - Official Lesson Plan Document</div>
+                        <div style="font-size:9px; color:#666;">${schoolName} - Official Lesson Plan Document</div>
                     </div>`;
             }
         }
@@ -1104,8 +1106,8 @@
                     
                     <div class="header-top">
                         ${topLogoHtml ? topLogoHtml : `
-                            <h3 style="margin:0; font-size:13px; color:#555;">${schoolName}</h3>
-                            <h2 style="margin:3px 0 10px 0; font-size:18px; text-transform:uppercase; border-bottom:2px solid #333; display:inline-block;">${tObj.frameworkTitle}</h2>
+                            <h3 style="margin:0; font-size:11px; color:#555;">${schoolName}</h3>
+                            <h2 style="margin:1px 0 4px 0; font-size:15px; text-transform:uppercase; border-bottom:2px solid #333; display:inline-block;">${tObj.frameworkTitle}</h2>
                         `}
                     </div>
 
@@ -1121,17 +1123,17 @@
                     </div>
 
                     <div class="metadata-row"><label>${tObj.topic}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${topicVal}</textarea></div>
-                    <div class="metadata-row"><label>${tObj.subtopic}</label><textarea rows="2" style="height: 2.2em;" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.subtopic}</textarea></div>
+                    <div class="metadata-row"><label>${tObj.subtopic}</label><textarea rows="1" style="height: 1.6em;" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.subtopic}</textarea></div>
                     <div class="metadata-row"><label>${tObj.rationale}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedRationale}</textarea></div>
                     <div class="metadata-row"><label>${tObj.objectives}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedObjectives}</textarea></div>
                     <div class="metadata-row"><label>${tObj.prereq}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedPrereq}</textarea></div>
 
                     <table>
                         <colgroup>
-                            <col style="width: 10%;">
                             <col style="width: 8%;">
-                            <col style="width: 20%;">
-                            <col style="width: 20%;">
+                            <col style="width: 7%;">
+                            <col style="width: 22%;">
+                            <col style="width: 21%;">
                             <col style="width: 22%;">
                             <col style="width: 10%;">
                             <col style="width: 10%;">
@@ -1150,37 +1152,37 @@
                         <tbody>
                             <tr>
                                 <td><strong>${tObj.starter}</strong></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${sMin} mins</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterContent}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterRole}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterAction}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterMethod}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterAssessment}</textarea></td>
+                                <td><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${sMin} mins</textarea></td>
+                                <td><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterContent}</textarea></td>
+                                <td><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterRole}</textarea></td>
+                                <td><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterAction}</textarea></td>
+                                <td><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterMethod}</textarea></td>
+                                <td><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterAssessment}</textarea></td>
                             </tr>
                             <tr>
                                 <td><strong>${tObj.main}</strong></td>
-                                <td style="background:#fafafa;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${mMin} mins</textarea></td>
-                                <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainContent}</textarea></td>
-                                <td style="background:#fffdf0;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedLang === 'am' ? 'ንቁ ስልቶችን (' + stratText + ') ያመቻቻል እና ለ' + topicVal + ' ተስማሚ ድጋፍ ይሰጣል።' : (selectedLang === 'om' ? 'Tooftaalee (' + stratText + ') mijeessuun deggersa barbaachisaa kennuu.' : 'Facilitates active strategies (' + stratText + ') and provides technical scaffolding for ' + topicVal + '.')}</textarea></td>
-                                <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainAction}</textarea></td>
-                                <td style="font-weight:bold; color:#b58100;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${stratText}</textarea></td>
-                                <td style="font-weight:bold; color:#0056b3;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${assessText}</textarea></td>
+                                <td style="background:#fafafa;"><textarea rows="3" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${mMin} mins</textarea></td>
+                                <td><textarea rows="3" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainContent}</textarea></td>
+                                <td style="background:#fffdf0;"><textarea rows="3" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedLang === 'am' ? 'ንቁ ስልቶችን (' + stratText + ') ያመቻቻል እና ለ' + topicVal + ' ተስማሚ ድጋፍ ይሰጣል።' : (selectedLang === 'om' ? 'Tooftaalee (' + stratText + ') mijeessuun deggersa barbaachisaa kennuu.' : 'Facilitates active strategies (' + stratText + ') and provides technical scaffolding for ' + topicVal + '.')}</textarea></td>
+                                <td><textarea rows="3" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainAction}</textarea></td>
+                                <td style="font-weight:bold; color:#b58100;"><textarea rows="3" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${stratText}</textarea></td>
+                                <td style="font-weight:bold; color:#0056b3;"><textarea rows="3" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${assessText}</textarea></td>
                             </tr>
                             <tr>
                                 <td><strong>${tObj.concluding}</strong></td>
-                                <td style="background:#fafafa;"><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${cMin} mins</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryContent}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryRole}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryAction}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryMethod}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryAssessment}</textarea></td>
+                                <td style="background:#fafafa;"><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${cMin} mins</textarea></td>
+                                <td><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryContent}</textarea></td>
+                                <td><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryRole}</textarea></td>
+                                <td><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryAction}</textarea></td>
+                                <td><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryMethod}</textarea></td>
+                                <td><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryAssessment}</textarea></td>
                             </tr>
                         </tbody>
                     </table>
 
                     ${bottomLogoHtml}
                     <div class="footer-section"><label><strong>${tObj.teachingAids}</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${aidsText}</textarea></div>
-                    <div class="footer-section" style="margin-top:6px;"><label><strong>${tObj.reflection}</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedLang === 'am' ? 'የስልቱን ውጤታማነት (' + stratText + ') ከ' + topicVal + ' የመማር ዓላማዎች ጋር ማመዛዘን።' : (selectedLang === 'om' ? 'Bu’aqabeessummaa tooftichaa (' + stratText + ') kaayyoo barachuu wajjin madaaluu.' : 'Evaluated strategy efficiency (' + stratText + ') versus target cognitive outcomes for ' + topicVal + '.')}</textarea></div>
+                    <div class="footer-section" style="margin-top:2px;"><label><strong>${tObj.reflection}</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedLang === 'am' ? 'የስልቱን ውጤታማነት (' + stratText + ') ከ' + topicVal + ' የመማር ዓላማዎች ጋር ማመዛዘን።' : (selectedLang === 'om' ? 'Bu’aqabeessummaa tooftichaa (' + stratText + ') kaayyoo barachuu wajjin madaaluu.' : 'Evaluated strategy efficiency (' + stratText + ') versus target cognitive outcomes for ' + topicVal + '.')}</textarea></div>
                     
                     ${adminSigHtml}
                 </div>
@@ -1267,9 +1269,9 @@
                 <head><meta charset='utf-8'><title>Lesson Plans</title>
                 <style>
                     body { font-family: 'Times New Roman', Times, serif !important; color: #333; }
-                    .day-plan { page-break-after: always; break-after: page; margin-bottom: 40px; position: relative; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; table-layout: fixed; }
-                    th, td { border: 1px solid #333; padding: 5px; vertical-align: top; font-size: 11px; word-wrap: break-word; overflow-wrap: break-word; }
+                    .day-plan { page-break-after: always; break-after: page; margin-bottom: 20px; position: relative; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 4px; margin-bottom: 4px; table-layout: fixed; }
+                    th, td { border: 1px solid #333; padding: 3px 3px; vertical-align: top; font-size: 10.5px; word-wrap: break-word; overflow-wrap: break-word; }
                     th { background-color: #f2f2f2; text-align: center; }
                 </style>
                 </head>
