@@ -690,20 +690,20 @@
                 <div class="day-config-grid" style="grid-template-columns: 1fr;">
                     <div class="ai-select-group">
                         <label>
-                            <span>AI Alternative Rationale Options (10 Options Available)</span>
+                            <span>AI Alternative Rationale Options (10 Options incorporating topic)</span>
                             <button type="button" class="ai-assist-btn" onclick="updateAiOptionsForDay(${dayNum})">✨ Refresh AI Alternatives</button>
                         </label>
                         <select id="rationaleSelect${dayNum}"></select>
                     </div>
                     <div class="ai-select-group">
                         <label>
-                            <span>AI Alternative Learning Objectives Options (10 Options Available)</span>
+                            <span>AI Alternative Learning Objectives Options (10 Options incorporating topic)</span>
                         </label>
                         <select id="objectivesSelect${dayNum}"></select>
                     </div>
                     <div class="ai-select-group">
                         <label>
-                            <span>AI Alternative Pre-requisite Knowledge Options (Topic-Specific - 10 Options Available)</span>
+                            <span>AI Alternative Pre-requisite Knowledge Options (10 Options incorporating topic)</span>
                         </label>
                         <select id="prereqSelect${dayNum}"></select>
                     </div>
@@ -787,7 +787,7 @@
     }
 
     function getAiAlternatives(topicVal) {
-        const t = topicVal.trim().toLowerCase();
+        const t = topicVal.trim();
         const selectedLang = document.getElementById('languageSelect')?.value || "en";
 
         let rationales = [];
@@ -797,86 +797,130 @@
 
         if (selectedLang === 'am') {
             rationales = [
-                `የ${topicVal} ጥልቅ እውቀት ለዘመናዊ የምህንድስና ንድፎች እና ለሳይንሳዊ ምርምሮች ወሳኝ መሠረት ይጥላል።`,
-                `ይህንን ርዕስ ማጥናት ተማሪዎች ውስብስብ እውነታዎችን በሂሳብ እና በፊዚክስ ቀመሮች እንዲያሰሉ ያስችለዋል።`,
-                `የ${topicVal} ትምህርት ከንድፈ-ሐሳብ ባለፈ በዕለት ተዕለት ሕይወት ውስጥ የሚከናወኑ ተግባራዊ አተገባብዎችን ያገናኛል።`,
-                `በ${topicVal} ላይ መወያየት ተማሪዎች ምክንያታዊ የማሰብ እና የመተንተን ችሎታቸውን እንዲያዳብሩ ይረዳል።`,
-                `ይህ ርዕስ ተማሪዎች የሳይንስ መርሆዎችን ከአካባቢያቸው ጋር እንዲያስተሳስሩ ከፍተኛ አስተዋጽኦ ያበረክታል።`
+                `የ${t} ጥልቅ እውቀት ለዘመናዊ የምህንድስና ንድፎች እና ለሳይንሳዊ ምርምሮች ወሳኝ መሠረት ይጥላል።`,
+                `ይህንን ርዕስ ማጥናት ተማሪዎች ${t}ን ከሂሳብ እና ከፊዚክስ ቀመሮች ጋር እንዲያሰሉ ያስችለዋል።`,
+                `የ${t} ትምህርት ከንድፈ-ሐሳብ ባለፈ በዕለት ተዕለት ሕይወት ውስጥ የሚከናወኑ ተግባራዊ አተገባብዎችን ከ${t} ጋር ያገናኛል።`,
+                `በ${t} ላይ መወያየት ተማሪዎች ምክንያታዊ የማሰብ እና የመተንተን ችሎታቸውን እንዲያዳብሩ ይረዳል።`,
+                `ይህ ርዕስ ተማሪዎች የሳይንስ መርሆዎችን ከ${t} አውድ ጋር እንዲያስተሳስሩ ከፍተኛ አስተዋጽኦ ያበረክታል።`,
+                `ተማሪዎች ስለ ${t} ያላቸውን ግንዛቤ እንዲያሳድጉ እና የትንተና ክህሎት እንዲገነቡ ያስችላል።`,
+                `የ${t} መሰረታዊ ንድፈ-ሐሳቦች ለቀጣይ የላቁ የትምህርት ክፍሎች አስተማማኝ መሰረት ይሆናሉ።`,
+                `የ${t} ክፍለ ጊዜ ተማሪዎች በቡድን በመሆን የጋራ መፍትሄዎችን እንዲያገኙ ይረዳል።`,
+                `ለ ${t} የተሰጡ ተግባራት የተማሪዎችን የፈጠራ ችሎታ እና የክህሎት ደረጃ ያሳድጋሉ።`,
+                `በ${t} ዙሪያ የሚደረግ ጥናት ተማሪዎች በሳይንሳዊ እና ሂሳባዊ እውነታዎች ላይ ያላቸውን እምነት ያጠናክራል።`
             ];
             objectives = [
-                `ተማሪዎች ስለ ${topicVal} መሰረታዊ ሃሳቦች በመገንዘብ ትክክለኛ መደምደሚያ ላይ ይደርሳሉ።`,
-                `ተማሪዎች የቀረቡትን የሂሳብና የሳይንስ ስሌቶች 90 በመቶ በሆነ ትክክለኛነት ይሰራሉ።`,
-                `ተማሪዎች የ${topicVal}ን ፅንሰ-ሐሳብ በተግባራዊ ሙከራዎች ወይም በምሳሌዎች ያሳያሉ።`
+                `ተማሪዎች ስለ ${t} መሰረታዊ ሃሳቦች በመገንዘብ ትክክለኛ መደምደሚያ ላይ ይደርሳሉ።`,
+                `ተማሪዎች የቀረቡትን የ${t} ስሌቶች እና መርሆዎች 90 በመቶ በሆነ ትክክለኛነት ይሰራሉ።`,
+                `ተማሪዎች የ${t}ን ፅንሰ-ሐሳብ በተግባራዊ ሙከራዎች ወይም በምሳሌዎች ያሳያሉ።`,
+                `ተማሪዎች የ${t} ዋና ዋና ክፍሎችን በመለየት በሰንጠረዥ ወይም በንድፍ ያቀርባሉ።`,
+                `ተማሪዎች ከ${t} ጋር የተያያዙ ችግሮችን በአግባቡ በመተንተን መፍትሄ ይሰጣሉ።`,
+                `ተማሪዎች የ${t}ን አተገባበር በዕለት ተዕለት ሕይወት ውስጥ ማሳየት ይችላሉ።`,
+                `ተማሪዎች ስለ ${t} ያላቸውን ዕውቀት በመጠቀም አጫጭር ሪፖርቶችን ያዘጋጃሉ።`,
+                `ተማሪዎች ከ${t} ጋር የተያያዙ ንድፈ-ሐሳቦችን ከሌሎች ርዕሶች ጋር ያቀናጃሉ።`,
+                `ተማሪዎች በ${t} ርዕስ ላይ የተሰጡ ጥያቄዎችን በቡድን በመሆን ያጠናቅቃሉ።`,
+                `ተማሪዎች የ${t}ን ፅንሰ-ሐሳብ በሚገባ መረዳታቸውን በግምገማ እና በፈተና ያረጋግጣሉ።`
             ];
             prereqs = [
-                `የቀድሞ የሂሳብ እና የሳይንስ መርሆዎች መሰረታዊ ግንዛቤ።`,
-                `መሰረታዊ የአልጀብራ ቀመሮችን እና የግራፍ ንባብ ክህሎት።`
+                `ለ${t} ትምህርት የሚሆን ቅድመ-ዝግጅት እና መሰረታዊ የቃላት ግንዛቤ።`,
+                `ከ${t} ጋር ተዛማጅነት ያላቸውን ቀደምት የሂሳብ ወይም የሳይንስ ፅንሰ-ሐሳቦች ማወቅ።`,
+                `የ${t}ን መሰረታዊ መርሆዎች ለመረዳት የሚያስችል አጠቃላይ እውቀት።`,
+                `የ${t} ጥያቄዎችን ለመስራት የሚያስችሉ መሰረታዊ ቀመሮች እና አሰራሮች።`,
+                `ከ${t} ጋር የተያያዙ መመሪያዎችን እና የጥናት ቴክኒኮችን መረዳት።`,
+                `የ${t} ንድፈ-ሐሳቦችን ለመረዳት የሚረዳ የቀድሞ ትምህርት ቅኝት።`,
+                `ተማሪዎች ለ${t} ትምህርት ዝግጁ እንዲሆኑ የሚያደርግ የመሠረታዊ ንባብ ልምድ።`,
+                `የ${t} መለኪያዎችን እና አሃዶችን የመለየት ቅድመ ክህሎት።`,
+                `በ${t} ዙሪያ አጭር መረጃዎችን የመሰብሰብ እና የመወያየት ልምድ።`,
+                `ከ${t} ጋር የተያያዙ መሰረታዊ ታሪካዊ ወይም አውዳዊ ጀርባዎች ግንዛቤ።`
             ];
             aidsOptions = [
-                `የክፍል ሰሌዳ፣ ማርከሮች እና የመማሪያ መጽሐፍት።`,
-                `ዲጂታል ፕሮጀክተር እና የማስተማሪያ ቻርቶች።`
+                `የክፍል ሰሌዳ፣ ማርከሮች እና የመማሪያ መጽሐፍት ለ${t} ትምህርት።`,
+                `ዲጂታል ፕሮጀክተር እና የ${t} የማስተማሪያ ቻርቶች።`
             ];
         } else if (selectedLang === 'om') {
             rationales = [
-                `Qorannoon ${topicVal} bu'uura guddaa ijaarsa teeknolojii ammayyaa fi qorannoo saayinsii tiif kenna.`,
-                `Barachuun ${topicVal} barattoonni adeemsa uumamaa qajeeltoowwan herregaa fi fizikii irratti hundaa'uun akka shallagan gargaara.`,
-                `Qorannoon ${topicVal} hubannoo teessoo barnootaa fi jireenya keessatti hojiirra oolmaa walitti hidha.`,
-                `Mariin ${topicVal} irratti taasifamu dandeettii xiinxalaafi yaada bu'uuraa barattootaa gabbisa.`
+                `Qorannoon ${t} bu'uura guddaa ijaarsa teeknolojii ammayyaa fi qorannoo saayinsii tiif ${t} irratti kenna.`,
+                `Barachuun ${t} barattoonni adeemsa uumamaa qajeeltoowwan herregaa fi fizikii ${t} wajjin walqabatu akka shallagan gargaara.`,
+                `Qorannoon ${t} hubannoo teessoo barnootaa fi jireenya keessatti hojiirra oolmaa ${t} walitti hidha.`,
+                `Mariin ${t} irratti taasifamu dandeettii xiinxalaafi yaada bu'uuraa barattootaa ${t} irratti gabbisa.`,
+                `Qajeelcha ${t} barachuun dandeettii yaada uumummaa barattootaa ${t} irratti guddisa.`,
+                `Barachuun ${t} bu'uura barnootaa fuulduraaf barbaachisu ${t} irratti cimsa.`,
+                `Qorannoon ${t} dandeettii quunnamtii fi barreeffama saayinsii ${t} irratti gabbisa.`,
+                `Kutaan barnootaa ${t} hubannoo xiinxalaa barattootaa ${t} irratti ol kaasa.`,
+                `Qopheessuun ${t} dandeettii hojii garee fi wal-gargaarsaa ${t} irratti jajjabeessa.`,
+                `Hubachuun ${t} bu'uura cimaa qorannoo dabalataaf ${t} irratti kenna.`
             ];
             objectives = [
-                `Barattoonni bu'uura ${topicVal} hubachuun sirnaan ibsuu danda'u.`,
-                `Barattoonni shallaggiiwwan walqabatan dhibbeentaa 90n hojjechuu danda'u.`,
-                `Barattoonni yaad-rimee ${topicVal} qorannoo qabatamaadhaan ni mirkaneessu.`
+                `Barattoonni bu'uura ${t} hubachuun sirnaan ibsuu danda'u.`,
+                `Barattoonni shallaggiiwwan walqabatan ${t} dhibbeentaa 90n hojjechuu danda'u.`,
+                `Barattoonni yaad-rimee ${t} qorannoo qabatamaadhaan ni mirkaneessu.`,
+                `Barattoonni qaamolee ijoo ${t} adda baasuun ibsuu danda'u.`,
+                `Barattoonni rakkoolee ${t} wajjin walqabatan hiikuu danda'u.`,
+                `Barattoonni hojiirra oolmaa ${t} jireenya keessatti ni argisiisu.`,
+                `Barattoonni gabaabaa ${t} qopheessuun dhiheessuu danda'u.`,
+                `Barattoonni yaad-rimee ${t} dhimmoota biroo wajjin walitti ni hidhu.`,
+                `Barattoonni gareen ta'uun hojii ${t} ni xumuru.`,
+                `Barattoonni madaallii fi qormaata ${t} irratti milkaa'uudhaan mirkaneessu.`
             ];
             prereqs = [
-                `Hubannoo bu'uuraa beekumsa herregaafi fizikii duraanii.`,
-                `Dandeettii shallaggii aljibraafi dubbisa giraafii.`
+                `Beekumsa bu'uuraa fi jechoota barreeffamaa ${t} wajjin walqabatu.`,
+                `Hubannoo duraanii ${t} fi qajeeltoowwan isaa wajjin walqabatu.`,
+                `Shaakala duraanii ${t} fi shallaggiiwwan isaa waliin walitti dhufeenya qabu.`,
+                `Yaad-rimee bu'uuraa ${t} hubachuuf dandeettii barbaachisu.`,
+                `Qajeelfamoota fi tooftaalee qorannoo ${t} waliin walqabatan beekuu.`,
+                `Seenaa ykn odeeffannoo duuba-biyyaa ${t} wajjin walqabatu qabaachuu.`,
+                `Dandeettii dubbisa murteessaa ${t} waliin walitti dhufeenya qabu.`,
+                `Madaallii fi unkaalee ${t} adda baasuuf beekumsa qabaachuu.`,
+                `Muuxannoo marii garee fi wal jijjiirraa yaadaa ${t} irratti qabaachuu.`,
+                `Qophii barumsaa duraa ${t} waliin walqabatu hubachuun barbaachisaa dha.`
             ];
             aidsOptions = [
-                `Gabatee barnootaa, maarkarii fi macaafota barnootaa.`,
-                `Pirojekterii dijiitalaa fi chaartiiwwan qajeelchaa.`
+                `Gabatee, maarkarii fi macaafota barnootaa ${t} f`,
+                `Pirojekterii dijiitalaa fi chaartiiwwan qajeelchaa ${t}`
             ];
         } else {
+            // Shortened options for Rationale (10 options incorporating topic)
             rationales = [
-                `Mastery of ${topicVal} builds essential critical thinking and quantitative analysis skills required for academic progression and practical problem solving.`,
-                `Exploring ${topicVal} provides learners with targeted conceptual tools to investigate real-world applications and solve complex domain challenges.`,
-                `Investigating ${topicVal} fosters comprehensive academic literacy and deep subject-matter comprehension.`,
-                `Studying ${topicVal} cultivates structured reasoning habits and analytical evaluation capabilities.`,
-                `Evaluating ${topicVal} prepares students for advanced curriculum modules and professional domain tasks.`,
-                `Apprehending ${topicVal} bridges foundational theoretical concepts with practical real-world problem scenarios.`,
-                `Analyzing ${topicVal} enhances methodical inquiry, data interpretation, and collaborative problem solving.`,
-                `Inquiry into ${topicVal} develops precise technical vocabulary and clear communicative expression.`,
-                `Examining ${topicVal} equips learners with rigorous analytical frameworks necessary for specialized study.`,
-                `Understanding ${topicVal} strengthens conceptual foundations and sparks ongoing academic curiosity.`
+                `Builds critical thinking and quantitative analysis skills specifically for ${t}.`,
+                `Provides conceptual tools for real-world problem solving within ${t}.`,
+                `Fosters academic literacy and deep subject comprehension regarding ${t}.`,
+                `Cultivates structured reasoning and analytical evaluation centered on ${t}.`,
+                `Prepares students for advanced curriculum modules dealing with ${t}.`,
+                `Bridges foundational theory with practical scenarios in ${t}.`,
+                `Enhances inquiry, data interpretation, and collaboration specific to ${t}.`,
+                `Develops technical vocabulary and communication frameworks for ${t}.`,
+                `Equips learners with rigorous analytical frameworks to master ${t}.`,
+                `Strengthens conceptual foundations and academic curiosity about ${t}.`
             ];
+            // Shortened options for Learning Objectives (10 options incorporating topic)
             objectives = [
-                `Students will analyze key principles, compute domain-specific problem sets, and evaluate theoretical applications of ${topicVal} with accuracy.`,
-                `Students will demonstrate conceptual mastery of ${topicVal} through structured problem-solving and peer-led analytical discussions.`,
-                `Students will investigate core mechanisms of ${topicVal} and present empirical findings clearly.`,
-                `Students will apply theoretical models of ${topicVal} to solve simulated real-world case studies.`,
-                `Students will evaluate alternative problem-solving strategies related to ${topicVal} with critical discernment.`,
-                `Students will synthesize comprehensive summary reports detailing the fundamental principles of ${topicVal}.`,
-                `Students will measure key performance indicators associated with ${topicVal} practical exercises.`,
-                `Students will construct structured concept maps illustrating relationships within ${topicVal}.`,
-                `Students will debate differing theoretical perspectives concerning ${topicVal} applications.`,
-                `Students will successfully complete formative assessment tasks verifying thorough comprehension of ${topicVal}.`
+                `Analyze key principles of ${t} and compute domain-specific problems accurately.`,
+                `Demonstrate conceptual mastery of ${t} through structured problem-solving.`,
+                `Investigate core mechanisms of ${t} and present empirical findings.`,
+                `Apply theoretical models of ${t} to solve simulated case studies.`,
+                `Evaluate alternative problem-solving strategies related to ${t} with discernment.`,
+                `Synthesize summary reports on fundamental principles governing ${t}.`,
+                `Measure key performance indicators in practical exercises exploring ${t}.`,
+                `Construct structured concept maps illustrating relationships within ${t}.`,
+                `Debate differing theoretical perspectives on applications of ${t}.`,
+                `Complete formative assessment tasks verifying thorough comprehension of ${t}.`
             ];
+            // Shortened options for Pre-requisite Knowledge (10 options incorporating topic)
             prereqs = [
-                `Foundational unit terminology, preliminary conceptual frameworks, and baseline competencies from preceding curriculum modules.`,
-                `Familiarity with basic investigative questioning, source literacy, and collaborative group task protocols.`,
-                `Prior exposure to introductory problem sets and core definitions relevant to ${topicVal}.`,
-                `Recall of general academic study skills, information synthesis habits, and critical reading strategies.`,
-                `Basic understanding of prerequisite subject terminology and foundational topic classifications.`,
-                `Familiarity with standard classroom laboratory or discussion protocols and inquiry guidelines.`,
-                `Previous exposure to introductory problem frameworks connected to ${topicVal}.`,
-                `Comprehension of basic analytical logic and structured problem decomposition techniques.`,
-                `Recall of relevant historical or contextual background information supporting the curriculum module.`,
-                `Basic familiarity with peer instruction techniques and collaborative group task sharing.`
+                `Foundational unit terminology and baseline competencies required for ${t}.`,
+                `Familiarity with investigative questioning and group protocols pertinent to ${t}.`,
+                `Prior exposure to introductory problem sets concerning ${t}.`,
+                `Recall of general study skills and critical reading habits relevant to ${t}.`,
+                `Basic understanding of prerequisite terminology specific to ${t}.`,
+                `Familiarity with standard classroom protocols needed for studying ${t}.`,
+                `Previous exposure to introductory problem frameworks involving ${t}.`,
+                `Comprehension of basic analytical logic applied to ${t}.`,
+                `Recall of relevant historical or contextual background preceding ${t}.`,
+                `Basic familiarity with peer instruction techniques applied to ${t}.`
             ];
             aidsOptions = [
-                `Whiteboards, dry-erase markers, and structured textbook reading chapters.`,
-                `Multimedia projection systems, summary handout packets, and exercise pads.`,
-                `Collaborative chart-making materials, sticky notes, and assessment rubrics.`
+                `Whiteboards, dry-erase markers, and structured textbook reading chapters dedicated to ${t}.`,
+                `Multimedia projection systems, summary handout packets, and exercise pads for ${t}.`,
+                `Collaborative chart-making materials, sticky notes, and assessment rubrics targeting ${t}.`
             ];
         }
 
@@ -1161,7 +1205,7 @@
                                 <td><strong>${tObj.main}</strong></td>
                                 <td style="background:#fafafa;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${mMin} mins</textarea></td>
                                 <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainContent}</textarea></td>
-                                <td style="background:#fffdf0;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedLang === 'am' ? 'ንቁ ስልቶችን (' + stratText + ') ያመቻቻል እና ለ' + topicVal + ' ተስማሚ ድጋፍ ይሰጣል።' : (selectedLang === 'om' ? 'Tooftaalee (' + stratText + ') mijeessuun deggersa barbaachisaa kennuu.' : 'Facilitates active strategies (' + stratText + ') and provides technical scaffolding for ' + topicVal + '.')}</textarea></td>
+                                <td style="background:#fffdf0;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedLang === 'am' ? 'ንቁ ስልቶችን (' + stratText + ') ያመቻቻል እና ለ' + topicVal + ' ተስማሚ ድጋፍ ይሰጥዋል።' : (selectedLang === 'om' ? 'Tooftaalee (' + stratText + ') mijeessuun deggersa barbaachisaa ' + topicVal + ' f kennuu.' : 'Facilitates active strategies (' + stratText + ') and provides technical scaffolding for ' + topicVal + '.')}</textarea></td>
                                 <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainAction}</textarea></td>
                                 <td style="font-weight:bold; color:#b58100;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${stratText}</textarea></td>
                                 <td style="font-weight:bold; color:#0056b3;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${assessText}</textarea></td>
@@ -1180,7 +1224,7 @@
 
                     ${bottomLogoHtml}
                     <div class="footer-section"><label><strong>${tObj.teachingAids}</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${aidsText}</textarea></div>
-                    <div class="footer-section" style="margin-top:6px;"><label><strong>${tObj.reflection}</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedLang === 'am' ? 'የስልቱን ውጤታማነት (' + stratText + ') ከ' + topicVal + ' የመማር ዓላማዎች ጋር ማመዛዘን።' : (selectedLang === 'om' ? 'Bu’aqabeessummaa tooftichaa (' + stratText + ') kaayyoo barachuu wajjin madaaluu.' : 'Evaluated strategy efficiency (' + stratText + ') versus target cognitive outcomes for ' + topicVal + '.')}</textarea></div>
+                    <div class="footer-section" style="margin-top:6px;"><label><strong>${tObj.reflection}</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedLang === 'am' ? 'የስልቱን ውጤታማነት (' + stratText + ') ከ' + topicVal + ' የመማር ዓላማዎች ጋር ማመዛዘን።' : (selectedLang === 'om' ? 'Bu’aqabeessummaa tooftichaa (' + stratText + ') kaayyoo barachuu ' + topicVal + ' wajjin madaaluu.' : 'Evaluated strategy efficiency (' + stratText + ') versus target cognitive outcomes for ' + topicVal + '.')}</textarea></div>
                     
                     ${adminSigHtml}
                 </div>
