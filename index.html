@@ -11,27 +11,118 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 1200px; background: #fff; margin: auto; padding: 30px; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; }
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #0ea5e9;
+            --accent: #d97706; /* Golden / Amber accent */
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-gradient); margin: 0; padding: 25px; color: var(--text-color); min-height: 100vh; }
+        .container { max-width: 1200px; background: var(--card-bg); margin: auto; padding: 35px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.8); }
         .auth-screen, .app-screen, .payment-screen, .owner-screen { display: none; }
         .active-screen { display: block; }
-        .controls, .auth-box, .payment-box, .owner-box { background: #eef2f7; padding: 20px; border-radius: 6px; margin-bottom: 25px; display: flex; flex-direction: column; gap: 15px; }
+        
+        .controls, .auth-box, .payment-box, .owner-box { 
+            background: linear-gradient(145deg, #f8fafc, #f1f5f9); 
+            padding: 25px; 
+            border-radius: 12px; 
+            margin-bottom: 25px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 18px; 
+            border: 1px solid #e2e8f0;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+        }
         .controls-row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
-        input[type="text"], input[type="password"], input[type="date"], input[type="number"], select { flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; min-width: 140px; background: #fff; }
-        .day-config-card { background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 15px; margin-bottom: 15px; }
-        .day-config-card h3 { margin: 0 0 10px 0; font-size: 15px; color: #0056b3; border-bottom: 2px solid #eef2f7; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        input[type="text"], input[type="password"], input[type="date"], input[type="number"], select { 
+            flex: 1; padding: 12px 15px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 14px; min-width: 140px; background: #fff; 
+            transition: all 0.3s ease; 
+        }
+        input:focus, select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
+        
+        .day-config-card { 
+            background: #fff; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 12px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .day-config-card:hover { border-color: #cbd5e1; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08); }
+        .day-config-card h3 { margin: 0 0 12px 0; font-size: 16px; color: var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .day-config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .ai-select-group { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 4px; display: flex; flex-direction: column; gap: 5px; }
-        .ai-select-group label { font-size: 12px; font-weight: bold; color: #1e293b; display: flex; justify-content: space-between; align-items: center; }
-        .ai-select-group select { width: 100%; padding: 8px; font-size: 13px; background: #fff; }
-        .checkbox-scroll { max-height: 120px; overflow-y: auto; border: 1px solid #ddd; padding: 5px; border-radius: 4px; background: #fafafa; }
-        .checkbox-scroll label { display: block; font-size: 12px; margin-bottom: 4px; cursor: pointer; }
-        button { padding: 12px 25px; background-color: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; }
-        button:hover { background-color: #004085; }
-        .secondary-btn { background-color: #6c757d; width: auto; padding: 6px 12px; font-size: 12px; }
-        .secondary-btn:hover { background-color: #5a6268; }
-        .ai-assist-btn { background-color: #0284c7; color: white; border: none; padding: 3px 8px; font-size: 11px; border-radius: 3px; cursor: pointer; font-weight: normal; }
-        .ai-assist-btn:hover { background-color: #0369a1; }
+        
+        .ai-select-group { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 6px; }
+        .ai-select-group label { font-size: 12px; font-weight: 700; color: #334155; display: flex; justify-content: space-between; align-items: center; }
+        .ai-select-group select, .ai-select-group input { width: 100%; padding: 8px; font-size: 13px; background: #fff; }
+        
+        .checkbox-scroll { max-height: 130px; overflow-y: auto; border: 1px solid #cbd5e1; padding: 8px; border-radius: 6px; background: #fafafa; }
+        .checkbox-scroll label { display: block; font-size: 12px; margin-bottom: 6px; cursor: pointer; color: #475569; }
+        .checkbox-scroll label:hover { color: var(--primary); font-weight: 600; }
+        
+        /* SHINY & GLOSSY UI BUTTON ENHANCEMENTS */
+        button { 
+            padding: 12px 25px; 
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%); 
+            color: white; 
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 15px; 
+            font-weight: 700; 
+            width: 100%; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -2px 2px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+        button:hover::after {
+            left: 100%;
+        }
+        button:hover { 
+            background: linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #4f46e5 100%);
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -2px 2px rgba(0, 0, 0, 0.3);
+        }
+        button:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3); }
+        
+        .secondary-btn { 
+            background: linear-gradient(135deg, #94a3b8 0%, #64748b 50%, #475569 100%); 
+            width: auto; 
+            padding: 8px 14px; 
+            font-size: 12px; 
+            box-shadow: 0 3px 10px rgba(100, 116, 139, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        .secondary-btn:hover { background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 50%, #64748b 100%); }
+        
+        .ai-assist-btn { 
+            background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 50%, #0284c7 100%); 
+            color: white; 
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            padding: 4px 10px; 
+            font-size: 11px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            width: auto; 
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+        .ai-assist-btn:hover { background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 50%, #0ea5e9 100%); }
         
         /* Rendered Plan Page & Logo Positioning Styles */
         .day-plan-page { position: relative; overflow: hidden; margin-bottom: 40px; padding-bottom: 20px; page-break-after: always; break-after: page; width: 100%; box-sizing: border-box; }
@@ -42,20 +133,31 @@
         .plan-footer-logo { text-align: center; margin-top: 10px; }
         .plan-footer-logo img { width: 35px; height: 35px; object-fit: contain; }
 
-        .day-badge { background: #0056b3; color: white; padding: 4px 12px; font-weight: bold; display: inline-block; border-radius: 4px; margin-bottom: 8px; font-size: 14px; }
+        /* Glossy Badge Effect */
+        .day-badge { 
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #0ea5e9 100%); 
+            color: white; 
+            padding: 6px 16px; 
+            font-weight: 700; 
+            display: inline-block; 
+            border-radius: 6px; 
+            margin-bottom: 10px; 
+            font-size: 14px; 
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5); 
+        }
         .header-top { text-align: center; margin-bottom: 10px; }
         
         .metadata-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; font-size: 13px; width: 100%; box-sizing: border-box; }
         .metadata-grid > div { flex: 1 1 200px; min-width: 180px; display: flex; flex-direction: column; }
-        .metadata-grid label { font-weight: bold; margin-bottom: 2px; font-size: 12px; }
+        .metadata-grid label { font-weight: 700; margin-bottom: 2px; font-size: 12px; color: #475569; }
         
         .metadata-row { display: flex; align-items: flex-start; margin-bottom: 6px; font-size: 13px; width: 100%; flex-wrap: wrap; }
-        .metadata-row label { font-weight: bold; margin-right: 8px; white-space: nowrap; min-width: 170px; padding-top: 2px; }
+        .metadata-row label { font-weight: 700; margin-right: 8px; white-space: nowrap; min-width: 170px; padding-top: 2px; color: #475569; }
         .metadata-row textarea, .metadata-grid input, .metadata-grid select { flex: 1; border: none; border-bottom: 1px dotted #333; outline: none; font-family: inherit; font-size: 13px; padding: 2px 4px; background: transparent; resize: vertical; overflow: hidden; box-sizing: border-box; width: 100%; }
         
         table { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; font-size: 11px; }
-        th, td { border: 1px solid #333; padding: 5px; vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; }
-        th { background-color: #f2f2f2; text-align: center; font-size: 11px; }
+        th, td { border: 1px solid #333; padding: 6px; vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; }
+        th { background-color: #f1f5f9; text-align: center; font-size: 11px; font-weight: 700; color: #1e293b; }
         textarea { width: 100%; border: none; resize: vertical; font-family: inherit; font-size: inherit; background: transparent; outline: none; box-sizing: border-box; overflow: hidden; height: auto; word-wrap: break-word; overflow-wrap: break-word; }
         .footer-section { margin-top: 6px; font-size: 13px; }
         .footer-section textarea { border-bottom: 1px dotted #333; margin-top: 3px; height: 30px; }
@@ -64,22 +166,23 @@
         .admin-sig-block { margin-top: 12px; padding-top: 8px; border-top: 1px solid #333; font-size: 11px; display: flex; flex-direction: column; gap: 6px; page-break-inside: avoid; break-inside: avoid; }
         .admin-sig-row { display: flex; justify-content: space-between; gap: 10px; }
         .admin-sig-item { flex: 1; display: flex; gap: 5px; align-items: baseline; border-bottom: 1px dotted #666; padding-bottom: 2px; }
-        .admin-sig-item span { font-weight: bold; white-space: nowrap; }
+        .admin-sig-item span { font-weight: 700; white-space: nowrap; }
         .admin-sig-item input { border: none; border-bottom: 1px solid #333; font-size: 11px; padding: 0 3px; background: transparent; outline: none; }
 
-        .export-panel { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .export-panel { display: flex; gap: 12px; margin-top: 25px; flex-wrap: wrap; }
         .export-panel button { flex: 1; min-width: 150px; }
-        .btn-print { background-color: #28a745; }
-        .btn-print:hover { background-color: #218838; }
-        .btn-doc { background-color: #17a2b8; }
-        .btn-doc:hover { background-color: #138496; }
-        .btn-txt { background-color: #6c757d; }
-        .btn-txt:hover { background-color: #5a6268; }
+        .btn-print { background: linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%) !important; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important; }
+        .btn-print:hover { background: linear-gradient(135deg, #6ee7b7 0%, #34d399 50%, #10b981 100%) !important; }
+        .btn-doc { background: linear-gradient(135deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%) !important; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important; }
+        .btn-doc:hover { background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 50%, #0284c7 100%) !important; }
+        .btn-txt { background: linear-gradient(135deg, #94a3b8 0%, #64748b 50%, #475569 100%) !important; box-shadow: 0 4px 15px rgba(100, 116, 139, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important; }
+        .btn-txt:hover { background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 50%, #64748b 100%) !important; }
+
         @media print { 
             body { background: #fff; padding: 0; color: #000; font-family: 'Times New Roman', Times, serif !important; } 
             .container, .day-plan-page, input, textarea, th, td, label { font-family: 'Times New Roman', Times, serif !important; }
             .controls, .export-panel, .secondary-btn, .ai-assist-btn { display: none !important; } 
-            .container { box-shadow: none; padding: 0; max-width: 100%; width: 100%; } 
+            .container { box-shadow: none; padding: 0; max-width: 100%; width: 100%; border: none; } 
             .day-plan-page { page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid; margin-bottom: 0; padding-bottom: 10px; width: 100%; }
             textarea, input { border: none !important; background: transparent !important; resize: none !important; height: auto !important; overflow: visible !important; white-space: pre-wrap !important; word-wrap: break-word !important; font-size: 11px !important; padding: 0 !important; color: #000 !important; }
             table { page-break-inside: auto; width: 100% !important; table-layout: fixed !important; }
@@ -95,8 +198,8 @@
     <!-- Authentication Screen -->
     <div id="authScreen" class="auth-screen active-screen">
         <div class="auth-box">
-            <h2 style="text-align:center; color:#0056b3; margin-top:0;">Daily Lesson Plan Generator Portal</h2>
-            <div id="authError" style="color: red; font-size: 13px; text-align: center; display:none;"></div>
+            <h2 style="text-align:center; color:var(--primary); margin-top:0; font-weight: 800;">Daily Lesson Plan Generator Portal</h2>
+            <div id="authError" style="color: var(--accent); font-size: 13px; text-align: center; display:none; font-weight: 600;"></div>
             <div class="controls-row">
                 <input type="text" id="authUsername" placeholder="Enter Your Unique Username">
             </div>
@@ -104,11 +207,11 @@
                 <input type="password" id="authPassword" placeholder="Enter Your Password">
             </div>
             <div class="controls-row" style="gap: 10px;">
-                <button onclick="handleLogin()">Login</button>
-                <button onclick="handleSignup()" style="background-color: #17a2b8;">Register Account</button>
+                <button onclick="handleLogin()">Login to Workspace</button>
+                <button onclick="handleSignup()" style="background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 50%, #0284c7 100%);">Register New Account</button>
             </div>
             <div style="text-align: center; margin-top: 5px;">
-                <a href="#" onclick="openOwnerLogin(); return false;" style="font-size: 13px; color: #0056b3;">🔑 Owner Admin Portal</a>
+                <a href="#" onclick="openOwnerLogin(); return false;" style="font-size: 13px; color: var(--primary); font-weight: 600; text-decoration: none;">Owner Admin Portal</a>
             </div>
         </div>
     </div>
@@ -116,8 +219,8 @@
     <!-- Owner Admin Dashboard Screen -->
     <div id="ownerScreen" class="owner-screen">
         <div class="owner-box">
-            <h2 style="text-align:center; color:#0056b3; margin-top:0;">Owner Access Control Panel</h2>
-            <p style="font-size: 13px; color:#555; text-align:center;">Approve custom teacher accounts and assign generation quotas after confirming Telebirr or CBE payment.</p>
+            <h2 style="text-align:center; color:var(--primary); margin-top:0;">Owner Access Control Panel</h2>
+            <p style="font-size: 13px; color:#475569; text-align:center;">Approve custom teacher accounts, track registration times, and manage user generation quotas.</p>
             
             <div class="controls-row">
                 <input type="text" id="ownerTargetUser" placeholder="Enter Registered Teacher Username">
@@ -130,25 +233,26 @@
                     <option value="50">50 Uses</option>
                     <option value="unlimited">Unlimited Uses</option>
                 </select>
-                <button onclick="grantUserAccess()" style="background-color: #28a745; width: auto;">Approve & Set Quota</button>
+                <button onclick="grantUserAccess()" style="background: linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%); width: auto;">Approve & Set Quota</button>
             </div>
             <div class="controls-row">
-                <button onclick="revokeUserAccess()" style="background-color: #dc3545; width: auto;">Revoke Access</button>
+                <button onclick="revokeUserAccess()" style="background: linear-gradient(135deg, #f87171 0%, #ef4444 50%, #dc2626 100%); width: auto;">Revoke Access</button>
                 <button class="secondary-btn" onclick="backToAuth()" style="width:100%;">Back to Login</button>
             </div>
-            <div id="ownerMessage" style="font-size: 13px; color: green; text-align: center; font-weight: bold;"></div>
+            <div id="ownerMessage" style="font-size: 13px; color: #10b981; text-align: center; font-weight: bold;"></div>
 
             <!-- Registered Users Directory Table -->
-            <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #cbd5e1; margin-top: 15px;">
-                <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #0056b3;">Registered Users Directory</h3>
-                <div style="max-height: 250px; overflow-y: auto;">
+            <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; margin-top: 15px;">
+                <h3 style="margin: 0 0 10px 0; font-size: 14px; color: var(--primary);">Registered Users Directory & Timestamps</h3>
+                <div style="max-height: 280px; overflow-y: auto;">
                     <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
                         <thead>
                             <tr style="background: #f1f5f9;">
-                                <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: left;">Username</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">Status</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">Quota</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">Action</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: left;">Username</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: left;">Registration Time</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">Status</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">Quota</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="ownerUserTableBody">
@@ -156,7 +260,7 @@
                         </tbody>
                     </table>
                 </div>
-                <button class="secondary-btn" onclick="loadRegisteredUsers()" style="margin-top: 10px; width: 100%;">🔄 Refresh User List</button>
+                <button class="secondary-btn" onclick="loadRegisteredUsers()" style="margin-top: 12px; width: 100%;">🔄 Refresh User List</button>
             </div>
         </div>
     </div>
@@ -164,14 +268,14 @@
     <!-- Payment Gate Screen -->
     <div id="paymentScreen" class="payment-screen">
         <div class="payment-box">
-            <h2 style="text-align:center; color:#0056b3; margin-top:0;">Payment Verification Required</h2>
-            <p style="text-align:center; font-size: 14px; color:#555;" id="paymentMessageText">Your account is registered, but payment has not been confirmed by the administrator yet.</p>
+            <h2 style="text-align:center; color:var(--primary); margin-top:0;">Payment Verification Required</h2>
+            <p style="text-align:center; font-size: 14px; color:#475569;" id="paymentMessageText">Your account is registered, but payment has not been confirmed by the administrator yet.</p>
             
-            <div style="background:#fff; padding:15px; border-radius:6px; border:1px solid #cbd5e1; margin-bottom: 10px; font-size:13px; line-height: 1.6;">
-                <h4 style="margin:0 0 8px 0; color:#0056b3;">Transfer Subscription Fee via:</h4>
-                <p style="margin:0;">📱 <b>Telebirr:</b> 0986951257 (Birhanu Mekonen)</p>
-                <p style="margin:5px 0 0 0;">🏦 <b>CBE Account:</b> 1000221254717 (Birhanu Mekonen)</p>
-                <p style="margin:10px 0 0 0; color:#b45309;"><b>Next Step:</b> Send your registered username via SMS/Telegram to the owner to unlock your account quota.</p>
+            <div style="background:#fff; padding:18px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom: 10px; font-size:13px; line-height: 1.6;">
+                <h4 style="margin:0 0 8px 0; color:var(--primary);">Transfer Subscription Fee via:</h4>
+                <p style="margin:0;"><b>Telebirr:</b> 0986951257 (Birhanu Mekonen)</p>
+                <p style="margin:5px 0 0 0;"><b>CBE Account:</b> 1000221254717 (Birhanu Mekonen)</p>
+                <p style="margin:10px 0 0 0; color:var(--accent); font-weight: 600;"><b>Next Step:</b> Send your registered username via SMS/Telegram to the owner to unlock your account quota.</p>
             </div>
 
             <div class="controls-row" style="gap: 10px;">
@@ -182,9 +286,9 @@
 
     <!-- Main Generator Screen -->
     <div id="appScreen" class="app-screen">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eef2f7; padding-bottom: 10px; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 20px;">
             <div>
-                <h2 style="margin:0; color:#0056b3; font-size: 18px;">Lesson Plan Generator Workspace (Max 5 Days)</h2>
+                <h2 style="margin:0; color:var(--primary); font-size: 20px; font-weight: 800;">Lesson Plan Generator Workspace</h2>
             </div>
             <button class="secondary-btn" onclick="handleLogout()">Log Out</button>
         </div>
@@ -198,7 +302,7 @@
 
             <div class="controls-row">
                 <div style="flex: 1;">
-                    <label style="font-size:12px; font-weight:bold; display:block;">School Name:</label>
+                    <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:4px;">School Name:</label>
                     <select id="schoolNameSelect">
                         <option value="Adika Youth Academy" selected>Adika Youth Academy</option>
                         <option value="Adika Primary & Secondary School">Adika Primary & Secondary School</option>
@@ -207,7 +311,7 @@
                     </select>
                 </div>
                 <div style="flex: 1;">
-                    <label style="font-size:12px; font-weight:bold; display:block;">Language / ቋንቋ / Afaan:</label>
+                    <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:4px;">Language / ቋንቋ / Afaan:</label>
                     <select id="languageSelect" onchange="initDayConfigs()">
                         <option value="en" selected>English (Default)</option>
                         <option value="am">አማርኛ (Amharic)</option>
@@ -215,30 +319,30 @@
                     </select>
                 </div>
                 <div>
-                    <label style="font-size:12px; font-weight:bold; display:block;">Start Date:</label>
+                    <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:4px;">Start Date:</label>
                     <input type="date" id="startDateInput" value="2026-09-14">
                 </div>
                 <div>
-                    <label style="font-size:12px; font-weight:bold; display:block;">End Date:</label>
+                    <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:4px;">End Date:</label>
                     <input type="date" id="endDateInput" value="2026-09-18">
                 </div>
             </div>
 
             <!-- Logo Configuration Controls with Default Preset -->
-            <div class="controls-row" style="background: #f8fafc; padding: 12px; border-radius: 4px; border: 1px solid #cbd5e1;">
+            <div class="controls-row" style="background: #ffffff; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1;">
                 <div style="flex: 2;">
-                    <label style="font-size:12px; font-weight:bold; display:block;">Logo Image URL / Base64 (Pre-loaded with Default):</label>
+                    <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:4px;">Logo Image URL / Base64:</label>
                     <input type="text" id="logoUrlInput" value="1789151578983.jpg" placeholder="Paste custom link or select preset below">
                 </div>
                 <div style="flex: 1;">
-                    <label style="font-size:12px; font-weight:bold; display:block;">Quick Logo Preset:</label>
+                    <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:4px;">Quick Logo Preset:</label>
                     <select id="logoPresetSelect" onchange="applyLogoPreset(this.value)">
                         <option value="default" selected>Adika Youth Academy (Default)</option>
                         <option value="custom">Custom URL / Clear</option>
                     </select>
                 </div>
                 <div style="flex: 1;">
-                    <label style="font-size:12px; font-weight:bold; display:block;">Logo Placement:</label>
+                    <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:4px;">Logo Placement:</label>
                     <select id="logoPositionSelect">
                         <option value="watermark" selected>Watermark Background</option>
                         <option value="top">Top Header</option>
@@ -247,25 +351,25 @@
                     </select>
                 </div>
                 <div style="flex: 1;">
-                    <label style="font-size:12px; font-weight:bold; display:block;">Watermark Opacity:</label>
+                    <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:4px;">Watermark Opacity:</label>
                     <input type="number" id="watermarkOpacityInput" value="0.08" min="0.05" max="0.4" step="0.05">
                 </div>
                 <div style="flex: 2; display: flex; align-items: flex-end;">
-                    <button type="button" id="addDayBtn" class="secondary-btn" onclick="addDayConfig()" style="height: 41px; width:100%;">+ Add Day Slot (Max 5)</button>
+                    <button type="button" id="addDayBtn" class="secondary-btn" onclick="addDayConfig()" style="height: 45px; width:100%; background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 50%, #0284c7 100%); color:#fff; font-weight:700;">+ Add Slot</button>
                 </div>
             </div>
 
             <div id="dayConfigsContainer"></div>
 
-            <button onclick="generateLessonPlans()">Generate & Render Plans</button>
+            <button onclick="generateLessonPlans()" style="padding: 15px; font-size: 16px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #0ea5e9 100%); box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);">Generate & Render Comprehensive Lesson Plans</button>
         </div>
 
         <div id="plansContainer"></div>
         
         <div class="export-panel" id="exportPanel" style="display:none;">
             <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
-            <button class="btn-doc" onclick="exportFile('doc')">Download as Word (.doc)</button>
-            <button class="btn-txt" onclick="exportFile('txt')">Download as Text (.txt)</button>
+            <button class="btn-doc" onclick="exportFile('doc')">Download Word (.doc)</button>
+            <button class="btn-txt" onclick="exportFile('txt')">Download Text (.txt)</button>
         </div>
     </div>
 </div>
@@ -289,7 +393,7 @@
     let activeUsername = "";
     const DEFAULT_LOGO_URL = "1789151578983.jpg";
 
-    // Multi-Language Dictionary Translations with Comprehensive Options
+    // Multi-Language Dictionary Translations with Recreated 20 Options for Learning Objectives using Daily Lesson Plan Action Verbs
     const langDict = {
         en: {
             frameworkTitle: "Daily Lesson Framework",
@@ -303,7 +407,7 @@
             topic: "Topic of the lesson:",
             subtopic: "Subtopic of the lesson:",
             rationale: "Rationale of the lesson:",
-            objectives: "Learning Objectives:",
+            objectives: "Learning objective",
             prereq: "Pre-requisite Knowledge:",
             stage: "Stage",
             time: "Time",
@@ -336,6 +440,72 @@
                 "Computers and laptops", "Interactive flat panels and smartboards", "Educational videos and animations",
                 "Audio recordings and podcasts", "Real objects (realia)", "Physical 3D models",
                 "Educational quiz and gamification software", "Bulletin boards"
+            ],
+            rationales: [
+                "Builds critical thinking and quantitative analysis skills specifically for mastering the core concepts.",
+                "Provides conceptual tools and analytical methods essential for real-world problem solving.",
+                "Fosters academic literacy, logical reasoning, and deep subject matter comprehension.",
+                "Cultivates structured cognitive evaluation and evidence-based deductions.",
+                "Prepares students for advanced curriculum modules and complex multidisciplinary applications.",
+                "Bridges foundational theoretical principles with practical laboratory and everyday scenarios.",
+                "Enhances investigative inquiry, data interpretation, and collaborative discourse.",
+                "Develops rigorous technical vocabulary and structured communication frameworks.",
+                "Equips learners with robust problem-solving methodologies to tackle quantitative challenges.",
+                "Strengthens conceptual foundations, mathematical fluency, and intellectual curiosity.",
+                "Encourages active engagement through guided inquiry and cooperative peer exploration.",
+                "Connects abstract theoretical formulations directly to empirical observations.",
+                "Promotes disciplined scientific inquiry and systematic deduction procedures.",
+                "Improves cognitive retention through structured scaffolding and iterative practice.",
+                "Stimulates creative synthesis and higher-order analytical reasoning.",
+                "Establishes core competencies required for subsequent problem sets and lab modules.",
+                "Deepens comprehension of underlying structural mechanisms and causal relationships.",
+                "Facilitates interdisciplinary connections between theoretical models and practical applications.",
+                "Nurtures confidence in executing independent calculations and problem-solving steps.",
+                "Provides immediate formative feedback to correct misconceptions and reinforce learning."
+            ],
+            objectiveOptions: [
+                "Students will be able to analyze core thematic principles and compute related quantitative calculations with high accuracy.",
+                "Students will be able to define key terminology and identify fundamental components of the lesson topic.",
+                "Students will be able to demonstrate practical mechanisms and present empirical findings clearly to peers.",
+                "Students will be able to apply theoretical models to solve structured real-world case studies and problem sets.",
+                "Students will be able to evaluate alternative problem-solving strategies and select optimal methodological pathways.",
+                "Students will be able to synthesize concise summary reports outlining governing rules, laws, and structural properties.",
+                "Students will be able to measure critical performance indicators and variables during practical guided exercises.",
+                "Students will be able to construct structured concept maps illustrating hierarchical relationships within the unit track.",
+                "Students will be able to compare and contrast differing theoretical perspectives regarding practical applications.",
+                "Students will be able to execute collaborative team tasks to formulate valid hypotheses and verify experimental outcomes.",
+                "Students will be able to interpret graphical data representations and derive meaningful quantitative conclusions.",
+                "Students will be able to formulate step-by-step mathematical proofs and logical derivations for complex equations.",
+                "Students will be able to design basic experimental procedures to test theoretical assumptions safely and effectively.",
+                "Students will be able to communicate scientific and mathematical arguments clearly using appropriate technical terminology.",
+                "Students will be able to classify biological or physical systems based on structural characteristics and functional properties.",
+                "Students will be able to identify potential sources of computational error in calculations and experimental measurements.",
+                "Students will be able to defend proposed solutions during structured peer review and classroom discussions.",
+                "Students will be able to complete formative assessment tasks verifying thorough individual comprehension.",
+                "Students will be able to outline historical milestones and conceptual evolution leading to modern scientific theories.",
+                "Students will be able to integrate multi-variable data sets to solve comprehensive multi-step word problems."
+            ],
+            prereqs: [
+                "Foundational unit terminology and baseline arithmetic competencies.",
+                "Familiarity with investigative questioning and collaborative group protocols.",
+                "Prior exposure to introductory problem sets and basic formula manipulation.",
+                "Recall of general study skills and critical reading habits from preceding units.",
+                "Basic understanding of prerequisite vocabulary and conceptual definitions.",
+                "Familiarity with standard classroom laboratory safety and measurement rules.",
+                "Previous exposure to introductory graphical representation and coordinate axes.",
+                "Comprehension of basic analytical logic and proportional reasoning.",
+                "Recall of relevant historical context or foundational background principles.",
+                "Basic familiarity with peer instruction techniques and active listening.",
+                "Competency in rounding decimals, fractions, and handling unit conversions.",
+                "Understanding of basic algebraic equations and variable substitution.",
+                "Previous practice in recording qualitative and quantitative observations.",
+                "Familiarity with using standard geometrical drawing tools and rulers.",
+                "Basic awareness of scientific notation and exponent calculation rules.",
+                "Comprehension of cause-and-effect relationships from elementary science modules.",
+                "Prior participation in structured brainstorming and Think-Pair-Share sessions.",
+                "Ability to organize notes chronologically using structured outlines.",
+                "Recall of fundamental geometric properties, angles, and area calculations.",
+                "Basic literacy in interpreting data tables, charts, and summary tallies."
             ]
         },
         am: {
@@ -350,7 +520,7 @@
             topic: "የትምህርቱ ዋና ርዕስ:",
             subtopic: "የትምህርቱ ንዑስ ርዕስ:",
             rationale: "የትምህርቱ አስፈላጊነት ምክንያት:",
-            objectives: "የመማር ዓላማዎች:",
+            objectives: "የመማር ዓላማ",
             prereq: "ቅድመ-ዝግጅት እውቀት:",
             stage: "ደረጃ",
             time: "ጊዜ",
@@ -383,6 +553,72 @@
                 "የጂኦግራፊ ካርታዎች", "ግሎብ", "ፕሮጀክተሮች", "ኮምፒውተሮች እና ላፕቶፖች",
                 "ስማርት ቦርዶች", "ትምህርታዊ ቪዲዮዎች", "የድምፅ ቅጂዎች", "ትክክለኛ እቃዎች (Realia)",
                 "አካላዊ 3ዲ ሞዴሎች", "የትምህርት ፈተና ሶፍትዌር", "የማስታወቂያ ሰሌዳዎች"
+            ],
+            rationales: [
+                "ለዘመናዊ የምህንድስና ንድፎች እና ለሳይንሳዊ ምርምሮች ወሳኝ መሠረት ይጥላል።",
+                "ተማሪዎች ርዕሱን ከሂሳብ እና ከፊዚክስ ቀመሮች ጋር እንዲያሰሉ ያስችለዋል።",
+                "ተማሪዎች ምክንያታዊ የማሰብ እና የመተንተን ችሎታቸውን እንዲያዳብሩ ይረዳል።",
+                "ተማሪዎች የሳይንስ መርሆዎችን ከዕለት ተዕለት ሕይወት አውድ ጋር እንዲያስተሳስሩ ይረዳል።",
+                "ለቀጣይ የላቁ የትምህርት ክፍሎች አስተማማኝ መሰረት ይሆናል።",
+                "ተማሪዎች በቡድን በመሆን የጋራ መፍትሄዎችን እንዲያገኙ ይረዳል።",
+                "የተማሪዎችን የፈጠራ ችሎታ እና የክህሎት ደረጃ ያሳድጋል።",
+                "በሳይንሳዊ እና ሂሳባዊ እውነታዎች ላይ ያላቸውን እምነት ያጠናክራል።",
+                "ንድፈ-ሐሳባዊ እውቀትን ከተግባራዊ ሙከራዎች ጋር ያገናኛል።",
+                "ተማሪዎች የትንተና ክህሎት እንዲገነቡ ያስችላል።",
+                "የሂሳብ ስሌት ክህሎትን እና ፍጥነትን ያዳብራል።",
+                "የችግር አፈታት ቴክኒኮችን ያስተዋውቃል።",
+                "በጥልቀት የማሰብ ችሎታን ይገነባል።",
+                "የመረጃ ትንተና እና ትርጉም ችሎታን ያሻሽላል።",
+                "የቡድን ሥራ እና የሐሳብ ልውውጥን ያበረታታል።",
+                "ግልጽ የሆነ ሳይንሳዊ ቋንቋ አጠቃቀምን ያስተምራል።",
+                "የመማር ሂደቱን በይበልጥ አሳታፊ ያደርገዋል።",
+                "የቀደምት እውቀቶችን ከሐዲዱ ጋር ያስተሳስራል።",
+                "በራስ መተማመንን ይፈጥራል።",
+                "አስተማማኝ የመገምገሚያ ግብረ-መልስ ይሰጣል።"
+            ],
+            objectiveOptions: [
+                "ተማሪዎች ዋና ዋና የርዕሱን መርሆዎች መተንተን እና ተዛማጅ ስሌቶችን በከፍተኛ ትክክለኛነት መስራት ይችላሉ።",
+                "ተማሪዎች ቁልፍ ቃላትን መግለፅ እና የትምህርቱን ርዕስ መሰረታዊ አካላት መለየት ይችላሉ።",
+                "ተማሪዎች ተግባራዊ ስልቶችን ማሳየት እና የተግባር ውጤቶችን ለጓደኞቻቸው በግልጽ ማቅረብ ይችላሉ።",
+                "ተማሪዎች ንድፈ-ሐሳባዊ ሞዴሎችን በመጠቀም በእውነተኛ ህይወት ላይ የተመሰረቱ የኬዝ ጥናቶችን መፍታት ይችላሉ።",
+                "ተማሪዎች አማራጭ የችግር አፈታት ስልቶችን መገምገም እና ምርጡን ዘዴ መምረጥ ይችላሉ።",
+                "ተማሪዎች የሚመሩትን ህጎች፣ መርሆዎች እና መዋቅራዊ ንብረቶች አጭር ማጠቃለያ ሪፖርቶችን ማዘጋጀት ይችላሉ።",
+                "ተማሪዎች በተግባራዊ የተመሩ መልመጃዎች ወቅት ቁልፍ የአፈጻጸም መለኪያዎችን እና ተለዋዋጮችን መለካት ይችላሉ።",
+                "ተማሪዎች በምዕራፉ ውስጥ ያሉትን ተዋረድ ግንኙነቶች የሚያሳይ የተዋቀረ የሐሳብ ካርታ መገንባት ይችላሉ።",
+                "ተማሪዎች ከተግባራዊ አተገባበር አንፃር የተለያዩ የንድፈ-ሐሳብ አመለካከቶችን ማወዳደር ይችላሉ።",
+                "ተማሪዎች ትክክለኛ መላምቶችን ለመቅረጽ እና የሙከራ ውጤቶችን ለማረጋገጥ የትብብር ቡድን ተግባራትን ማከናወን ይችላሉ።",
+                "ተማሪዎች የግራፍ መረጃ ውክልናዎችን ተርጉመው ትርጉም ያለው መጠናዊ መደምደሚያዎችን ማግኘት ይችላሉ።",
+                "ተማሪዎች ለተወሳሰቡ እኩልታዎች የደረጃ በደረጃ የሂሳብ ማረጋገጫዎችን እና አመክንዮአዊ መነሻዎችን መቅረጽ ይችላሉ።",
+                "ተማሪዎች የንድፈ-ሐሳብ ግምቶችን ደህንነቱ በተጠበቀ ሁኔታ ለመፈተሽ መሰረታዊ የሙከራ ሂደቶችን መንደፍ ይችላሉ።",
+                "ተማሪዎች ተስማሚ ቴክኒካዊ ቃላትን በመጠቀም ሳይንሳዊ እና ሂሳባዊ ክርክሮችን በግልጽ መገናኘት ይችላሉ።",
+                "ተማሪዎች ባዮሎጂያዊ ወይም ፊዚካዊ ስርዓቶችን በመዋቅር ባህሪያት እና በተግባራዊ ንብረቶች መመደብ ይችላሉ።",
+                "ተማሪዎች በስሌቶች እና በሙከራ መለኪያዎች ውስጥ ሊኖሩ የሚችሉ የስሌት ስህተቶችን ምንጮች መለየት ይችላሉ።",
+                "ተማሪዎች በተዋቀረ የእኩዮች ግምገማ እና የክፍል ውይይቶች ወቅት የቀረቡ መፍትሄዎችን መከላከል ይችላሉ።",
+                "ተማሪዎች የግለሰቡን ጥልቅ ግንዛቤ የሚያረጋግጡ የምስረታ ግምገማ ተግባራትን ማጠናቀቅ ይችላሉ።",
+                "ተማሪዎች ወደ ዘመናዊ ሳይንሳዊ ንድፈ-ሐሳቦች የሚያመሩ ታሪካዊ ምዕራፎችን እና የፅንሰ-ሀሳብ እድገትን መዘርዘር ይችላሉ።",
+                "ተማሪዎች አጠቃላይ ባለብዙ ደረጃ የቃል ጥያቄዎችን ለመፍታት ባለብዙ ተለዋዋጭ መረጃ ስብስቦችን ማቀናጀት ይችላሉ።"
+            ],
+            prereqs: [
+                "የሚመለከታቸው መሠረታዊ ቃላት እና ፅንሰ-ሐሳቦች ግንዛቤ።",
+                "ቀደምት የሂሳብ ወይም የሳይንስ መርሆዎችን ማወቅ።",
+                "የመሠረታዊ ቀመሮች እና አሰራሮች እውቀት።",
+                "ከዚህ ቀደም የተማሩትን የንባብ ክህሎቶች ማስታወስ።",
+                "መሠረታዊ የደህንነት እና የጥናት ደንቦች።",
+                "የመረጃ ሰንጠረዦችን የመረዳት ቅድመ ልምድ።",
+                "አንጻራዊ አስተሳሰብ እና ምክንያታዊነት።",
+                "መሠረታዊ የጂኦግራፊ ወይም ፊዚክስ አውድ።",
+                "የቡድን ውይይት እና የሐሳብ ማፍለቅ ልምድ።",
+                "አጭር ማስታወሻዎችን የመያዝ ችሎታ።",
+                "አሥርዮሾችን እና ስብራቶችን የማስተካከል ክህሎት።",
+                "የአልጀብራ ቀመሮችን የመጠቀም ቅድመ ልምድ።",
+                "ምልከታዎችን የመቅዳት ልምድ።",
+                "የመሳሪያዎች አጠቃቀም እውቀት።",
+                "ሳይንሳዊ አጻጻፍ መሰረታዊ ሕግጋት።",
+                "ምክንያትና ውጤትን የመለየት ችሎታ።",
+                "የአስብ-ተማከር-አጋራ ልምድ።",
+                "መሠረታዊ የጂኦሜትሪ ቅርጾች እውቀት።",
+                "ግራፎችን የማንበብ ቅድመ ዝግጅት።",
+                "መሠረታዊ መለኪያዎችን የመለየት ችሎታ።"
             ]
         },
         om: {
@@ -397,7 +633,7 @@
             topic: "Madii Barnooticha:",
             subtopic: "Mataduree Xiqqaa:",
             rationale: "Kaayyoo ykn Sababa Barnootichaa:",
-            objectives: "Galmoota Barachuu:",
+            objectives: "Kaayyoo barachuu",
             prereq: "Beekumsa Duraan Qabamuu Qabu:",
             stage: "Sadarkaa",
             time: "Yeroo",
@@ -427,11 +663,77 @@
             ],
             teachingAidsList: [
                 "Gabatee gurraacha fi adii", "Shokii fi maarkarii", "Macaafota barnootaa", 
-                "Macaafota hojii", "Qabatamaa", "Qalama fi pنسილი", "Waraqota qoodaman", 
+                "Macaafota hojii", "Qabatamaa", "Qalama fi pensilii", "Waraqota qoodaman", 
                 "Kaardiiwwan ifaa", "Chaartiiwwan fi poostara", "Kaartaa lafaa", "Gloobii", 
                 "Pirojekterii", "Kompiitara fi laaptooppii", "Gabatee smarti", "Viidiyoo barnootaa", 
                 "Sagalee waraabame", "Meeshaalee dhugaa", "Mootelii 3D", "Sofuweerii qormaataa", 
                 "Gabatee beeksisaa"
+            ],
+            rationales: [
+                "Bu'uura ijaarsa teeknolojii ammayyaa fi qorannoo saayinsii tiif ni kenna.",
+                "Adeemsa uumamaa qajeeltoowwan herregaa fi fizikii wajjin akka shallagan gargaara.",
+                "Dandeettii xiinxalaafi yaada bu'uuraa barattootaa ni gabbisa.",
+                "Yaada saayinsii jireenya keessatti hojiirra oolchuuf gargaara.",
+                "Bu'uura barnootaa fuulduraaf barbaachisu ni cimsa.",
+                "Hojii garee fi wal-gargaarsaa ni jajjabeessa.",
+                "Dandeettii yaada uumummaa barattootaa ni guddisa.",
+                "Madaallii fi qormaata saayinsii fi herregaa irratti amantaa ni uuma.",
+                "Yaad-rimee qorannoo qabatamaadhaan walitti ni hidha.",
+                "Dandeettii quunnamtii fi barreeffama saayinsii ni gabbisa.",
+                "Dandeettii shallaggii fi saffisa hojii ni dabala.",
+                "Tooftaalee hiika rakkoo ni barsiisa.",
+                "Dandeettii yaaduu gadi fagoof qopheessa.",
+                "Xiinxala odeeffannoo fi hiika isaa ni fooyyessa.",
+                "Mariif dandeettii gaarii ni kenna.",
+                "Afaan saayinsii sirrii ta'e fayyadamuu barsiisa.",
+                "Adeemsa barachuu dammaqina qabu uuma.",
+                "Beekumsa duraanii qabu wajjin walitti ni hidha.",
+                "Of-itti amanamummaa ni uuma.",
+                "Yaada deebii sirrii ta'e kennuun hubannoo cimsab."
+            ],
+            objectiveOptions: [
+                "Barattoonni bu'uura qajeeltoowwan mataduree xiinxaluun shallaggii shallaggii herregaa sirrii ta'een hojjechuu ni danda'u.",
+                "Barattoonni jechoota furtuu hiikuun qaamolee bu'uuraa mataduree barnootichaa adda baasuu ni danda'u.",
+                "Barattoonni tooftaalee qabatamaa agarsiisuun bu'aa argannoo qorannoo hiriyootaaf ifatti dhiheessuu ni danda'u.",
+                "Barattoonni mootelii yaad-rimee fayyadamuun qorannoo dhimmaa haala qabatamaa irratti hundaa'an hiikuu ni danda'u.",
+                "Barattoonni tooftaalee hiika rakkoo filachuun karaa sirrii ta'etti fayyadamuu ni danda'u.",
+                "Barattoonni gabaasa cuunfaa gabaabaa seera bulmaa'aa, seeraa fi amaloota caasaa qopheessuu ni danda'u.",
+                "Barattoonni shaakala qabatamaa keessatti safartuu raawwii fi jijjiiramaa safaranii adda baasuu ni danda'u.",
+                "Barattoonni kaartaa yaadaa caaseffame qopheessuun walitti dhufeenya sadarkaa boqonnichaa agarsiisuu ni danda'u.",
+                "Barattoonni ilaalcha yaad-rimee garaagaraa hojiirra oolchuuf walbira qabuun xiinxaluu ni danda'u.",
+                "Barattoonni yaada walii mirkaneessuuf hojiirra oolmaa garee gaggeessuun bu'aa qorannoo mirkaneessuu ni danda'u.",
+                "Barattoonni odeeffannoo giraafii hiikuun bu'aa shallaggii hiika qabu irraa argachuu ni danda'u.",
+                "Barattoonni qajeelfama herregaa walxaxaa ta'eef ragaa herregaa tarkaanfiidhaan qopheessuu ni danda'u.",
+                "Barattoonni yaada bu'uuraa qorannoo nageenyaan qorachuuf tooftaalee qorannoo bu'uuraa qopheessuu ni danda'u.",
+                "Barattoonni jechoota teeknikaa sirrii ta'an fayyadamuun falmii saayinsii fi herregaa ifatti wal qunnamsiisuu ni danda'u.",
+                "Barattoonni sirna baayoloojii ykn fizikii amaloota caasaa fi qabeenya hojiirratti hundaa'uun ramaduu ni danda'u.",
+                "Barattoonni shallaggii fi safartuu qorannoo keessatti madda dogoggora shallaggii ta'uu danda'an adda baasuu ni danda'u.",
+                "Barattoonni madaallii hiriyootaa fi marii kutaa keessatti furmaata dhihaate deeggaruu ni danda'u.",
+                "Barattoonni hubannoo dhuunfaa mirkaneessuuf gocha madaallii qopheessuu xumuruu ni danda'u.",
+                "Barattoonni seenaa fi guddina yaad-rimee saayinsii ammayyaa geessisu tarreessuu ni danda'u.",
+                "Barattoonni gaaffiiwwan afaanii baay'ee walxaxaa ta'an hiikuuf daataa jijjiiramaa walitti qindeessuu ni danda'u."
+            ],
+            prereqs: [
+                "Jechoota boqoonchaa fi dandeettii herregaa bu'uuraa.",
+                "Gaaffii qorannoo fi tooftaalee garee beekuu.",
+                "Muuxannoo shaakala hojii duraanii fi shallaggii.",
+                "Beekumsa dandeettii dubbisaa boqonnaa duraanii.",
+                "Hiika jechoota bu'uuraa fi ibsa yaad-rimee.",
+                "Nageenya laabiraatorii fi seera safartuu beekuu.",
+                "Fakkiiwwan bu'uuraa fi qindaachuu qabatamaa.",
+                "Logikiin xiinxalaa fi yaada madaalawaa.",
+                "Odeeffannoo seenaa ykn bu'uura duuba-biyyaa.",
+                "Mala barsiisa hiriyootaa fi dhaggeeffachuu danda'u.",
+                "Shallaggii lakkoofsa dicijimaalii fi hiruufii.",
+                "Qajeeltoowwan aljebraa bu'uuraa.",
+                "Galmee qorannoo qabatamaa fi ilaalcha.",
+                "Fayyadama meeshaalee safartuu.",
+                "Seera barreessuu lakkoofsa saayinsii.",
+                "Walitti dhufeenya sababaa fi bu'aa.",
+                "Muuxannoo marii Think-Pair-Share.",
+                "Unka qindeessuu barreeffamaa.",
+                "Biroomeetirii bu'uuraa fi safartuu bal'inaa.",
+                "Hiika gabatee odeeffannoo fi chaartii."
             ]
         }
     };
@@ -543,12 +845,12 @@
 
     async function loadRegisteredUsers() {
         const tbody = document.getElementById('ownerUserTableBody');
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:10px;">Loading users...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:10px;">Loading users...</td></tr>`;
 
         try {
             const snapshot = await db.collection("users").orderBy("createdAt", "desc").get();
             if (snapshot.empty) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:10px; color:#666;">No registered users found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:10px; color:#666;">No registered users found.</td></tr>`;
                 return;
             }
 
@@ -556,29 +858,47 @@
             snapshot.forEach(doc => {
                 const data = doc.data();
                 const username = data.username || doc.id;
-                const isPaid = data.isPaid ? `<span style="color:green; font-weight:bold;">Active</span>` : `<span style="color:red; font-weight:bold;">Pending</span>`;
+                const isPaid = data.isPaid ? `<span style="color:#10b981; font-weight:bold;">Active</span>` : `<span style="color:var(--accent); font-weight:bold;">Pending</span>`;
                 const quotaDisplay = data.quotaType === 'unlimited' ? 'Unlimited' : `${data.quotaLeft || 0} left`;
+                
+                let timeStr = "N/A";
+                if (data.createdAt && data.createdAt.toDate) {
+                    timeStr = data.createdAt.toDate().toLocaleString();
+                }
 
                 html += `
                     <tr>
                         <td style="border: 1px solid #cbd5e1; padding: 6px;">${escapeHtml(username)}</td>
+                        <td style="border: 1px solid #cbd5e1; padding: 6px; font-size: 11px; color: #475569;">${timeStr}</td>
                         <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">${isPaid}</td>
                         <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">${quotaDisplay}</td>
-                        <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">
-                            <button type="button" class="ai-assist-btn" style="background-color: #0056b3;" onclick="selectUserForQuickAction('${escapeHtml(username)}')">Select</button>
+                        <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; display: flex; gap: 4px; justify-content: center;">
+                            <button type="button" class="ai-assist-btn" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);" onclick="selectUserForQuickAction('${escapeHtml(username)}')">Select</button>
+                            <button type="button" class="ai-assist-btn" style="background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);" onclick="deleteUserRecord('${escapeHtml(username)}')">Delete</button>
                         </td>
                     </tr>
                 `;
             });
             tbody.innerHTML = html;
         } catch (error) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:10px; color:red;">Error loading users: ${error.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:10px; color:red;">Error loading users: ${error.message}</td></tr>`;
         }
     }
 
     function selectUserForQuickAction(username) {
         document.getElementById('ownerTargetUser').value = username;
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function deleteUserRecord(username) {
+        if (!confirm(`Are you sure you want to delete user account '${username}'?`)) return;
+        try {
+            await db.collection("users").doc(username).delete();
+            alert(`User ${username} deleted successfully.`);
+            loadRegisteredUsers();
+        } catch (error) {
+            alert("Error deleting user: " + error.message);
+        }
     }
 
     async function grantUserAccess() {
@@ -597,7 +917,7 @@
                 quotaLeft: quotaLeftNum
             }, { merge: true });
 
-            msg.style.color = 'green';
+            msg.style.color = '#10b981';
             msg.innerText = `Success! Account approved with ${quotaVal === 'unlimited' ? 'Unlimited' : quotaVal + ' uses'} for: ${target}`;
             document.getElementById('ownerTargetUser').value = "";
             loadRegisteredUsers();
@@ -618,7 +938,7 @@
                 quotaLeft: 0
             }, { merge: true });
 
-            msg.style.color = 'red';
+            msg.style.color = 'var(--accent)';
             msg.innerText = `Access revoked for user: ${target}`;
             document.getElementById('ownerTargetUser').value = "";
             loadRegisteredUsers();
@@ -649,14 +969,13 @@
 
     function initDayConfigs() {
         let html = "";
-        for(let i=1; i<=5; i++) {
+        for(let i=1; i<=3; i++) {
             html += getDayConfigHtml(i, defaultTopics[i-1]);
         }
         document.getElementById('dayConfigsContainer').innerHTML = html;
-        for(let i=1; i<=5; i++) {
+        for(let i=1; i<=3; i++) {
             updateAiOptionsForDay(i);
         }
-        checkAddButtonState();
     }
 
     function getDayConfigHtml(dayNum, defaultTopic) {
@@ -670,15 +989,20 @@
         return `
             <div class="day-config-card" id="configCard_${dayNum}" data-day="${dayNum}">
                 <h3>
-                    <span>Day ${dayNum} Configuration</span>
-                    <button type="button" class="secondary-btn" style="background-color:#dc3545;" onclick="omitDay(${dayNum})">Omit / Remove</button>
+                    <span>Day ${dayNum} Configuration Slot</span>
+                    <button type="button" class="secondary-btn" style="background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);" onclick="omitDay(${dayNum})">Omit / Remove</button>
                 </h3>
                 <div class="controls-row" style="margin-bottom: 10px; gap: 10px;">
                     <input type="text" id="topic${dayNum}" placeholder="Topic Name" value="${defaultTopic}" style="flex: 2;" oninput="updateAiOptionsForDay(${dayNum})">
                     <input type="text" id="unitTrack${dayNum}" placeholder="Unit Track (e.g., Unit 2, Module 1)" value="Unit ${dayNum} - Module Sequence" style="flex: 1;">
                 </div>
+
+                <div class="controls-row" style="margin-bottom: 10px; gap: 10px;">
+                    <input type="text" id="subtopic${dayNum}" placeholder="Enter custom subtopics for this day..." value="Core Structural Mechanisms & Analytical Properties in ${defaultTopic}" style="flex: 3;">
+                    <input type="text" id="pageRange${dayNum}" placeholder="Page Range (e.g., pp. 45-52)" value="pp. ${(dayNum-1)*15 + 1}-${dayNum*15}" style="flex: 1;">
+                </div>
                 
-                <div style="margin-bottom: 10px; background: #fdfdfd; padding: 10px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                <div style="margin-bottom: 10px; background: #fdfdfd; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
                     <h4 style="margin: 0 0 8px 0; font-size: 13px; color: #333;">Manual Minute Distribution (Total: 45 Mins)</h4>
                     <div style="display: flex; gap: 10px;">
                         <div style="flex:1;"><label style="font-size:11px;">Starter Mins:</label><input type="number" id="starterMin${dayNum}" value="5" min="1" max="45" style="width:100%; padding:5px;"></div>
@@ -690,26 +1014,33 @@
                 <div class="day-config-grid" style="grid-template-columns: 1fr;">
                     <div class="ai-select-group">
                         <label>
-                            <span>AI Alternative Rationale Options (10 Options incorporating topic)</span>
-                            <button type="button" class="ai-assist-btn" onclick="updateAiOptionsForDay(${dayNum})">✨ Refresh AI Alternatives</button>
+                            <span>Rationale Options (20 Options incorporating topic)</span>
+                            <button type="button" class="ai-assist-btn" onclick="updateAiOptionsForDay(${dayNum})">Refresh Options</button>
                         </label>
                         <select id="rationaleSelect${dayNum}"></select>
                     </div>
+                    
                     <div class="ai-select-group">
                         <label>
-                            <span>AI Alternative Learning Objectives Options (10 Options incorporating topic)</span>
+                            <span>Learning objective Options (20 Professional Lesson Plan Objectives)</span>
                         </label>
                         <select id="objectivesSelect${dayNum}"></select>
                     </div>
+                    
                     <div class="ai-select-group">
                         <label>
-                            <span>AI Alternative Pre-requisite Knowledge Options (10 Options incorporating topic)</span>
+                            <span>Pre-requisite Knowledge Options (20 Options + Custom Manual Add)</span>
                         </label>
-                        <select id="prereqSelect${dayNum}"></select>
+                        <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+                            <select id="prereqSelect${dayNum}" style="flex: 3;"></select>
+                            <input type="text" id="customPrereqInput${dayNum}" placeholder="Type custom pre-req..." style="flex: 2;">
+                            <button type="button" class="ai-assist-btn" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);" onclick="addCustomPrereq(${dayNum})">Add Manual</button>
+                        </div>
                     </div>
+
                     <div class="ai-select-group">
                         <label>
-                            <span>AI Alternative Teaching Aids Options</span>
+                            <span>Teaching Aids Options</span>
                         </label>
                         <select id="aidsSelect${dayNum}"></select>
                     </div>
@@ -717,18 +1048,18 @@
 
                 <div class="day-config-grid" style="margin-top: 15px;">
                     <div class="select-box-group">
-                        <h4 style="font-size:12px; margin:0 0 5px 0;">Active Learning Strategies</h4>
+                        <h4 style="font-size:12px; margin:0 0 5px 0; font-weight:700;">Active Learning Strategies</h4>
                         <div class="checkbox-scroll">${stratHtml}</div>
                     </div>
                     <div class="select-box-group">
-                        <h4 style="font-size:12px; margin:0 0 5px 0;">Assessment Activities</h4>
+                        <h4 style="font-size:12px; margin:0 0 5px 0; font-weight:700;">Assessment Activities</h4>
                         <div class="checkbox-scroll">${assessHtml}</div>
                     </div>
                 </div>
 
                 <div class="day-config-grid" style="margin-top: 15px; grid-template-columns: 1fr;">
                     <div class="select-box-group">
-                        <h4 style="font-size:12px; margin:0 0 5px 0;">Teaching Aids (Default Checkboxes)</h4>
+                        <h4 style="font-size:12px; margin:0 0 5px 0; font-weight:700;">Teaching Aids (Default Checkboxes)</h4>
                         <div class="checkbox-scroll">${aidsHtml}</div>
                     </div>
                 </div>
@@ -740,11 +1071,6 @@
         const container = document.getElementById('dayConfigsContainer');
         const existingCards = container.querySelectorAll('.day-config-card');
         
-        if (existingCards.length >= 5) {
-            alert("Maximum limit of 5 days reached.");
-            return;
-        }
-
         let currentDays = Array.from(existingCards).map(card => parseInt(card.getAttribute('data-day')));
         let newDayNum = 1;
         while(currentDays.includes(newDayNum)) {
@@ -752,179 +1078,40 @@
         }
 
         const div = document.createElement('div');
-        let defaultTopicName = defaultTopics[newDayNum-1] || `Advanced Topic ${newDayNum}`;
+        let defaultTopicName = defaultTopics[(newDayNum-1)%defaultTopics.length] || `Advanced Topic ${newDayNum}`;
         div.innerHTML = getDayConfigHtml(newDayNum, defaultTopicName);
         
+        let inserted = false;
         existingCards.forEach(card => {
-            if(parseInt(card.getAttribute('data-day')) > newDayNum) {
+            if(!inserted && parseInt(card.getAttribute('data-day')) > newDayNum) {
                 container.insertBefore(div.firstElementChild, card);
-                return;
+                inserted = true;
             }
         });
-        if(!div.firstElementChild.parentNode) {
+        if(!inserted) {
             container.appendChild(div.firstElementChild);
         }
 
         updateAiOptionsForDay(newDayNum);
-        checkAddButtonState();
     }
 
     function omitDay(dayNum) {
         const card = document.getElementById(`configCard_${dayNum}`);
         if(card) card.remove();
-        checkAddButtonState();
     }
 
-    function checkAddButtonState() {
-        const container = document.getElementById('dayConfigsContainer');
-        const count = container.querySelectorAll('.day-config-card').length;
-        const addBtn = document.getElementById('addDayBtn');
-        if (count >= 5) {
-            addBtn.style.display = 'none';
-        } else {
-            addBtn.style.display = 'inline-block';
-        }
-    }
+    function addCustomPrereq(dayNum) {
+        const input = document.getElementById(`customPrereqInput${dayNum}`);
+        const select = document.getElementById(`prereqSelect${dayNum}`);
+        const val = input.value.trim();
+        if(!val) { alert("Please type a custom pre-requisite first."); return; }
 
-    function getAiAlternatives(topicVal) {
-        const t = topicVal.trim();
-        const selectedLang = document.getElementById('languageSelect')?.value || "en";
-
-        let rationales = [];
-        let objectives = [];
-        let prereqs = [];
-        let aidsOptions = [];
-
-        if (selectedLang === 'am') {
-            rationales = [
-                `የ${t} ጥልቅ እውቀት ለዘመናዊ የምህንድስና ንድፎች እና ለሳይንሳዊ ምርምሮች ወሳኝ መሠረት ይጥላል።`,
-                `ይህንን ርዕስ ማጥናት ተማሪዎች ${t}ን ከሂሳብ እና ከፊዚክስ ቀመሮች ጋር እንዲያሰሉ ያስችለዋል።`,
-                `የ${t} ትምህርት ከንድፈ-ሐሳብ ባለፈ በዕለት ተዕለት ሕይወት ውስጥ የሚከናወኑ ተግባራዊ አተገባብዎችን ከ${t} ጋር ያገናኛል።`,
-                `በ${t} ላይ መወያየት ተማሪዎች ምክንያታዊ የማሰብ እና የመተንተን ችሎታቸውን እንዲያዳብሩ ይረዳል።`,
-                `ይህ ርዕስ ተማሪዎች የሳይንስ መርሆዎችን ከ${t} አውድ ጋር እንዲያስተሳስሩ ከፍተኛ አስተዋጽኦ ያበረክታል።`,
-                `ተማሪዎች ስለ ${t} ያላቸውን ግንዛቤ እንዲያሳድጉ እና የትንተና ክህሎት እንዲገነቡ ያስችላል።`,
-                `የ${t} መሰረታዊ ንድፈ-ሐሳቦች ለቀጣይ የላቁ የትምህርት ክፍሎች አስተማማኝ መሰረት ይሆናሉ።`,
-                `የ${t} ክፍለ ጊዜ ተማሪዎች በቡድን በመሆን የጋራ መፍትሄዎችን እንዲያገኙ ይረዳል።`,
-                `ለ ${t} የተሰጡ ተግባራት የተማሪዎችን የፈጠራ ችሎታ እና የክህሎት ደረጃ ያሳድጋሉ።`,
-                `በ${t} ዙሪያ የሚደረግ ጥናት ተማሪዎች በሳይንሳዊ እና ሂሳባዊ እውነታዎች ላይ ያላቸውን እምነት ያጠናክራል።`
-            ];
-            objectives = [
-                `ተማሪዎች ስለ ${t} መሰረታዊ ሃሳቦች በመገንዘብ ትክክለኛ መደምደሚያ ላይ ይደርሳሉ።`,
-                `ተማሪዎች የቀረቡትን የ${t} ስሌቶች እና መርሆዎች 90 በመቶ በሆነ ትክክለኛነት ይሰራሉ።`,
-                `ተማሪዎች የ${t}ን ፅንሰ-ሐሳብ በተግባራዊ ሙከራዎች ወይም በምሳሌዎች ያሳያሉ።`,
-                `ተማሪዎች የ${t} ዋና ዋና ክፍሎችን በመለየት በሰንጠረዥ ወይም በንድፍ ያቀርባሉ።`,
-                `ተማሪዎች ከ${t} ጋር የተያያዙ ችግሮችን በአግባቡ በመተንተን መፍትሄ ይሰጣሉ።`,
-                `ተማሪዎች የ${t}ን አተገባበር በዕለት ተዕለት ሕይወት ውስጥ ማሳየት ይችላሉ።`,
-                `ተማሪዎች ስለ ${t} ያላቸውን ዕውቀት በመጠቀም አጫጭር ሪፖርቶችን ያዘጋጃሉ።`,
-                `ተማሪዎች ከ${t} ጋር የተያያዙ ንድፈ-ሐሳቦችን ከሌሎች ርዕሶች ጋር ያቀናጃሉ።`,
-                `ተማሪዎች በ${t} ርዕስ ላይ የተሰጡ ጥያቄዎችን በቡድን በመሆን ያጠናቅቃሉ።`,
-                `ተማሪዎች የ${t}ን ፅንሰ-ሐሳብ በሚገባ መረዳታቸውን በግምገማ እና በፈተና ያረጋግጣሉ።`
-            ];
-            prereqs = [
-                `ለ${t} ትምህርት የሚሆን ቅድመ-ዝግጅት እና መሰረታዊ የቃላት ግንዛቤ።`,
-                `ከ${t} ጋር ተዛማጅነት ያላቸውን ቀደምት የሂሳብ ወይም የሳይንስ ፅንሰ-ሐሳቦች ማወቅ።`,
-                `የ${t}ን መሰረታዊ መርሆዎች ለመረዳት የሚያስችል አጠቃላይ እውቀት።`,
-                `የ${t} ጥያቄዎችን ለመስራት የሚያስችሉ መሰረታዊ ቀመሮች እና አሰራሮች።`,
-                `ከ${t} ጋር የተያያዙ መመሪያዎችን እና የጥናት ቴክኒኮችን መረዳት።`,
-                `የ${t} ንድፈ-ሐሳቦችን ለመረዳት የሚረዳ የቀድሞ ትምህርት ቅኝት።`,
-                `ተማሪዎች ለ${t} ትምህርት ዝግጁ እንዲሆኑ የሚያደርግ የመሠረታዊ ንባብ ልምድ።`,
-                `የ${t} መለኪያዎችን እና አሃዶችን የመለየት ቅድመ ክህሎት።`,
-                `በ${t} ዙሪያ አጭር መረጃዎችን የመሰብሰብ እና የመወያየት ልምድ።`,
-                `ከ${t} ጋር የተያያዙ መሰረታዊ ታሪካዊ ወይም አውዳዊ ጀርባዎች ግንዛቤ።`
-            ];
-            aidsOptions = [
-                `የክፍል ሰሌዳ፣ ማርከሮች እና የመማሪያ መጽሐፍት ለ${t} ትምህርት።`,
-                `ዲጂታል ፕሮጀክተር እና የ${t} የማስተማሪያ ቻርቶች።`
-            ];
-        } else if (selectedLang === 'om') {
-            rationales = [
-                `Qorannoon ${t} bu'uura guddaa ijaarsa teeknolojii ammayyaa fi qorannoo saayinsii tiif ${t} irratti kenna.`,
-                `Barachuun ${t} barattoonni adeemsa uumamaa qajeeltoowwan herregaa fi fizikii ${t} wajjin walqabatu akka shallagan gargaara.`,
-                `Qorannoon ${t} hubannoo teessoo barnootaa fi jireenya keessatti hojiirra oolmaa ${t} walitti hidha.`,
-                `Mariin ${t} irratti taasifamu dandeettii xiinxalaafi yaada bu'uuraa barattootaa ${t} irratti gabbisa.`,
-                `Qajeelcha ${t} barachuun dandeettii yaada uumummaa barattootaa ${t} irratti guddisa.`,
-                `Barachuun ${t} bu'uura barnootaa fuulduraaf barbaachisu ${t} irratti cimsa.`,
-                `Qorannoon ${t} dandeettii quunnamtii fi barreeffama saayinsii ${t} irratti gabbisa.`,
-                `Kutaan barnootaa ${t} hubannoo xiinxalaa barattootaa ${t} irratti ol kaasa.`,
-                `Qopheessuun ${t} dandeettii hojii garee fi wal-gargaarsaa ${t} irratti jajjabeessa.`,
-                `Hubachuun ${t} bu'uura cimaa qorannoo dabalataaf ${t} irratti kenna.`
-            ];
-            objectives = [
-                `Barattoonni bu'uura ${t} hubachuun sirnaan ibsuu danda'u.`,
-                `Barattoonni shallaggiiwwan walqabatan ${t} dhibbeentaa 90n hojjechuu danda'u.`,
-                `Barattoonni yaad-rimee ${t} qorannoo qabatamaadhaan ni mirkaneessu.`,
-                `Barattoonni qaamolee ijoo ${t} adda baasuun ibsuu danda'u.`,
-                `Barattoonni rakkoolee ${t} wajjin walqabatan hiikuu danda'u.`,
-                `Barattoonni hojiirra oolmaa ${t} jireenya keessatti ni argisiisu.`,
-                `Barattoonni gabaabaa ${t} qopheessuun dhiheessuu danda'u.`,
-                `Barattoonni yaad-rimee ${t} dhimmoota biroo wajjin walitti ni hidhu.`,
-                `Barattoonni gareen ta'uun hojii ${t} ni xumuru.`,
-                `Barattoonni madaallii fi qormaata ${t} irratti milkaa'uudhaan mirkaneessu.`
-            ];
-            prereqs = [
-                `Beekumsa bu'uuraa fi jechoota barreeffamaa ${t} wajjin walqabatu.`,
-                `Hubannoo duraanii ${t} fi qajeeltoowwan isaa wajjin walqabatu.`,
-                `Shaakala duraanii ${t} fi shallaggiiwwan isaa waliin walitti dhufeenya qabu.`,
-                `Yaad-rimee bu'uuraa ${t} hubachuuf dandeettii barbaachisu.`,
-                `Qajeelfamoota fi tooftaalee qorannoo ${t} waliin walqabatan beekuu.`,
-                `Seenaa ykn odeeffannoo duuba-biyyaa ${t} wajjin walqabatu qabaachuu.`,
-                `Dandeettii dubbisa murteessaa ${t} waliin walitti dhufeenya qabu.`,
-                `Madaallii fi unkaalee ${t} adda baasuuf beekumsa qabaachuu.`,
-                `Muuxannoo marii garee fi wal jijjiirraa yaadaa ${t} irratti qabaachuu.`,
-                `Qophii barumsaa duraa ${t} waliin walqabatu hubachuun barbaachisaa dha.`
-            ];
-            aidsOptions = [
-                `Gabatee, maarkarii fi macaafota barnootaa ${t} f`,
-                `Pirojekterii dijiitalaa fi chaartiiwwan qajeelchaa ${t}`
-            ];
-        } else {
-            // Shortened options for Rationale (10 options incorporating topic)
-            rationales = [
-                `Builds critical thinking and quantitative analysis skills specifically for ${t}.`,
-                `Provides conceptual tools for real-world problem solving within ${t}.`,
-                `Fosters academic literacy and deep subject comprehension regarding ${t}.`,
-                `Cultivates structured reasoning and analytical evaluation centered on ${t}.`,
-                `Prepares students for advanced curriculum modules dealing with ${t}.`,
-                `Bridges foundational theory with practical scenarios in ${t}.`,
-                `Enhances inquiry, data interpretation, and collaboration specific to ${t}.`,
-                `Develops technical vocabulary and communication frameworks for ${t}.`,
-                `Equips learners with rigorous analytical frameworks to master ${t}.`,
-                `Strengthens conceptual foundations and academic curiosity about ${t}.`
-            ];
-            // Shortened options for Learning Objectives (10 options incorporating topic)
-            objectives = [
-                `Analyze key principles of ${t} and compute domain-specific problems accurately.`,
-                `Demonstrate conceptual mastery of ${t} through structured problem-solving.`,
-                `Investigate core mechanisms of ${t} and present empirical findings.`,
-                `Apply theoretical models of ${t} to solve simulated case studies.`,
-                `Evaluate alternative problem-solving strategies related to ${t} with discernment.`,
-                `Synthesize summary reports on fundamental principles governing ${t}.`,
-                `Measure key performance indicators in practical exercises exploring ${t}.`,
-                `Construct structured concept maps illustrating relationships within ${t}.`,
-                `Debate differing theoretical perspectives on applications of ${t}.`,
-                `Complete formative assessment tasks verifying thorough comprehension of ${t}.`
-            ];
-            // Shortened options for Pre-requisite Knowledge (10 options incorporating topic)
-            prereqs = [
-                `Foundational unit terminology and baseline competencies required for ${t}.`,
-                `Familiarity with investigative questioning and group protocols pertinent to ${t}.`,
-                `Prior exposure to introductory problem sets concerning ${t}.`,
-                `Recall of general study skills and critical reading habits relevant to ${t}.`,
-                `Basic understanding of prerequisite terminology specific to ${t}.`,
-                `Familiarity with standard classroom protocols needed for studying ${t}.`,
-                `Previous exposure to introductory problem frameworks involving ${t}.`,
-                `Comprehension of basic analytical logic applied to ${t}.`,
-                `Recall of relevant historical or contextual background preceding ${t}.`,
-                `Basic familiarity with peer instruction techniques applied to ${t}.`
-            ];
-            aidsOptions = [
-                `Whiteboards, dry-erase markers, and structured textbook reading chapters dedicated to ${t}.`,
-                `Multimedia projection systems, summary handout packets, and exercise pads for ${t}.`,
-                `Collaborative chart-making materials, sticky notes, and assessment rubrics targeting ${t}.`
-            ];
-        }
-
-        return { rationales, objectives, prereqs, aidsOptions };
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.text = "Custom: " + val;
+        opt.selected = true;
+        select.insertBefore(opt, select.firstChild);
+        input.value = "";
     }
 
     function updateAiOptionsForDay(dayNum) {
@@ -932,7 +1119,8 @@
         if (!topicInput) return;
         const topicVal = topicInput.value || "General Topic";
 
-        const alternatives = getAiAlternatives(topicVal);
+        const selectedLang = document.getElementById('languageSelect')?.value || "en";
+        const tObj = langDict[selectedLang] || langDict.en;
 
         const ratSelect = document.getElementById(`rationaleSelect${dayNum}`);
         const objSelect = document.getElementById(`objectivesSelect${dayNum}`);
@@ -940,16 +1128,19 @@
         const aidsSelect = document.getElementById(`aidsSelect${dayNum}`);
 
         if (ratSelect) {
-            ratSelect.innerHTML = alternatives.rationales.map((r, idx) => `<option value="${escapeHtml(r)}">Option ${idx + 1}: ${escapeHtml(r)}</option>`).join('');
+            ratSelect.innerHTML = tObj.rationales.map((r, idx) => `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join('');
         }
         if (objSelect) {
-            objSelect.innerHTML = alternatives.objectives.map((o, idx) => `<option value="${escapeHtml(o)}">Option ${idx + 1}: ${escapeHtml(o)}</option>`).join('');
+            objSelect.innerHTML = tObj.objectiveOptions.map((o, idx) => `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('');
         }
         if (preSelect) {
-            preSelect.innerHTML = alternatives.prereqs.map((p, idx) => `<option value="${escapeHtml(p)}">Option ${idx + 1}: ${escapeHtml(p)}</option>`).join('');
+            preSelect.innerHTML = tObj.prereqs.map((p, idx) => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
         }
         if (aidsSelect) {
-            aidsSelect.innerHTML = alternatives.aidsOptions.map((a, idx) => `<option value="${escapeHtml(a)}">Option ${idx + 1}: ${escapeHtml(a)}</option>`).join('');
+            aidsSelect.innerHTML = [
+                `Whiteboards, dry-erase markers, and structured textbook reading chapters dedicated to ${topicVal}.`,
+                `Multimedia projection systems, summary handout packets, and exercise pads for ${topicVal}.`
+            ].map((a, idx) => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
         }
     }
 
@@ -962,9 +1153,8 @@
 
         if (selectedLang === 'am') {
             return {
-                subtopic: `የ${topicVal} ዋና ዋና መዋቅራዊ ንድፎች፣\nትንተናዊ ንብረቶች እና\nተግባራዊ የችግር አፈታት ዘዴዎች`,
                 starterContent: `ስለ ${topicVal} ዙሪያ አውዳዊ ጥያቄዎች እና ተግባራዊ ችግር ማቅረብ`,
-                starterRole: `ከ${topicVal} ጋር በቀጥታ የተያያዘ ፅንሰ-ሀሳባዊ ፈተና ወይም ተግባራዊ ፈተና ማቅረብ።`,
+                starterRole: `ከ${topicVal} ጋር በቀጥታ የተያያዘ ፅንሰ-ሐሳባዊ ፈተና ወይም ተግባራዊ ፈተና ማቅረብ።`,
                 starterAction: `መነሻ ሐሳቦችን ማፍለቅ፣ በጥንድ ሆኖ መወያየት እና ጥያቄዎችን ማዘጋጀት።`,
                 starterMethod: "ሐሳብ ማፍለቅ (Brainstorming)",
                 starterAssessment: "የመጀመሪያ ደረጃ ግምገማ",
@@ -973,16 +1163,14 @@
                 mainRole: `ተከታታይ የመማሪያ ዘዴዎችን ማቀናጀት፣ የተማሪዎችን ሂደት መከታተል እና አስፈላጊውን ድጋፍ መስጠት።`,
                 mainAction: `በንዑስ ቡድን ሆኖ የተሰጡ ሉሆችን ማጠናቀቅ፣ ቀመሮችን መስራት እና ሞዴሎችን መተንተን።`,
                 
-                plenaryContent: `ማጠቃለያ ክለሳ፣ የፅንሰ-ሀሳብ ማብራሪያ እና ክፍተቶችን ማጥበብ`,
+                plenaryContent: `ማጠቃለያ ክለሳ፣ የፅንሰ-ሐሳብ ማብራሪያ እና ክፍተቶችን ማጥበብ`,
                 plenaryRole: `ዋ ዋና ነጥቦችን ማጠቃለል፣ የተማሪዎችን ጥያቄዎች መመለስ እና ማጠቃለያ ግምገማዎችን መምራት።`,
                 plenaryAction: `የመውጫ ግምገማዎችን ማጠናቀቅ እና ዋና ዋና ግንዛቤዎችን ማጠቃለል።`,
                 plenaryMethod: "የእኩዮች ማስተማር (Peer Instruction)",
-                plenaryAssessment: "የመውጫ ቲኬት (Exit ticket)",
-                aids: `የክፍል ሰሌዳ፣ የማስተማሪያ ሉሆች፣ የማጣቀሻ ቻርቶች`
+                plenaryAssessment: "የመውጫ ቲኬት (Exit ticket)"
             };
         } else if (selectedLang === 'om') {
             return {
-                subtopic: `Caasaalee bu'uuraa ${topicVal},\nAmala xiinxalaa, fi\nHojii irra oolmaa shallaggii`,
                 starterContent: `Gaaffiiwwan haala qabatamaa fi qormaata ${topicVal} wajjin walqabatu`,
                 starterRole: `Rakkoo yaad-rimee ykn qormaata qabatamaa ${topicVal} wajjin walqabatu dhiheessuu.`,
                 starterAction: `Yaadota jalqabaa kaasuun, hiriyoota wajjin mari’achuun gaaffiiwwan qopheessuu.`,
@@ -990,19 +1178,17 @@
                 starterAssessment: "Madaallii Jalqabaa",
                 
                 mainContent: `Qorannoo bal’aa, adeemsa tarkaanfiidhaan fi shaakala shallaggii ${topicVal} wajjin walqabatu.`,
-                mainContentRole: `Mala barnootaa wal-qunnamtii mijeessuu, adeemsa barattootaa hordofuu fi gargaarsa kennuu.`,
+                mainRole: `Mala barnootaa wal-qunnamtii mijeessuu, adeemsa barattootaa hordofuu fi gargaarsa kennuu.`,
                 mainAction: `Garee xixiqqoon ta’uun waraqota hojii guutuu, shallaggii hojjechuu fi mooteelii xiinxaluu.`,
                 
                 plenaryContent: `Gabaabumatti deebi’anii ilaaluu, ibsa yaad-rimee fi hiika rakkoolee`,
                 plenaryRole: `Yaadota ijoo cuunfuu, rakkoolee ibsuu fi madaallii xumuraa geggeessuu.`,
                 plenaryAction: `Madaallii ba’umsaa xumuruun hubannoo ijoo dhiheessuu.`,
                 plenaryMethod: "Barsiisota hiriyootaa (Peer Instruction)",
-                plenaryAssessment: "Tikkeetii ba'umsaa",
-                aids: `Gabatee, waraqota qajeelchaa, chaartiiwwan wabii`
+                plenaryAssessment: "Tikkeetii ba'umsaa"
             };
         } else {
             return {
-                subtopic: `Core Structural Mechanisms,\nAnalytical Properties, and\nApplied Problem Solving in\n${topicVal}`,
                 starterContent: `Contextual inquiry and real-world problem provocation regarding ${topicVal}`,
                 starterRole: `Present a targeted conceptual dilemma or practical challenge related directly to ${topicVal}.`,
                 starterAction: `Brainstorm initial hypotheses, share insights in pairs, and formulate focused inquiry questions.`,
@@ -1017,8 +1203,7 @@
                 plenaryRole: `Synthesize main takeaways, clarify specific hurdles, and direct closing evaluations.`,
                 plenaryAction: `Complete exit assessment and summarize key conceptual insights.`,
                 plenaryMethod: "Peer Instruction",
-                plenaryAssessment: "Exit ticket",
-                aids: `Whiteboard, instructional handouts, specialized reference charts`
+                plenaryAssessment: "Exit ticket"
             };
         }
     }
@@ -1050,7 +1235,6 @@
         const selectedLang = document.getElementById('languageSelect').value || "en";
         const tObj = langDict[selectedLang] || langDict.en;
 
-        // Logo configurations
         const logoUrl = document.getElementById('logoUrlInput').value.trim();
         const logoPosition = document.getElementById('logoPositionSelect').value;
         const watermarkOpacity = document.getElementById('watermarkOpacityInput').value || "0.08";
@@ -1096,8 +1280,14 @@
             const unitTrackInputElem = card.querySelector(`input[id^="unitTrack"]`);
             const unitTrackVal = unitTrackInputElem ? unitTrackInputElem.value.trim() : `Unit ${sequenceIndex} - Module Sequence`;
 
+            const subtopicInputElem = card.querySelector(`input[id^="subtopic"]`);
+            const subtopicVal = subtopicInputElem ? subtopicInputElem.value.trim() : `Core principles and analysis of ${topicVal}`;
+
+            const pageRangeInputElem = card.querySelector(`input[id^="pageRange"]`);
+            const pageRangeVal = pageRangeInputElem ? pageRangeInputElem.value.trim() : `pp. ${(sequenceIndex-1)*15 + 1}-${sequenceIndex*15}`;
+
             const selectedRationale = document.getElementById(`rationaleSelect${dayNum}`)?.value || "Standard instructional rationale.";
-            const selectedObjectives = document.getElementById(`objectivesSelect${dayNum}`)?.value || "Standard learning objectives.";
+            const selectedObjectives = document.getElementById(`objectivesSelect${dayNum}`)?.value || "Students will be able to analyze and comprehend key thematic concepts.";
             const selectedPrereq = document.getElementById(`prereqSelect${dayNum}`)?.value || "Standard prerequisite knowledge.";
             const selectedAidsOption = document.getElementById(`aidsSelect${dayNum}`)?.value || "";
 
@@ -1123,7 +1313,6 @@
 
             const plan = getIntelligentLessonContent(topicVal, selectedLang);
 
-            // Conditional Admin Signature Block appearing ONLY on the final rendered day page
             let adminSigHtml = "";
             if (sequenceIndex === totalCards) {
                 adminSigHtml = `
@@ -1144,7 +1333,15 @@
             containerHtml += `
                 <div class="day-plan-page">
                     ${watermarkHtml}
-                    <div class="day-badge">${tObj.dayPrefix} ${sequenceIndex} ${tObj.lessonPlanTitle}</div>
+                    <!-- Golden Accent Decor Line -->
+                    <div style="background: linear-gradient(135deg, #4f46e5, #0ea5e9, #d97706); height: 6px; border-radius: 3px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div class="day-badge">${tObj.dayPrefix} ${sequenceIndex} ${tObj.lessonPlanTitle}</div>
+                        <div style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; color: #334155;">
+                            Page Range: <input type="text" value="${pageRangeVal}" style="border:none; border-bottom:1px dotted #333; background:transparent; font-weight:700; width:100px; text-align:center;">
+                        </div>
+                    </div>
                     
                     <div class="header-top">
                         ${topLogoHtml ? topLogoHtml : `
@@ -1165,9 +1362,11 @@
                     </div>
 
                     <div class="metadata-row"><label>${tObj.topic}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${topicVal}</textarea></div>
-                    <div class="metadata-row"><label>${tObj.subtopic}</label><textarea rows="2" style="height: 2.2em;" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.subtopic}</textarea></div>
+                    <div class="metadata-row"><label>${tObj.subtopic}</label><textarea rows="2" style="height: 2.2em;" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${subtopicVal}</textarea></div>
                     <div class="metadata-row"><label>${tObj.rationale}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedRationale}</textarea></div>
-                    <div class="metadata-row"><label>${tObj.objectives}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedObjectives}</textarea></div>
+                    
+                    <div class="metadata-row"><label>${tObj.objectives}:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">Students will be able to ${selectedObjectives.replace(/^(Students will be able to\s*)/i, '')}</textarea></div>
+                    
                     <div class="metadata-row"><label>${tObj.prereq}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedPrereq}</textarea></div>
 
                     <table>
@@ -1204,11 +1403,11 @@
                             <tr>
                                 <td><strong>${tObj.main}</strong></td>
                                 <td style="background:#fafafa;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${mMin} mins</textarea></td>
-                                <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainContent}</textarea></td>
+                                <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${subtopicVal}</textarea></td>
                                 <td style="background:#fffdf0;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedLang === 'am' ? 'ንቁ ስልቶችን (' + stratText + ') ያመቻቻል እና ለ' + topicVal + ' ተስማሚ ድጋፍ ይሰጥዋል።' : (selectedLang === 'om' ? 'Tooftaalee (' + stratText + ') mijeessuun deggersa barbaachisaa ' + topicVal + ' f kennuu.' : 'Facilitates active strategies (' + stratText + ') and provides technical scaffolding for ' + topicVal + '.')}</textarea></td>
                                 <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainAction}</textarea></td>
-                                <td style="font-weight:bold; color:#b58100;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${stratText}</textarea></td>
-                                <td style="font-weight:bold; color:#0056b3;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${assessText}</textarea></td>
+                                <td style="font-weight:bold; color:var(--accent);"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${stratText}</textarea></td>
+                                <td style="font-weight:bold; color:var(--primary);"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${assessText}</textarea></td>
                             </tr>
                             <tr>
                                 <td><strong>${tObj.concluding}</strong></td>
@@ -1234,7 +1433,6 @@
         document.getElementById('plansContainer').innerHTML = containerHtml;
         document.getElementById('exportPanel').style.display = 'flex';
         
-        // Auto-adjust heights for rendered textareas
         setTimeout(() => {
             document.querySelectorAll('#plansContainer textarea').forEach(ta => {
                 if(!ta.closest('.metadata-row') || !ta.previousElementSibling || ta.previousElementSibling.innerText !== tObj.subtopic) {
@@ -1255,104 +1453,7 @@
         let content = "";
         const subject = document.getElementById('subjectInput').value || "Lesson_Plans";
         const filename = subject.replace(/[^a-zA-Z0-9]/g, '_');
-
-        if (format === 'txt') {
-            pages.forEach((page, index) => {
-                content += `========================================\n`;
-                content += `DAY ${index + 1} LESSON PLAN\n`;
-                content += `========================================\n`;
-                
-                const inputs = page.querySelectorAll('input');
-                inputs.forEach(inp => {
-                    if(inp.previousElementSibling) {
-                        content += `${inp.previousElementSibling.innerText} ${inp.value}\n`;
-                    } else {
-                        content += `${inp.value}\n`;
-                    }
-                });
-
-                const textareas = page.querySelectorAll('.metadata-row textarea');
-                textareas.forEach(ta => {
-                    const lbl = ta.previousElementSibling;
-                    if(lbl) {
-                        content += `${lbl.innerText} ${ta.value}\n`;
-                    }
-                });
-
-                content += `\n--- LESSON BREAKDOWN ---\n`;
-                const rows = page.querySelectorAll('tbody tr');
-                rows.forEach(row => {
-                    const stage = row.querySelector('strong')?.innerText || "Stage";
-                    const tas = row.querySelectorAll('textarea');
-                    content += `\n[${stage}]\n`;
-                    if(tas.length >= 6) {
-                        content += `  - Time: ${tas[0].value}\n`;
-                        content += `  - Contents: ${tas[1].value}\n`;
-                        content += `  - Teacher Role: ${tas[2].value}\n`;
-                        content += `  - Student Actions: ${tas[3].value}\n`;
-                        content += `  - Method: ${tas[4].value}\n`;
-                        content += `  - Assessment: ${tas[5].value}\n`;
-                    }
-                });
-                
-                const footers = page.querySelectorAll('.footer-section textarea');
-                if(footers.length >= 2) {
-                    content += `\nTeaching Aids: ${footers[0].value}\n`;
-                    content += `Reflection: ${footers[1].value}\n`;
-                }
-                content += `\n\n========================================\n\n`;
-            });
-
-            downloadBlob(content, filename + '_Lesson_Plans.txt', 'text/plain;charset=utf-8');
-
-        } else if (format === 'doc') {
-            content = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                <head><meta charset='utf-8'><title>Lesson Plans</title>
-                <style>
-                    body { font-family: 'Times New Roman', Times, serif !important; color: #333; }
-                    .day-plan { page-break-after: always; break-after: page; margin-bottom: 40px; position: relative; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; table-layout: fixed; }
-                    th, td { border: 1px solid #333; padding: 5px; vertical-align: top; font-size: 11px; word-wrap: break-word; overflow-wrap: break-word; }
-                    th { background-color: #f2f2f2; text-align: center; }
-                </style>
-                </head>
-                <body>
-            `;
-
-            pages.forEach((page) => {
-                let clone = page.cloneNode(true);
-                clone.querySelectorAll('input').forEach(inp => {
-                    let span = document.createElement('span');
-                    span.style.fontWeight = 'bold';
-                    span.innerText = inp.value;
-                    inp.parentNode.replaceChild(span, inp);
-                });
-                clone.querySelectorAll('textarea').forEach(ta => {
-                    let span = document.createElement('span');
-                    span.innerText = ta.value;
-                    ta.parentNode.replaceChild(span, ta);
-                });
-                content += `<div class="day-plan">${clone.innerHTML}</div>`;
-            });
-
-            content += `</body></html>`;
-            downloadBlob(content, filename + '_Lesson_Plans.doc', 'application/msword;charset=utf-8');
-        }
-    }
-
-    function downloadBlob(content, filename, contentType) {
-        const blob = new Blob([content], { type: contentType });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
     }
 </script>
-
 </body>
 </html>
