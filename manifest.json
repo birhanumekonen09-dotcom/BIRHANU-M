@@ -1,0 +1,23 @@
+{
+  "background_color": "#ffffff",
+  "dir": "auto",
+  "display": "standalone",
+  "name": "birhanumekonen09-dotcom.github",
+  "orientation": "natural",
+  "scope": "https://birhanumekonen09-dotcom.github.io/BIRHANU-M/",
+  "short_name": "birhanumekonen09-dotcom.github",
+  "start_url": "https://birhanumekonen09-dotcom.github.io/BIRHANU-M/",
+  "theme_color": "#ffffff",
+  "id": "BM",
+  "description": "This website is prepared with the intention of making planning easier.",
+  "lang": "en",
+  "display_override": [
+    "browser",
+    "fullscreen",
+    "standalone",
+    "window-controls-overlay"
+  ],
+  "categories": [
+    "education"
+  ]
+}
