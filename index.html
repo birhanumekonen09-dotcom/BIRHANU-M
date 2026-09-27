@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Lesson Plan Generator</title>
     
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="manifest.json">
+
     <!-- Firebase SDK Compat Scripts -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -1528,5 +1530,21 @@
         const filename = subject.replace(/[^a-zA-Z0-9]/g, '_');
     }
 </script>
+
+<!-- Service Worker Registration Script -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/BIRHANU-M/pwabuilder-sw.js')
+        .then((reg) => {
+          console.log('Service worker registered!', reg);
+        })
+        .catch((err) => {
+          console.log('Service worker registration failed: ', err);
+        });
+    });
+  }
+</script>
+
 </body>
 </html>
