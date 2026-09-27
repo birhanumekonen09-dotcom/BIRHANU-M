@@ -1,16 +1,28 @@
 {
-  "background_color": "#ffffff",
-  "dir": "auto",
-  "display": "standalone",
   "name": "birhanumekonen09-dotcom.github",
-  "orientation": "natural",
-  "scope": "https://birhanumekonen09-dotcom.github.io/BIRHANU-M/",
-  "short_name": "birhanumekonen09-dotcom.github",
-  "start_url": "https://birhanumekonen09-dotcom.github.io/BIRHANU-M/",
-  "theme_color": "#ffffff",
-  "id": "BM",
+  "short_name": "Planning App",
   "description": "This website is prepared with the intention of making planning easier.",
+  "start_url": "https://birhanumekonen09-dotcom.github.io/BIRHANU-M/",
+  "scope": "https://birhanumekonen09-dotcom.github.io/BIRHANU-M/",
+  "display": "standalone",
+  "orientation": "natural",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "dir": "auto",
   "lang": "en",
+  "id": "BM",
+  "icons": [
+    {
+      "src": "launchericon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "launchericon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
   "display_override": [
     "browser",
     "fullscreen",
