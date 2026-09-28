@@ -174,9 +174,9 @@
         .metadata-grid > div { flex: 1 1 200px; min-width: 180px; display: flex; flex-direction: column; }
         .metadata-grid label { font-weight: 700; margin-bottom: 2px; font-size: 12px; color: #475569; }
         
-        .metadata-row { display: flex; align-items: flex-start; margin-bottom: 6px; font-size: 13px; width: 100%; flex-wrap: wrap; }
-        .metadata-row label { font-weight: 700; margin-right: 8px; white-space: nowrap; min-width: 170px; padding-top: 2px; color: #475569; }
-        .metadata-row textarea, .metadata-grid input, .metadata-grid select { flex: 1; border: none; border-bottom: 1px dotted #333; outline: none; font-family: inherit; font-size: 13px; padding: 2px 4px; background: transparent; resize: vertical; overflow: hidden; box-sizing: border-box; width: 100%; }
+        .metadata-row { display: flex; align-items: flex-start; margin-bottom: 8px; font-size: 13px; width: 100%; flex-wrap: wrap; }
+        .metadata-row label { font-weight: 700; margin-right: 8px; white-space: nowrap; min-width: 170px; padding-top: 4px; color: #475569; }
+        .metadata-row textarea, .metadata-grid input, .metadata-grid select { flex: 1; border: none; border-bottom: 1px dotted #333; outline: none; font-family: inherit; font-size: 13px; padding: 4px 6px; background: transparent; resize: vertical; overflow: hidden; box-sizing: border-box; width: 100%; line-height: 1.5; }
         
         table { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; font-size: 11px; }
         th, td { border: 1px solid #333; padding: 6px; vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; }
@@ -319,9 +319,9 @@
 
         <div class="controls">
             <div class="controls-row">
-                <input type="text" id="teacherNameInput" placeholder="Teacher Name" value="Birhanu Mekonen">
-                <input type="text" id="subjectInput" placeholder="Subject Name" value="General Physics & Mathematics">
-                <input type="text" id="gradeInput" placeholder="Grade & Section" value="Grade 10 - A">
+                <input type="text" id="teacherNameInput" placeholder="Teacher Name">
+                <input type="text" id="subjectInput" placeholder="Subject Name">
+                <input type="text" id="gradeInput" placeholder="Grade & Section">
             </div>
 
             <!-- FILE, DOC, AND IMAGE UPLOAD PORTION (UP TO 100MB) -->
@@ -354,15 +354,15 @@
                 </div>
                 <div>
                     <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:4px;">Start Date:</label>
-                    <input type="date" id="startDateInput" value="2026-09-14">
+                    <input type="date" id="startDateInput">
                 </div>
                 <div>
                     <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:4px;">End Date:</label>
-                    <input type="date" id="endDateInput" value="2026-09-18">
+                    <input type="date" id="endDateInput">
                 </div>
             </div>
 
-            <!-- Logo Configuration Controls with Default Preset -->
+            <!-- Logo Configuration Controls with Default Preset & Top Header Default Position -->
             <div class="controls-row" style="background: #ffffff; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1;">
                 <div style="flex: 2;">
                     <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:4px;">Logo Image URL / Base64:</label>
@@ -378,8 +378,8 @@
                 <div style="flex: 1;">
                     <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:4px;">Logo Placement:</label>
                     <select id="logoPositionSelect">
-                        <option value="watermark" selected>Watermark Background</option>
-                        <option value="top">Top Header</option>
+                        <option value="watermark">Watermark Background</option>
+                        <option value="top" selected>Top Header</option>
                         <option value="bottom">Bottom Footer</option>
                         <option value="none">Do Not Use Logo</option>
                     </select>
@@ -428,15 +428,13 @@
     const DEFAULT_LOGO_URL = "1789151578983.jpg";
     let uploadedFilesCache = [];
 
-    // Hidden Admin Password implementation with closure security against simple bypassers
     const _secureAdminVerify = (function() {
-        const _hashSalt = "Owner382"; // Secured hash-equivalent token check
+        const _hashSalt = "Owner382";
         return function(inputPass) {
             return inputPass === _hashSalt;
         };
     })();
 
-    // File Upload Handler (Supports up to 100MB files, documents, and images)
     function handleFileUpload(event) {
         const files = event.target.files;
         uploadedFilesCache = [];
@@ -450,7 +448,7 @@
         }
 
         let fileNames = [];
-        const MAX_SIZE_BYTES = 100 * 1024 * 1024; // 100MB
+        const MAX_SIZE_BYTES = 100 * 1024 * 1024;
 
         for (let i = 0; i < files.length; i++) {
             let file = files[i];
@@ -466,7 +464,6 @@
         listContainer.innerHTML = `Attached: ${fileNames.join(', ')}`;
     }
 
-    // Multi-Language Dictionary Translations with Recreated 20 Options for Learning Objectives using Daily Lesson Plan Action Verbs
     const langDict = {
         en: {
             frameworkTitle: "Daily Lesson Framework",
@@ -477,6 +474,7 @@
             grade: "Grade:",
             date: "Date:",
             unitTrack: "Unit Track:",
+            previousTopic: "Previous Topic:",
             topic: "Topic of the lesson:",
             subtopic: "Subtopic of the lesson:",
             rationale: "Rationale of the lesson:",
@@ -498,88 +496,131 @@
             sig: "Sig:",
             deptHead: "Dep't Head:",
             vDir: "V. Director:",
-            strategies: [
-                "Think pair share", "Jigsaw", "Brainstorming", "Fishbowl", "Role-play", 
-                "Problem Based learning", "Concept Mapping", "Interactive Simulations and Labs", 
-                "Case study", "Gallery walk", "Peer Instruction"
+            starterStrategies: [
+                "Brainstorming", "Think pair share", "KWL Chart (Know, Want to Know, Learned)", 
+                "Quick Write / Free Write", "Concept Association Warm-up", "Diagnostic Poll", "Diagnostic Checkpoint"
+            ],
+            mainStrategies: [
+                "Jigsaw", "Fishbowl", "Role-play", "Problem Based learning", "Concept Mapping", 
+                "Interactive Simulations and Labs", "Case study", "Gallery walk", "Peer Instruction", 
+                "Socratic Seminar", "Inquiry-Based Learning", "Flipped Classroom Discussion", "Peer Review Circles"
+            ],
+            concludingStrategies: [
+                "Asking and Answering Questions", "Exit Ticket Summary", "Two Minute Papers", 
+                "Muddy Point Reflection", "Minute Paper", "One-Sentence Summary", "Peer Debriefing"
+            ],
+            starterAssessments: [
+                "Oral questions", "Formative questions", "Concept test"
+            ],
+            mainAssessments: [
+                "Classwork", "Two minutes paper", "Performance task", "Peer Evaluation Ruberics"
+            ],
+            concludingAssessments: [
+                "Homework", "Diagnostic Check points", "Exit tickets", "Tests", "Quiz"
             ],
             assessments: [
-                "Classwork", "Homework", "Exit ticket", "Concept tests", "Two minute papers", "Performance tasks"
+                "Oral questions", "Formative questions", "Quizzes", "Tests", "Classwork", 
+                "Homework", "Exit ticket", "Concept tests", "Two minute papers", "Performance tasks",
+                "Diagnostic Checkpoints", "Peer Evaluation Rubrics"
             ],
             teachingAidsList: [
-                "Blackboards and whiteboards", "Chalk and dry-erase markers", "Textbooks",
-                "Workbooks and exercise pads", "Notebooks", "Pens and pencils", "Handouts and worksheets",
-                "Flashcards", "Charts and posters", "Geographical maps", "Globes", "Projectors",
-                "Computers and laptops", "Interactive flat panels and smartboards", "Educational videos and animations",
-                "Audio recordings and podcasts", "Real objects (realia)", "Physical 3D models",
-                "Educational quiz and gamification software", "Bulletin boards"
+                "Abacus", "Audiobooks", "Blackboards and Whiteboards", "Calculators (Scientific and Graphing)",
+                "Chart Papers and Infographics", "ChemCollective Virtual Labs", "Classroom Response Systems (Clickers)",
+                "Coding and Robotics Kits", "Concept Maps and Graphic Organizers", "Dioramas",
+                "Document Cameras (Visualizers)", "Educational Board Games", "Educational Podcasts",
+                "Electronic Tablets", "Flashcards", "Flashlights and Laser Pointers", "Fossils and Geological Specimens",
+                "Fraction Tiles and Circles", "Geoboards", "Globes (Terrestrial and Celestial)",
+                "Graph Paper and Coordinate Grids", "Historical Costumes and Replicas", "Interactive Whiteboards (Smartboards)",
+                "Jigsaw Puzzles", "Language Laboratory Headsets", "Magnifying Glasses and Microscopes",
+                "Magnetic Letters and Numbers", "Mannequins and Anatomical Models", "Math Manipulatives (Base-Ten Blocks)",
+                "Metre Sticks and Measuring Tapes", "Musical Instruments (Orff/Percussion)", "Number Lines",
+                "oPhysics Simulations", "Periodic Table Charts", "PhET Interactive Simulations",
+                "Plastic Measuring Cylinders and Beakers", "Puppets and Marionettes", "QR Codes",
+                "Realia (Real-Life Objects)", "Rubber Stamps and Stamp Pads", "Sandtimers and Digital Stopwatches",
+                "Scales and Balances (Spring/Digital)", "School Atlas Books", "Slide Rules",
+                "Stellarium (Planetarium Software)", "Stereoscopes", "Textbooks and Workbooks",
+                "Thermometers", "Virtual Reality (VR) Headsets", "Word Walls"
             ],
             rationales: [
-                "Builds critical thinking and quantitative analysis skills specifically for mastering the core concepts.",
-                "Provides conceptual tools and analytical methods essential for real-world problem solving.",
-                "Fosters academic literacy, logical reasoning, and deep subject matter comprehension.",
-                "Cultivates structured cognitive evaluation and evidence-based deductions.",
-                "Prepares students for advanced curriculum modules and complex multidisciplinary applications.",
-                "Bridges foundational theoretical principles with practical laboratory and everyday scenarios.",
-                "Enhances investigative inquiry, data interpretation, and collaborative discourse.",
-                "Develops rigorous technical vocabulary and structured communication frameworks.",
-                "Equips learners with robust problem-solving methodologies to tackle quantitative challenges.",
-                "Strengthens conceptual foundations, mathematical fluency, and intellectual curiosity.",
-                "Encourages active engagement through guided inquiry and cooperative peer exploration.",
-                "Connects abstract theoretical formulations directly to empirical observations.",
-                "Promotes disciplined scientific inquiry and systematic deduction procedures.",
-                "Improves cognitive retention through structured scaffolding and iterative practice.",
-                "Stimulates creative synthesis and higher-order analytical reasoning.",
-                "Establishes core competencies required for subsequent problem sets and lab modules.",
-                "Deepens comprehension of underlying structural mechanisms and causal relationships.",
-                "Facilitates interdisciplinary connections between theoretical models and practical applications.",
-                "Nurtures confidence in executing independent calculations and problem-solving steps.",
-                "Provides immediate formative feedback to correct misconceptions and reinforce learning."
+                "Builds critical thinking and quantitative analysis skills specifically for mastering the core concepts of [TOPIC].",
+                "Provides essential conceptual tools and analytical frameworks required to evaluate [TOPIC] in depth.",
+                "Fosters academic literacy, logical reasoning, and deep subject matter comprehension regarding [TOPIC].",
+                "Cultivates structured cognitive evaluation and evidence-based deductions related directly to [TOPIC].",
+                "Prepares students for advanced curriculum modules and complex multidisciplinary applications built upon [TOPIC].",
+                "Strengthens problem-solving capabilities and analytical reasoning through focused exploration of [TOPIC].",
+                "Establishes a solid foundational understanding of core principles and practical contexts within [TOPIC].",
+                "Encourages collaborative inquiry and independent investigation into the underlying mechanisms of [TOPIC].",
+                "Bridges theoretical concepts and everyday practical applications associated with [TOPIC].",
+                "Enhances technical vocabulary and precise conceptual articulation regarding [TOPIC].",
+                "Promotes intellectual curiosity and lifelong engagement with the themes of [TOPIC].",
+                "Develops systematic data interpretation and logical structuring related to [TOPIC].",
+                "Equips learners with necessary evaluative frameworks to critique arguments surrounding [TOPIC].",
+                "Accelerates mastery of subsequent interconnected units by solidifying knowledge of [TOPIC].",
+                "Fosters a comprehensive global perspective on the significance and evolution of [TOPIC].",
+                "Inspires creative synthesis and innovative application of principles inherent to [TOPIC].",
+                "Builds learner confidence through guided discovery and mastery of [TOPIC].",
+                "Connects abstract theoretical formulations with tangible, real-world phenomena of [TOPIC].",
+                "Instills discipline-specific inquiry methods tailored specifically to the study of [TOPIC].",
+                "Maximizes academic achievement by reinforcing core competency indicators for [TOPIC]."
             ],
             objectiveOptions: [
-                "Students will be able to analyze core thematic principles and compute related quantitative calculations with high accuracy.",
-                "Students will be able to define key terminology and identify fundamental components of the lesson topic.",
-                "Students will be able to demonstrate practical mechanisms and present empirical findings clearly to peers.",
-                "Students will be able to apply theoretical models to solve structured real-world case studies and problem sets.",
-                "Students will be able to evaluate alternative problem-solving strategies and select optimal methodological pathways.",
-                "Students will be able to synthesize concise summary reports outlining governing rules, laws, and structural properties.",
-                "Students will be able to measure critical performance indicators and variables during practical guided exercises.",
-                "Students will be able to construct structured concept maps illustrating hierarchical relationships within the unit track.",
-                "Students will be able to compare and contrast differing theoretical perspectives regarding practical applications.",
-                "Students will be able to execute collaborative team tasks to formulate valid hypotheses and verify experimental outcomes.",
-                "Students will be able to interpret graphical data representations and derive meaningful quantitative conclusions.",
-                "Students will be able to formulate step-by-step mathematical proofs and logical derivations for complex equations.",
-                "Students will be able to design basic experimental procedures to test theoretical assumptions safely and effectively.",
-                "Students will be able to communicate scientific and mathematical arguments clearly using appropriate technical terminology.",
-                "Students will be able to classify biological or physical systems based on structural characteristics and functional properties.",
-                "Students will be able to identify potential sources of computational error in calculations and experimental measurements.",
-                "Students will be able to defend proposed solutions during structured peer review and classroom discussions.",
-                "Students will be able to complete formative assessment tasks verifying thorough individual comprehension.",
-                "Students will be able to outline historical milestones and conceptual evolution leading to modern scientific theories.",
-                "Students will be able to integrate multi-variable data sets to solve comprehensive multi-step word problems."
+                "Students will be able to analyze core thematic principles of [TOPIC] and compute related quantitative calculations with high accuracy.",
+                "Students will be able to define key terminology and identify fundamental components of [TOPIC].",
+                "Students will be able to demonstrate practical mechanisms of [TOPIC] and present empirical findings clearly to peers.",
+                "Students will be able to apply theoretical models of [TOPIC] to solve structured real-world case studies.",
+                "Students will be able to evaluate the historical development and modern applications of [TOPIC].",
+                "Students will be able to synthesize multiple perspectives on [TOPIC] into a cohesive written argument.",
+                "Students will be able to compare and contrast competing theories associated with [TOPIC].",
+                "Students will be able to design a basic experimental framework or model to test hypotheses about [TOPIC].",
+                "Students will be able to interpret graphical data and numerical summaries related to [TOPIC].",
+                "Students will be able to construct logical proofs and systematic derivations concerning [TOPIC].",
+                "Students will be able to identify common misconceptions and errors when working with [TOPIC].",
+                "Students will be able to categorize different sub-branches and typologies within [TOPIC].",
+                "Students will be able to formulate targeted inquiry questions to guide further independent research on [TOPIC].",
+                "Students will be able to critique peer presentations on [TOPIC] using standardized rubric criteria.",
+                "Students will be able to translate complex prose descriptions of [TOPIC] into structured visual maps.",
+                "Students will be able to execute multi-step problem-solving sequences involving [TOPIC].",
+                "Students will be able to defend a chosen methodological approach for investigating [TOPIC].",
+                "Students will be able to summarize primary source readings and research briefs concerning [TOPIC].",
+                "Students will be able to map out interdisciplinary connections between [TOPIC] and broader fields of study.",
+                "Students will be able to demonstrate mastery of [TOPIC] through a comprehensive cumulative assessment task."
             ],
             prereqs: [
-                "Foundational unit terminology and baseline arithmetic competencies.",
-                "Familiarity with investigative questioning and collaborative group protocols.",
-                "Prior exposure to introductory problem sets and basic formula manipulation.",
-                "Recall of general study skills and critical reading habits from preceding units.",
-                "Basic understanding of prerequisite vocabulary and conceptual definitions.",
-                "Familiarity with standard classroom laboratory safety and measurement rules.",
-                "Previous exposure to introductory graphical representation and coordinate axes.",
-                "Comprehension of basic analytical logic and proportional reasoning.",
-                "Recall of relevant historical context or foundational background principles.",
-                "Basic familiarity with peer instruction techniques and active listening.",
-                "Competency in rounding decimals, fractions, and handling unit conversions.",
-                "Understanding of basic algebraic equations and variable substitution.",
-                "Previous practice in recording qualitative and quantitative observations.",
-                "Familiarity with using standard geometrical drawing tools and rulers.",
-                "Basic awareness of scientific notation and exponent calculation rules.",
-                "Comprehension of cause-and-effect relationships from elementary science modules.",
-                "Prior participation in structured brainstorming and Think-Pair-Share sessions.",
-                "Ability to organize notes chronologically using structured outlines.",
-                "Recall of fundamental geometric properties, angles, and area calculations.",
-                "Basic literacy in interpreting data tables, charts, and summary tallies."
-            ]
+                "Foundational terminology and baseline arithmetic competencies related to [TOPIC].",
+                "Familiarity with investigative questioning and foundational concepts preceding [TOPIC].",
+                "Prior exposure to introductory problem sets and basic formula manipulation linked with [TOPIC].",
+                "Understanding of basic operational definitions and elementary classification principles relevant to [TOPIC].",
+                "Working knowledge of preceding thematic modules directly prerequisite to [TOPIC].",
+                "Ability to perform basic data collection and measurement tasks necessary for [TOPIC].",
+                "Familiarity with standard notation, symbols, and conventions used in [TOPIC].",
+                "Basic conceptual grasp of cause-and-effect relationships foundational to [TOPIC].",
+                "Experience with introductory collaborative group work and discussion protocols pertinent to [TOPIC].",
+                "Proficiency in reading comprehension and critical analysis of introductory texts covering [TOPIC].",
+                "Previous practice with simple graphical representations and visual organizers related to [TOPIC].",
+                "Initial awareness of real-world contexts and everyday instances of [TOPIC].",
+                "Competence in executing fundamental algebraic or logical transformations required for [TOPIC].",
+                "Familiarity with safety guidelines, laboratory rules, or ethical protocols associated with [TOPIC].",
+                "General background knowledge of historical milestones or key figures preceding [TOPIC].",
+                "Ability to access, navigate, and utilize basic reference materials or digital tools for [TOPIC].",
+                "Understanding of core proportional reasoning and scaling concepts relevant to [TOPIC].",
+                "Experience formulating simple hypotheses or predictive guesses prior to exploring [TOPIC].",
+                "Basic familiarity with structural outlines or thematic frameworks matching [TOPIC].",
+                "Mental readiness and curiosity cultivated through introductory warm-up activities for [TOPIC]."
+            ],
+            starterContentsList: [
+                "Review of prior lesson terminology", "Interactive quiz on previous concepts", 
+                "Guided warm-up problem solving", "Brainstorming session on background knowledge", "Concept connection prompt"
+            ],
+            concludingContentsList: [
+                "Summary and wrap-up discussion", "Q&A clarification session", 
+                "Exit ticket assessment collection", "Homework assignment and milestone preview", "Key takeaways synthesis"
+            ],
+            teacherStarterVerbs: ["Recalling in", "Remembering about", "Reminding in", "Revisiting on", "Reviewing about"],
+            teacherMainVerbs: ["Providing note on", "Presenting briefly about", "Making explanation in detail about", "Demonstrating on", "Illustrating about"],
+            teacherConcludingVerbs: ["Summarize in", "Stabilize about", "Consolidate in", "Synthesize about", "Wrap-up in"],
+            studentStarterVerbs: ["Active Listening in", "Active Participation on", "Recalling about", "Responding to in", "Reflecting on"],
+            studentMainVerbs: ["Taking notes about", "Active Participation on", "Making Hot discussion on", "Brainstorming about", "Collaborating on"],
+            studentConcludingVerbs: ["Asking Questions about", "Answering Questions on", "Making a summary response in", "Reflecting on", "Clarifying doubts about"]
         },
         am: {
             frameworkTitle: "የዕለት ትምህርት ማዕቀፍ",
@@ -590,6 +631,7 @@
             grade: "ክፍል:",
             date: "ቀን:",
             unitTrack: "ምዕራፍ/ክፍል ቅደም ተከተል:",
+            previousTopic: "ቀዳሚ ርዕስ:",
             topic: "የትምህርቱ ዋና ርዕስ:",
             subtopic: "የትምህርቱ ንዑስ ርዕስ:",
             rationale: "የትምህርቱ አስፈላጊነት ምክንያት:",
@@ -611,88 +653,25 @@
             sig: "ፊርማ:",
             deptHead: "የဌቃ ዋና:",
             vDir: "ምክትል ዳይሬክተር:",
-            strategies: [
-                "አስብ-ተማከር-አጋራ (Think pair share)", "ጅግሶ (Jigsaw)", "ሐሳብ ማፍለቅ (Brainstorming)", 
-                "የዓሳ ጎድጓዳ ሳህን (Fishbowl)", "የሚና ጨዋታ (Role-play)", "በችግር ላይ የተመሠረተ ትምህርት (Problem Based learning)", 
-                "የሐሳብ ካርታ (Concept Mapping)", "ተነጋጋሪ አስመስሎ መስራት (Interactive Simulations)", 
-                "የኬዝ ጥናት (Case study)", "የጋለሪ ጉብኝት (Gallery walk)", "የእኩዮች ማስተማር (Peer Instruction)"
-            ],
-            assessments: [
-                "የክፍል ሥራ", "የቤት ሥራ", "የመውጫ ቲኬት (Exit ticket)", "የጽንሰ-ሐሳብ ፈተናዎች", "የሁለት ደቂቃ ወረቀቶች", "የአፈጻጸም ተግባራት"
-            ],
-            teachingAidsList: [
-                "ጥቁር እና ነጭ ሰሌዳዎች", "ኖራ እና ማርከሮች", "የመማሪያ መጻሕፍት", "የመልመጃ ደብተሮች",
-                "ደብተሮች", "ብዕሮች እና 铅笔", "የማከፋፈያ ወረቀቶች", "ፍላሽ ካርዶች", "ቻርቶች እና ፖስተሮች",
-                "የጂኦግራፊ ካርታዎች", "ግሎብ", "ፕሮጀክተሮች", "ኮምፒውተሮች እና ላፕቶፖች",
-                "ስማርት ቦርዶች", "ትምህርታዊ ቪዲዮዎች", "የድምፅ ቅጂዎች", "ትክክለኛ እቃዎች (Realia)",
-                "አካላዊ 3ዲ ሞዴሎች", "የትምህርት ፈተና ሶፍትዌር", "የማስታወቂያ ሰሌዳዎች"
-            ],
-            rationales: [
-                "ለዘመናዊ የምህንድስና ንድፎች እና ለሳይንሳዊ ምርምሮች ወሳኝ መሠረት ይጥላል።",
-                "ተማሪዎች ርዕሱን ከሂሳብ እና ከፊዚክስ ቀመሮች ጋር እንዲያሰሉ ያስችለዋል።",
-                "ተማሪዎች ምክንያታዊ የማሰብ እና የመተንተን ችሎታቸውን እንዲያዳብሩ ይረዳል።",
-                "ተማሪዎች የሳይንስ መርሆዎችን ከዕለት ተዕለት ሕይወት አውድ ጋር እንዲያስተሳስሩ ይረዳል።",
-                "ለቀጣይ የላቁ የትምህርት ክፍሎች አስተማማኝ መሰረት ይሆናል።",
-                "ተማሪዎች በቡድን በመሆን የጋራ መፍትሄዎችን እንዲያገኙ ይረዳል።",
-                "የተማሪዎችን የፈጠራ ችሎታ እና የክህሎት ደረጃ ያሳድጋል።",
-                "በሳይንሳዊ እና ሂሳባዊ እውነታዎች ላይ ያላቸውን እምነት ያጠናክራል።",
-                "ንድፈ-ሐሳባዊ እውቀትን ከተግባራዊ ሙከራዎች ጋር ያገናኛል።",
-                "ተማሪዎች የትንተና ክህሎት እንዲገነቡ ያስችላል።",
-                "የሂሳብ ስሌት ክህሎትን እና ፍጥነትን ያዳብራል።",
-                "የችግር አፈታት ቴክኒኮችን ያስተዋውቃል።",
-                "በጥልቀት የማሰብ ችሎታን ይገነባል።",
-                "የመረጃ ትንተና እና ትርጉም ችሎታን ያሻሽላል።",
-                "የቡድን ሥራ እና የሐሳብ ልውውጥን ያበረታታል።",
-                "ግልጽ የሆነ ሳይንሳዊ ቋንቋ አጠቃቀምን ያስተምራል።",
-                "የመማር ሂደቱን በይበልጥ አሳታፊ ያደርገዋል።",
-                "የቀደምት እውቀቶችን ከሐዲዱ ጋር ያስተሳስራል።",
-                "በራስ መተማመንን ይፈጥራል።",
-                "አስተማማኝ የመገምገሚያ ግብረ-መልስ ይሰጣል።"
-            ],
-            objectiveOptions: [
-                "ተማሪዎች ዋና ዋና የርዕሱን መርሆዎች መተንተን እና ተዛማጅ ስሌቶችን በከፍተኛ ትክክለኛነት መስራት ይችላሉ።",
-                "ተማሪዎች ቁልፍ ቃላትን መግለፅ እና የትምህርቱን ርዕስ መሰረታዊ አካላት መለየት ይችላሉ።",
-                "ተማሪዎች ተግባራዊ ስልቶችን ማሳየት እና የተግባር ውጤቶችን ለጓደኞቻቸው በግልጽ ማቅረብ ይችላሉ።",
-                "ተማሪዎች ንድፈ-ሐሳባዊ ሞዴሎችን በመጠቀም በእውነተኛ ህይወት ላይ የተመሰረቱ የኬዝ ጥናቶችን መፍታት ይችላሉ።",
-                "ተማሪዎች አማራጭ የችግር አፈታት ስልቶችን መገምገም እና ምርጡን ዘዴ መምረጥ ይችላሉ።",
-                "ተማሪዎች የሚመሩትን ህጎች፣ መርሆዎች እና መዋቅራዊ ንብረቶች አጭር ማጠቃለያ ሪፖርቶችን ማዘጋጀት ይችላሉ።",
-                "ተማሪዎች በተግባራዊ የተመሩ መልመጃዎች ወቅት ቁልፍ የአፈጻጸም መለኪያዎችን እና ተለዋዋጮችን መለካት ይችላሉ።",
-                "ተማሪዎች በምዕራፉ ውስጥ ያሉትን ተዋረድ ግንኙነቶች የሚያሳይ የተዋቀረ የሐሳብ ካርታ መገንባት ይችላሉ።",
-                "ተማሪዎች ከተግባራዊ አተገባበር አንፃር የተለያዩ የንድፈ-ሐሳብ አመለካከቶችን ማወዳደር ይችላሉ።",
-                "ተማሪዎች ትክክለኛ መላምቶችን ለመቅረጽ እና የሙከራ ውጤቶችን ለማረጋገጥ የትብብር ቡድን ተግባራትን ማከናወን ይችላሉ።",
-                "ተማሪዎች የግራፍ መረጃ ውክልናዎችን ተርጉመው ትርጉም ያለው መጠናዊ መደምደሚያዎችን ማግኘት ይችላሉ።",
-                "ተማሪዎች ለተወሳሰቡ እኩልታዎች የደረጃ በደረጃ የሂሳብ ማረጋገጫዎችን እና አመክንዮአዊ መነሻዎችን መቅረጽ ይችላሉ።",
-                "ተማሪዎች የንድፈ-ሐሳብ ግምቶችን ደህንነቱ በተጠበቀ ሁኔታ ለመፈተሽ መሰረታዊ የሙከራ ሂደቶችን መንደፍ ይችላሉ።",
-                "ተማሪዎች ተስማሚ ቴክኒካዊ ቃላትን በመጠቀም ሳይንሳዊ እና ሂሳባዊ ክርክሮችን በግልጽ መገናኘት ይችላሉ።",
-                "ተማሪዎች ባዮሎጂያዊ ወይም ፊዚካዊ ስርዓቶችን በመዋቅር ባህሪያት እና በተግባራዊ ንብረቶች መመደብ ይችላሉ።",
-                "ተማሪዎች በስሌቶች እና በሙከራ መለኪያዎች ውስጥ ሊኖሩ የሚችሉ የስሌት ስህተቶችን ምንጮች መለየት ይችላሉ።",
-                "ተማሪዎች በተዋቀረ የእኩዮች ግምገማ እና የክፍል ውይይቶች ወቅት የቀረቡ መፍትሄዎችን መከላከል ይችላሉ።",
-                "ተማሪዎች የግለሰቡን ጥልቅ ግንዛቤ የሚያረጋግጡ የምስረታ ግምገማ ተግባራትን ማጠናቀቅ ይችላሉ።",
-                "ተማሪዎች ወደ ዘመናዊ ሳይንሳዊ ንድፈ-ሐሳቦች የሚያመሩ ታሪካዊ ምዕራፎችን እና የፅንሰ-ሀሳብ እድገትን መዘርዘር ይችላሉ።",
-                "ተማሪዎች አጠቃላይ ባለብዙ ደረጃ የቃል ጥያቄዎችን ለመፍታት ባለብዙ ተለዋዋጭ መረጃ ስብስቦችን ማቀናጀት ይችላሉ።"
-            ],
-            prereqs: [
-                "የሚመለከታቸው መሠረታዊ ቃላት እና ፅንሰ-ሐሳቦች ግንዛቤ።",
-                "ቀደምት የሂሳብ ወይም የሳይንስ መርሆዎችን ማወቅ።",
-                "የመሠረታዊ ቀመሮች እና አሰራሮች እውቀት።",
-                "ከዚህ ቀደም የተማሩትን የንባብ ክህሎቶች ማስታወስ።",
-                "መሠረታዊ የደህንነት እና የጥናት ደንቦች።",
-                "የመረጃ ሰንጠረዦችን የመረዳት ቅድመ ልምድ።",
-                "አንጻራዊ አስተሳሰብ እና ምክንያታዊነት።",
-                "መሠረታዊ የጂኦግራፊ ወይም ፊዚክስ አውድ።",
-                "የቡድን ውይይት እና የሐሳብ ማፍለቅ ልምድ።",
-                "አጭር ማስታወሻዎችን የመያዝ ችሎታ።",
-                "አሥርዮሾችን እና ስብራቶችን የማስተካከል ክህሎት።",
-                "የአልጀብራ ቀመሮችን የመጠቀም ቅድመ ልምድ።",
-                "ምልከታዎችን የመቅዳት ልምድ።",
-                "የመሳሪያዎች አጠቃቀም እውቀት።",
-                "ሳይንሳዊ አጻጻፍ መሰረታዊ ሕግጋት።",
-                "ምክንያትና ውጤትን የመለየት ችሎታ።",
-                "የአስብ-ተማከር-አጋራ ልምድ።",
-                "መሠረታዊ የጂኦሜትሪ ቅርጾች እውቀት።",
-                "ግራፎችን የማንበብ ቅድመ ዝግጅት።",
-                "መሠረታዊ መለኪያዎችን የመለየት ችሎታ።"
-            ]
+            starterStrategies: ["ሐሳብ ማፍለቅ (Brainstorming)", "አስብ-ተማከር-አጋራ", "መነሻ ጥያቄዎች እና ዳሰሳ"],
+            mainStrategies: ["ጅግሶ (Jigsaw)", "የዓሳ ጎድጓዳ ሳህን (Fishbowl)", "የሚና ጨዋታ (Role-play)", "የሐሳብ ካርታ"],
+            concludingStrategies: ["ጥያቄዎችን መጠየቅ እና መመለስ", "የመውጫ ቲኬት (Exit ticket)", "ማጠቃለያ ውይይት"],
+            starterAssessments: ["የአፍ ጥያቄዎች", "የመፈጠሪያ ጥያቄዎች", "የፅንሰ-ሃሳብ ምርመራ"],
+            mainAssessments: ["የክፍል ስራ", "የሁለት ደቂቃ ፅሁፍ", "የአፈጻጸም ተግባር", "የእኩዮች ግምገማ መመዘኛዎች"],
+            concludingAssessments: ["የቤት ስራ", "የምርመራ ማረጋገጫ ነጥቦች", "የመውጫ ቲኬቶች", "ፈተናዎች", "ክዊዝ"],
+            assessments: ["የአፍ ጥያቄዎች", "የመፈጠሪያ ጥያቄዎች", "ፈተናዎች", "ክዊዞች", "የክፍል ሥራ", "የቤት ሥራ"],
+            teachingAidsList: ["Abacus", "Blackboards and Whiteboards", "Calculators", "Chart Papers and Infographics"],
+            rationales: ["ስለ [TOPIC] ጥልቅ ግንዛቤ ለመፍጠር ወሳኝ ትንተና ይሰጣል።"],
+            objectiveOptions: ["ተማሪዎች የ[TOPIC] ዋና ዋና መርሆዎችን መተንተን ይችላሉ።"],
+            prereqs: ["ከ[TOPIC] ጋር የተያያዙ መሰረታዊ ቃላት እና ፅንሰ-ሐሳቦች ግንዛቤ።"],
+            starterContentsList: ["የቀድሞ ትምህርት ግምገማ", "መነሻ ጥያቄዎች እና መልሶች"],
+            concludingContentsList: ["ማጠቃለያ እና ጥያቄዎች መልስ", "የቤት ስራ ማስታወሻ"],
+            teacherStarterVerbs: ["ማስታወስ በ", "ማስተወስ ስለ", "መገምገም ስለ"],
+            teacherMainVerbs: ["ማስታወሻ በመስጠት ላይ", "በአጭሩ በማቅረብ ላይ", "ዝርዝር ማብራሪያ በመስጠት ላይ"],
+            teacherConcludingVerbs: ["ማጠቃለል በ", "ማረጋጋት ስለ", "ማሰባሰብ በ"],
+            studentStarterVerbs: ["ንቁ ማዳመጥ በ", "ንቁ ተሳትፎ ማድረግ", "ማስታወስ ስለ"],
+            studentMainVerbs: ["ማስታወሻ መያዝ ስለ", "ንቁ ተሳትፎ ማድረግ በ", "ውይይት ማድረግ"],
+            studentConcludingVerbs: ["ጥያቄዎችን መጠየቅ ስለ", "ጥያቄዎችን መመለስ በ", "የማጠቃለያ ምላሽ መስጠት"]
         },
         om: {
             frameworkTitle: "Qajeelcha Barnootaa Guyyaa",
@@ -703,6 +682,7 @@
             grade: "Kiree/Kutaa:",
             date: "Guyyaa:",
             unitTrack: "Kutaa/Boqonnaa:",
+            previousTopic: "Mataduree Duraanii:",
             topic: "Madii Barnooticha:",
             subtopic: "Mataduree Xiqqaa:",
             rationale: "Kaayyoo ykn Sababa Barnootichaa:",
@@ -724,90 +704,25 @@
             sig: "Mallattoo:",
             deptHead: "Thepha Gosaa:",
             vDir: "Daariktera Itti-aanaa:",
-            strategies: [
-                "Yaada wal jijjiiruu (Think pair share)", "Jigsoo (Jigsaw)", "Yaada burqisiisuu (Brainstorming)", 
-                "Fishbowilii (Fishbowl)", "Tapha gahee (Role-play)", "Barachuu rakkoon geggeeffamu", 
-                "Kaartaa yaadaa (Concept Mapping)", "Mootelii wal-qunnamtii", "Qorannoo dhimmaa (Case study)", 
-                "Imala gaalarii (Gallery walk)", "Barsiisota hiriyootaa (Peer Instruction)"
-            ],
-            assessments: [
-                "Hojii kutaa", "Hojii mana", "Tikkeetii ba'umsaa", "Qormaata yaada bu'uuraa", 
-                "Waraqaa daqiiqaa lamaa", "Gocha raawwii"
-            ],
-            teachingAidsList: [
-                "Gabatee gurraacha fi adii", "Shokii fi maarkarii", "Macaafota barnootaa", 
-                "Macaafota hojii", "Qabatamaa", "Qalama fi pensilii", "Waraqota qoodaman", 
-                "Kaardiiwwan ifaa", "Chaartiiwwan fi poostara", "Kaartaa lafaa", "Gloobii", 
-                "Pirojekterii", "Kompiitara fi laaptooppii", "Gabatee smarti", "Viidiyoo barnootaa", 
-                "Sagalee waraabame", "Meeshaalee dhugaa", "Mootelii 3D", "Sofuweerii qormaataa", 
-                "Gabatee beeksisaa"
-            ],
-            rationales: [
-                "Bu'uura ijaarsa teeknolojii ammayyaa fi qorannoo saayinsii tiif ni kenna.",
-                "Adeemsa uumamaa qajeeltoowwan herregaa fi fizikii wajjin akka shallagan gargaara.",
-                "Dandeettii xiinxalaafi yaada bu'uuraa barattootaa ni gabbisa.",
-                "Yaada saayinsii jireenya keessatti hojiirra oolchuuf gargaara.",
-                "Bu'uura barnootaa fuulduraaf barbaachisu ni cimsa.",
-                "Hojii garee fi wal-gargaarsaa ni jajjabeessa.",
-                "Dandeettii yaada uumummaa barattootaa ni guddisa.",
-                "Madaallii fi qormaata saayinsii fi herregaa irratti amantaa ni uuma.",
-                "Yaad-rimee qorannoo qabatamaadhaan walitti ni hidha.",
-                "Dandeettii quunnamtii fi barreeffama saayinsii ni gabbisa.",
-                "Dandeettii shallaggii fi saffisa hojii ni dabala.",
-                "Tooftaalee hiika rakkoo ni barsiisa.",
-                "Dandeettii yaaduu gadi fagoof qopheessa.",
-                "Xiinxala odeeffannoo fi hiika isaa ni fooyyessa.",
-                "Mariif dandeettii gaarii ni kenna.",
-                "Afaan saayinsii sirrii ta'e fayyadamuu barsiisa.",
-                "Adeemsa barachuu dammaqina qabu uuma.",
-                "Beekumsa duraanii qabu wajjin walitti ni hidha.",
-                "Of-itti amanamummaa ni uuma.",
-                "Yaada deebii sirrii ta'e kennuun hubannoo cimsab."
-            ],
-            objectiveOptions: [
-                "Barattoonni bu'uura qajeeltoowwan mataduree xiinxaluun shallaggii shallaggii herregaa sirrii ta'een hojjechuu ni danda'u.",
-                "Barattoonni jechoota furtuu hiikuun qaamolee bu'uuraa mataduree barnootichaa adda baasuu ni danda'u.",
-                "Barattoonni tooftaalee qabatamaa agarsiisuun bu'aa argannoo qorannoo hiriyootaaf ifatti dhiheessuu ni danda'u.",
-                "Barattoonni mootelii yaad-rimee fayyadamuun qorannoo dhimmaa haala qabatamaa irratti hundaa'an hiikuu ni danda'u.",
-                "Barattoonni tooftaalee hiika rakkoo filachuun karaa sirrii ta'etti fayyadamuu ni danda'u.",
-                "Barattoonni gabaasa cuunfaa gabaabaa seera bulmaa'aa, seeraa fi amaloota caasaa qopheessuu ni danda'u.",
-                "Barattoonni shaakala qabatamaa keessatti safartuu raawwii fi jijjiiramaa safaranii adda baasuu ni danda'u.",
-                "Barattoonni kaartaa yaadaa caaseffame qopheessuun walitti dhufeenya sadarkaa boqonnichaa agarsiisuu ni danda'u.",
-                "Barattoonni ilaalcha yaad-rimee garaagaraa hojiirra oolchuuf walbira qabuun xiinxaluu ni danda'u.",
-                "Barattoonni yaada walii mirkaneessuuf hojiirra oolmaa garee gaggeessuun bu'aa qorannoo mirkaneessuu ni danda'u.",
-                "Barattoonni odeeffannoo giraafii hiikuun bu'aa shallaggii hiika qabu irraa argachuu ni danda'u.",
-                "Barattoonni qajeelfama herregaa walxaxaa ta'eef ragaa herregaa tarkaanfiidhaan qopheessuu ni danda'u.",
-                "Barattoonni yaada bu'uuraa qorannoo nageenyaan qorachuuf tooftaalee qorannoo bu'uuraa qopheessuu ni danda'u.",
-                "Barattoonni jechoota teeknikaa sirrii ta'an fayyadamuun falmii saayinsii fi herregaa ifatti wal qunnamsiisuu ni danda'u.",
-                "Barattoonni sirna baayoloojii ykn fizikii amaloota caasaa fi qabeenya hojiirratti hundaa'uun ramaduu ni danda'u.",
-                "Barattoonni shallaggii fi safartuu qorannoo keessatti madda dogoggora shallaggii ta'uu danda'an adda baasuu ni danda'u.",
-                "Barattoonni madaallii hiriyootaa fi marii kutaa keessatti furmaata dhihaate deeggaruu ni danda'u.",
-                "Barattoonni hubannoo dhuunfaa mirkaneessuuf gocha madaallii qopheessuu xumuruu ni danda'u.",
-                "Barattoonni seenaa fi guddina yaad-rimee saayinsii ammayyaa geessisu tarreessuu ni danda'u.",
-                "Barattoonni gaaffiiwwan afaanii baay'ee walxaxaa ta'an hiikuuf daataa jijjiiramaa walitti qindeessuu ni danda'u."
-            ],
-            prereqs: [
-                "Jechoota boqoonchaa fi dandeettii herregaa bu'uuraa.",
-                "Gaaffii qorannoo fi tooftaalee garee beekuu.",
-                "Muuxannoo shaakala hojii duraanii fi shallaggii.",
-                "Beekumsa dandeettii dubbisaa boqonnaa duraanii.",
-                "Hiika jechoota bu'uuraa fi ibsa yaad-rimee.",
-                "Nageenya laabiraatorii fi seera safartuu beekuu.",
-                "Fakkiiwwan bu'uuraa fi qindaachuu qabatamaa.",
-                "Logikiin xiinxalaa fi yaada madaalawaa.",
-                "Odeeffannoo seenaa ykn bu'uura duuba-biyyaa.",
-                "Mala barsiisa hiriyootaa fi dhaggeeffachuu danda'u.",
-                "Shallaggii lakkoofsa dicijimaalii fi hiruufii.",
-                "Qajeeltoowwan aljebraa bu'uuraa.",
-                "Galmee qorannoo qabatamaa fi ilaalcha.",
-                "Fayyadama meeshaalee safartuu.",
-                "Seera barreessuu lakkoofsa saayinsii.",
-                "Walitti dhufeenya sababaa fi bu'aa.",
-                "Muuxannoo marii Think-Pair-Share.",
-                "Unka qindeessuu barreeffamaa.",
-                "Biroomeetirii bu'uuraa fi safartuu bal'inaa.",
-                "Hiika gabatee odeeffannoo fi chaartii."
-            ]
+            starterStrategies: ["Yaada burqisiisuu", "Yaada wal jijjiiruu", "Gaaffiiwwan jalqabaa"],
+            mainStrategies: ["Jigsoo (Jigsaw)", "Fishbowilii", "Tapha gahee (Role-play)", "Kaartaa yaadaa"],
+            concludingStrategies: ["Gaaffii gaafachuu fi deebisuu", "Tikkeetii ba'umsaa", "Cuunfaa xumuraa"],
+            starterAssessments: ["Gaaffiiwwan afaanii", "Gaaffiiwwan hojii irraa", "Qormaata yaad-rimee"],
+            mainAssessments: ["Hojii kutaa", "Waraqaa daqiiqaa lama", "Hojii raawwii", "Rubrii madaallii hiriyootaa"],
+            concludingAssessments: ["Hojii mana", "Tuqaa sakatta'aa", "Tikkeetii ba'umsaa", "Qormaata", "Kwiizii"],
+            assessments: ["Gaaffiiwwan afaanii", "Qormaata", "Kwiizii", "Hojii kutaa", "Hojii mana"],
+            teachingAidsList: ["Abacus", "Blackboards and Whiteboards", "Calculators", "Chart Papers"],
+            rationales: ["Bu'uura ijaarsa yaad-rimee [TOPIC] tiif ni kenna."],
+            objectiveOptions: ["Barattoonni bu'uura qajeeltoowwan [TOPIC] xiinxaluu ni danda'u."],
+            prereqs: ["Jechoota boqoonchaa fi dandeettii [TOPIC] wajjin walqabatan."],
+            starterContentsList: ["Irra deebi'ii barnoota darbee", "Gaaffii fi deebii jalqabaa"],
+            concludingContentsList: ["Cuunfaa fi marii xumuraa", "Kennaa hojii mana"],
+            teacherStarterVerbs: ["Yaadachiisuu irratti", "Yaadachuu keessatti", "Hubachiisuu irratti"],
+            teacherMainVerbs: ["Yaadannoo kennuu irratti", "Gabaabumatti dhiheessuu irratti", "Ibsaa bal'aa kennuu irratti"],
+            teacherConcludingVerbs: ["Cuunfuu irratti", "Madaalchisuu keessatti", "Walitti qindeessuu irratti"],
+            studentStarterVerbs: ["Dhaggeeffachuu dammaqaa keessatti", "Hirmaannaa dammaqaa irratti"],
+            studentMainVerbs: ["Yaadannoo qabachuu irratti", "Hirmaannaa dammaqaa taasisuu irratti"],
+            studentConcludingVerbs: ["Gaaffii gaafachuu irratti", "Gaaffii deebisuu irratti"]
         }
     };
 
@@ -824,9 +739,7 @@
     const defaultTopics = [
         "Cell Structure and Functions",
         "Process of Photosynthesis",
-        "Ecosystems and Food Webs",
-        "Introduction to Genetics",
-        "Human Respiratory System"
+        "Ecosystems and Food Webs"
     ];
 
     function getEmailForUser(username) {
@@ -1055,9 +968,29 @@
         const selectedLang = document.getElementById('languageSelect')?.value || "en";
         const tObj = langDict[selectedLang] || langDict.en;
 
-        let stratHtml = tObj.strategies.map((s, idx) => `<label><input type="checkbox" name="strat${dayNum}" value="${s}" ${idx<2?'checked':''}> ${s}</label>`).join('');
-        let assessHtml = tObj.assessments.map((a, idx) => `<label><input type="checkbox" name="assess${dayNum}" value="${a}" ${idx===0?'checked':''}> ${a}</label>`).join('');
+        let starterAssessHtml = tObj.starterAssessments.map((a, idx) => `<label><input type="checkbox" name="starterAssess${dayNum}" value="${a}" ${idx===0?'checked':''}> ${a}</label>`).join('');
+        let mainAssessHtml = tObj.mainAssessments.map((a, idx) => `<label><input type="checkbox" name="mainAssess${dayNum}" value="${a}" ${idx===0?'checked':''}> ${a}</label>`).join('');
+        let conclAssessHtml = tObj.concludingAssessments.map((a, idx) => `<label><input type="checkbox" name="conclAssess${dayNum}" value="${a}" ${idx===0?'checked':''}> ${a}</label>`).join('');
+
         let aidsHtml = tObj.teachingAidsList.map((ta, idx) => `<label><input type="checkbox" name="aids${dayNum}" value="${ta}" ${idx<3?'checked':''}> ${ta}</label>`).join('');
+
+        // Specific distributed strategy checkboxes
+        let starterStratHtml = tObj.starterStrategies.map((s, idx) => `<label><input type="checkbox" name="starterStrat${dayNum}" value="${s}" ${idx===0?'checked':''}> ${s}</label>`).join('');
+        let mainStratHtml = tObj.mainStrategies.map((s, idx) => `<label><input type="checkbox" name="mainStrat${dayNum}" value="${s}" ${idx<2?'checked':''}> ${s}</label>`).join('');
+        let conclStratHtml = tObj.concludingStrategies.map((s, idx) => `<label><input type="checkbox" name="conclStrat${dayNum}" value="${s}" ${idx===0?'checked':''}> ${s}</label>`).join('');
+
+        // Multi-select option lists for Starter, Main, and Concluding Contents, Teacher Roles, and Student Roles
+        let starterContentsOpts = tObj.starterContentsList.map(c => `<label><input type="checkbox" name="starterContent${dayNum}" value="${escapeHtml(c)}"> ${escapeHtml(c)}</label>`).join('');
+        let conclContentsOpts = tObj.concludingContentsList.map(c => `<label><input type="checkbox" name="conclContent${dayNum}" value="${escapeHtml(c)}"> ${escapeHtml(c)}</label>`).join('');
+
+        let tStarterVerbsOpts = tObj.teacherStarterVerbs.map(v => `<label><input type="checkbox" name="tStarterVerb${dayNum}" value="${escapeHtml(v)}"> ${escapeHtml(v)}</label>`).join('');
+        let sStarterVerbsOpts = tObj.studentStarterVerbs.map(v => `<label><input type="checkbox" name="sStarterVerb${dayNum}" value="${escapeHtml(v)}"> ${escapeHtml(v)}</label>`).join('');
+
+        let tMainVerbsOpts = tObj.teacherMainVerbs.map(v => `<label><input type="checkbox" name="tMainVerb${dayNum}" value="${escapeHtml(v)}"> ${escapeHtml(v)}</label>`).join('');
+        let sMainVerbsOpts = tObj.studentMainVerbs.map(v => `<label><input type="checkbox" name="sMainVerb${dayNum}" value="${escapeHtml(v)}"> ${escapeHtml(v)}</label>`).join('');
+
+        let tConclVerbsOpts = tObj.teacherConcludingVerbs.map(v => `<label><input type="checkbox" name="tConclVerb${dayNum}" value="${escapeHtml(v)}"> ${escapeHtml(v)}</label>`).join('');
+        let sConclVerbsOpts = tObj.studentConcludingVerbs.map(v => `<label><input type="checkbox" name="sConclVerb${dayNum}" value="${escapeHtml(v)}"> ${escapeHtml(v)}</label>`).join('');
 
         return `
             <div class="day-config-card" id="configCard_${dayNum}" data-day="${dayNum}">
@@ -1066,44 +999,38 @@
                     <button type="button" class="secondary-btn" style="background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);" onclick="omitDay(${dayNum})">Omit / Remove</button>
                 </h3>
                 <div class="controls-row" style="margin-bottom: 10px; gap: 10px;">
-                    <input type="text" id="topic${dayNum}" placeholder="Topic Name" value="${defaultTopic}" style="flex: 2;" oninput="updateAiOptionsForDay(${dayNum})">
-                    <input type="text" id="unitTrack${dayNum}" placeholder="Unit Track (e.g., Unit 2, Module 1)" value="Unit ${dayNum} - Module Sequence" style="flex: 1;">
+                    <input type="text" id="topic${dayNum}" placeholder="Topic Name (Leave blank or edit)" value="${defaultTopic}" style="flex: 2;" oninput="updateAiOptionsForDay(${dayNum})">
+                    <input type="text" id="prevTopic${dayNum}" placeholder="Previous Topic (Fill Manually)" style="flex: 2;">
+                    <input type="text" id="unitTrack${dayNum}" placeholder="Unit Track" style="flex: 1;">
                 </div>
 
                 <div class="controls-row" style="margin-bottom: 10px; gap: 10px;">
-                    <input type="text" id="subtopic${dayNum}" placeholder="Enter custom subtopics for this day..." value="Core Structural Mechanisms & Analytical Properties in ${defaultTopic}" style="flex: 3;">
-                    <input type="text" id="pageRange${dayNum}" placeholder="Page Range (e.g., pp. 45-52)" value="pp. ${(dayNum-1)*15 + 1}-${dayNum*15}" style="flex: 1;">
+                    <input type="text" id="subtopic${dayNum}" placeholder="Subtopic of the lesson" style="flex: 3;">
+                    <input type="text" id="pageRange${dayNum}" placeholder="Page Range (e.g., pp. 45-52)" style="flex: 1;">
                 </div>
                 
                 <div style="margin-bottom: 10px; background: #fdfdfd; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                    <h4 style="margin: 0 0 8px 0; font-size: 13px; color: #333;">Manual Minute Distribution (Total: 45 Mins)</h4>
+                    <h4 style="margin: 0 0 8px 0; font-size: 13px; color: #333;">Minute Distribution</h4>
                     <div style="display: flex; gap: 10px;">
-                        <div style="flex:1;"><label style="font-size:11px;">Starter Mins:</label><input type="number" id="starterMin${dayNum}" value="5" min="1" max="45" style="width:100%; padding:5px;"></div>
-                        <div style="flex:1;"><label style="font-size:11px;">Main Mins:</label><input type="number" id="mainMin${dayNum}" value="32" min="1" max="45" style="width:100%; padding:5px;"></div>
-                        <div style="flex:1;"><label style="font-size:11px;">Concluding Mins:</label><input type="number" id="conclMin${dayNum}" value="8" min="1" max="45" style="width:100%; padding:5px;"></div>
+                        <div style="flex:1;"><label style="font-size:11px;">Starter Mins:</label><input type="number" id="starterMin${dayNum}" min="1" max="45" value="" style="width:100%; padding:5px;"></div>
+                        <div style="flex:1;"><label style="font-size:11px;">Main Mins:</label><input type="number" id="mainMin${dayNum}" min="1" max="45" value="" style="width:100%; padding:5px;"></div>
+                        <div style="flex:1;"><label style="font-size:11px;">Concluding Mins:</label><input type="number" id="conclMin${dayNum}" min="1" max="45" value="" style="width:100%; padding:5px;"></div>
                     </div>
                 </div>
 
                 <div class="day-config-grid" style="grid-template-columns: 1fr;">
                     <div class="ai-select-group">
-                        <label>
-                            <span>Rationale Options (20 Options incorporating topic)</span>
-                            <button type="button" class="ai-assist-btn" onclick="updateAiOptionsForDay(${dayNum})">Refresh Options</button>
-                        </label>
+                        <label><span>Rationale Options (AI Integrated with Topic)</span></label>
                         <select id="rationaleSelect${dayNum}"></select>
                     </div>
                     
                     <div class="ai-select-group">
-                        <label>
-                            <span>Learning objective Options (20 Professional Lesson Plan Objectives)</span>
-                        </label>
+                        <label><span>Learning objective Options (AI Integrated with Topic)</span></label>
                         <select id="objectivesSelect${dayNum}"></select>
                     </div>
                     
                     <div class="ai-select-group">
-                        <label>
-                            <span>Pre-requisite Knowledge Options (20 Options + Custom Manual Add)</span>
-                        </label>
+                        <label><span>Pre-requisite Knowledge Options (AI Integrated with Topic)</span></label>
                         <div style="display: flex; gap: 8px; margin-bottom: 6px;">
                             <select id="prereqSelect${dayNum}" style="flex: 3;"></select>
                             <input type="text" id="customPrereqInput${dayNum}" placeholder="Type custom pre-req..." style="flex: 2;">
@@ -1112,25 +1039,109 @@
                     </div>
 
                     <div class="ai-select-group">
-                        <label>
-                            <span>Teaching Aids Options</span>
-                        </label>
+                        <label><span>Teaching Aids Options</span></label>
                         <select id="aidsSelect${dayNum}"></select>
                     </div>
                 </div>
 
-                <div class="day-config-grid" style="margin-top: 15px;">
-                    <div class="select-box-group">
-                        <h4 style="font-size:12px; margin:0 0 5px 0; font-weight:700;">Active Learning Strategies</h4>
-                        <div class="checkbox-scroll">${stratHtml}</div>
+                <!-- Multi-Select Drop-Downs & Configuration Controls for Contents, Teacher Role, and Student Role -->
+                <div style="margin-top: 15px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px;">
+                    <h4 style="margin: 0 0 10px 0; font-size: 13px; color: var(--primary);">Multi-Select Statement Configuration (Contents, Teacher Role, Student Role)</h4>
+                    
+                    <!-- Starter Activity Section -->
+                    <div style="margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+                        <strong style="font-size: 12px; color: #1e293b; display: block; margin-bottom: 6px;">Starter Activity Multi-Selections:</strong>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
+                            <div>
+                                <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Contents (Select multiple):</label>
+                                <div class="checkbox-scroll">${starterContentsOpts}</div>
+                                <input type="text" id="starterContentManual${dayNum}" placeholder="Or type custom content..." style="width: 100%; margin-top: 6px; padding: 6px; font-size: 12px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Teacher Role Verbs (Select multiple):</label>
+                                <div class="checkbox-scroll">${tStarterVerbsOpts}</div>
+                                <input type="text" id="tStarterManual${dayNum}" placeholder="Or custom teacher role..." style="width: 100%; margin-top: 6px; padding: 6px; font-size: 12px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Student Role Verbs (Select multiple):</label>
+                                <div class="checkbox-scroll">${sStarterVerbsOpts}</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="select-box-group">
-                        <h4 style="font-size:12px; margin:0 0 5px 0; font-weight:700;">Assessment Activities</h4>
-                        <div class="checkbox-scroll">${assessHtml}</div>
+
+                    <!-- Main Activity Section -->
+                    <div style="margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+                        <strong style="font-size: 12px; color: #1e293b; display: block; margin-bottom: 6px;">Main Activity Multi-Selections:</strong>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
+                            <div>
+                                <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Contents (Uses Lesson Topic):</label>
+                                <input type="text" id="mainContentTopicDisplay${dayNum}" readonly style="width: 100%; padding: 6px; font-size: 12px; background: #e2e8f0;" placeholder="Uses Lesson Topic">
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Teacher Role Verbs (Select multiple):</label>
+                                <div class="checkbox-scroll">${tMainVerbsOpts}</div>
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Student Role Verbs (Select multiple):</label>
+                                <div class="checkbox-scroll">${sMainVerbsOpts}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Concluding Activity Section -->
+                    <div>
+                        <strong style="font-size: 12px; color: #1e293b; display: block; margin-bottom: 6px;">Concluding Activity Multi-Selections:</strong>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
+                            <div>
+                                <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Contents (Select multiple):</label>
+                                <div class="checkbox-scroll">${conclContentsOpts}</div>
+                                <input type="text" id="conclContentManual${dayNum}" placeholder="Or type custom content..." style="width: 100%; margin-top: 6px; padding: 6px; font-size: 12px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Teacher Role Verbs (Select multiple):</label>
+                                <div class="checkbox-scroll">${tConclVerbsOpts}</div>
+                                <input type="text" id="tConclManual${dayNum}" placeholder="Or custom teacher role..." style="width: 100%; margin-top: 6px; padding: 6px; font-size: 12px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Student Role Verbs (Select multiple):</label>
+                                <div class="checkbox-scroll">${sConclVerbsOpts}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="day-config-grid" style="margin-top: 15px; grid-template-columns: 1fr;">
+                <!-- Distributed Learning Strategies per Activity Phase -->
+                <div style="margin-top: 15px; background: #fdfdfd; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px;">
+                    <h4 style="margin: 0 0 10px 0; font-size: 13px; color: var(--primary);">Distributed Learning & Teaching Strategies</h4>
+                    <div class="day-config-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+                        <div>
+                            <h5 style="font-size:12px; margin:0 0 5px 0; color:#334155;">Starter Strategies</h5>
+                            <div class="checkbox-scroll">${starterStratHtml}</div>
+                        </div>
+                        <div>
+                            <h5 style="font-size:12px; margin:0 0 5px 0; color:#334155;">Main Activity Strategies</h5>
+                            <div class="checkbox-scroll">${mainStratHtml}</div>
+                        </div>
+                        <div>
+                            <h5 style="font-size:12px; margin:0 0 5px 0; color:#334155;">Concluding Strategies</h5>
+                            <div class="checkbox-scroll">${conclStratHtml}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="day-config-grid" style="margin-top: 15px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+                    <div class="select-box-group">
+                        <h4 style="font-size:12px; margin:0 0 5px 0; font-weight:700;">Starter Assessment Activities</h4>
+                        <div class="checkbox-scroll">${starterAssessHtml}</div>
+                    </div>
+                    <div class="select-box-group">
+                        <h4 style="font-size:12px; margin:0 0 5px 0; font-weight:700;">Main Assessment Activities</h4>
+                        <div class="checkbox-scroll">${mainAssessHtml}</div>
+                    </div>
+                    <div class="select-box-group">
+                        <h4 style="font-size:12px; margin:0 0 5px 0; font-weight:700;">Conclusion Assessment Activities</h4>
+                        <div class="checkbox-scroll">${conclAssessHtml}</div>
+                    </div>
                     <div class="select-box-group">
                         <h4 style="font-size:12px; margin:0 0 5px 0; font-weight:700;">Teaching Aids (Default Checkboxes)</h4>
                         <div class="checkbox-scroll">${aidsHtml}</div>
@@ -1151,7 +1162,7 @@
         }
 
         const div = document.createElement('div');
-        let defaultTopicName = defaultTopics[(newDayNum-1)%defaultTopics.length] || `Advanced Topic ${newDayNum}`;
+        let defaultTopicName = "";
         div.innerHTML = getDayConfigHtml(newDayNum, defaultTopicName);
         
         let inserted = false;
@@ -1190,7 +1201,12 @@
     function updateAiOptionsForDay(dayNum) {
         const topicInput = document.getElementById(`topic${dayNum}`);
         if (!topicInput) return;
-        const topicVal = topicInput.value || "General Topic";
+        const topicVal = topicInput.value.trim() || "General Topic";
+
+        const mainContentDisplay = document.getElementById(`mainContentTopicDisplay${dayNum}`);
+        if(mainContentDisplay) {
+            mainContentDisplay.value = topicVal;
+        }
 
         const selectedLang = document.getElementById('languageSelect')?.value || "en";
         const tObj = langDict[selectedLang] || langDict.en;
@@ -1201,86 +1217,34 @@
         const aidsSelect = document.getElementById(`aidsSelect${dayNum}`);
 
         if (ratSelect) {
-            ratSelect.innerHTML = tObj.rationales.map((r, idx) => `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join('');
+            ratSelect.innerHTML = tObj.rationales.map((r) => {
+                const formatted = r.replace(/\[TOPIC\]/g, topicVal);
+                return `<option value="${escapeHtml(formatted)}">${escapeHtml(formatted)}</option>`;
+            }).join('');
         }
         if (objSelect) {
-            objSelect.innerHTML = tObj.objectiveOptions.map((o, idx) => `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('');
+            objSelect.innerHTML = tObj.objectiveOptions.map((o) => {
+                const formatted = o.replace(/\[TOPIC\]/g, topicVal);
+                return `<option value="${escapeHtml(formatted)}">${escapeHtml(formatted)}</option>`;
+            }).join('');
         }
         if (preSelect) {
-            preSelect.innerHTML = tObj.prereqs.map((p, idx) => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
+            preSelect.innerHTML = tObj.prereqs.map((p) => {
+                const formatted = p.replace(/\[TOPIC\]/g, topicVal);
+                return `<option value="${escapeHtml(formatted)}">${escapeHtml(formatted)}</option>`;
+            }).join('');
         }
         if (aidsSelect) {
             let extraFilesContext = uploadedFilesCache.length > 0 ? ` [Incorporating attached: ${uploadedFilesCache.map(f=>f.name).join(', ')}]` : '';
             aidsSelect.innerHTML = [
                 `Whiteboards, dry-erase markers, and structured textbook reading chapters dedicated to ${topicVal}.${extraFilesContext}`,
                 `Multimedia projection systems, summary handout packets, and exercise pads for ${topicVal}.`
-            ].map((a, idx) => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+            ].map((a) => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
         }
     }
 
     function escapeHtml(str) {
         return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    }
-
-    function getIntelligentLessonContent(topicVal, lang) {
-        const selectedLang = lang || "en";
-        let uploadedContextNote = uploadedFilesCache.length > 0 ? ` [Integrated references from ${uploadedFilesCache.length} uploaded source file(s)]` : '';
-
-        if (selectedLang === 'am') {
-            return {
-                starterContent: `ስለ ${topicVal} ዙሪያ አውዳዊ ጥያቄዎች እና ተግባራዊ ችግር ማቅረብ${uploadedContextNote}`,
-                starterRole: `ከ${topicVal} ጋር በቀጥታ የተያያዘ ፅንሰ-ሐሳባዊ ፈተና ወይም ተግባራዊ ፈተና ማቅረብ።`,
-                starterAction: `መነሻ ሐሳቦችን ማፍለቅ፣ በጥንድ ሆኖ መወያየት እና ጥያቄዎችን ማዘጋጀት።`,
-                starterMethod: "ሐሳብ ማፍለቅ (Brainstorming)",
-                starterAssessment: "የመጀመሪያ ደረጃ ግምገማ",
-                
-                mainContent: `ጥልቅ ዳሰሳ፣ የደረጃ በደረጃ ትንተና እና ከ${topicVal} ጋር የተያያዙ የተግባር መልመጃዎች።`,
-                mainRole: `ተከታታይ የመማሪያ ዘዴዎችን ማቀናጀት፣ የተማሪዎችን ሂደት መከታተል እና አስፈላጊውን ድጋፍ መስጠት።`,
-                mainAction: `በንዑስ ቡድን ሆኖ የተሰጡ ሉሆችን ማጠናቀቅ፣ ቀመሮችን መስራት እና ሞዴሎችን መተንተን።`,
-                
-                plenaryContent: `ማጠቃለያ ክለሳ፣ የፅንሰ-ሐሳብ ማብራሪያ እና ክፍተቶችን ማጥበብ`,
-                plenaryRole: `ዋ ዋና ነጥቦችን ማጠቃለል፣ የተማሪዎችን ጥያቄዎች መመለስ እና ማጠቃለያ ግምገማዎችን መምራት።`,
-                plenaryAction: `የመውጫ ግምገማዎችን ማጠናቀቅ እና ዋና ዋና ግንዛቤዎችን ማጠቃለል።`,
-                plenaryMethod: "የእኩዮች ማስተማር (Peer Instruction)",
-                plenaryAssessment: "የመውጫ ቲኬት (Exit ticket)"
-            };
-        } else if (selectedLang === 'om') {
-            return {
-                starterContent: `Gaaffiiwwan haala qabatamaa fi qormaata ${topicVal} wajjin walqabatu${uploadedContextNote}`,
-                starterRole: `Rakkoo yaad-rimee ykn qormaata qabatamaa ${topicVal} wajjin walqabatu dhiheessuu.`,
-                starterAction: `Yaadota jalqabaa kaasuun, hiriyoota wajjin mari’achuun gaaffiiwwan qopheessuu.`,
-                starterMethod: "Yaada burqisiisuu (Brainstorming)",
-                starterAssessment: "Madaallii Jalqabaa",
-                
-                mainContent: `Qorannoo bal’aa, adeemsa tarkaanfiidhaan fi shaakala shallaggii ${topicVal} wajjin walqabatu.`,
-                mainRole: `Mala barnootaa wal-qunnamtii mijeessuu, adeemsa barattootaa hordofuu fi gargaarsa kennuu.`,
-                mainAction: `Garee xixiqqoon ta’uun waraqota hojii guutuu, shallaggii hojjechuu fi mooteelii xiinxaluu.`,
-                
-                plenaryContent: `Gabaabumatti deebi’anii ilaaluu, ibsa yaad-rimee fi hiika rakkoolee`,
-                plenaryRole: `Yaadota ijoo cuunfuu, rakkoolee ibsuu fi madaallii xumuraa geggeessuu.`,
-                plenaryAction: `Madaallii ba’umsaa xumuruun hubannoo ijoo dhiheessuu.`,
-                plenaryMethod: "Barsiisota hiriyootaa (Peer Instruction)",
-                plenaryAssessment: "Tikkeetii ba'umsaa"
-            };
-        } else {
-            return {
-                starterContent: `Contextual inquiry and real-world problem provocation regarding ${topicVal}${uploadedContextNote}`,
-                starterRole: `Present a targeted conceptual dilemma or practical challenge related directly to ${topicVal}.`,
-                starterAction: `Brainstorm initial hypotheses, share insights in pairs, and formulate focused inquiry questions.`,
-                starterMethod: "Brainstorming",
-                starterAssessment: "Formative Check",
-                
-                mainContent: `Comprehensive exploration, step-by-step analytical breakdown, and guided problem-solving drills specific to ${topicVal}.`,
-                mainRole: `Facilitate interactive learning structures, monitor student progress, and provide targeted technical scaffolding.`,
-                mainAction: `Collaborate in small peer groups to complete structured task sheets, solve equations, and analyze models.`,
-                
-                plenaryContent: `Summary review, conceptual debrief, and misconception resolution`,
-                plenaryRole: `Synthesize main takeaways, clarify specific hurdles, and direct closing evaluations.`,
-                plenaryAction: `Complete exit assessment and summarize key conceptual insights.`,
-                plenaryMethod: "Peer Instruction",
-                plenaryAssessment: "Exit ticket"
-            };
-        }
     }
 
     async function generateLessonPlans() {
@@ -1302,9 +1266,9 @@
             await userDocRef.update({ quotaLeft: remaining });
         }
 
-        const teacherName = document.getElementById('teacherNameInput').value || "Teacher";
-        const subject = document.getElementById('subjectInput').value || "Subject";
-        const gradeSection = document.getElementById('gradeInput').value || "Grade";
+        const teacherName = document.getElementById('teacherNameInput').value || "";
+        const subject = document.getElementById('subjectInput').value || "";
+        const gradeSection = document.getElementById('gradeInput').value || "";
         const schoolName = document.getElementById('schoolNameSelect').value || "Adika Youth Academy";
         const startDateStr = document.getElementById('startDateInput').value;
         const selectedLang = document.getElementById('languageSelect').value || "en";
@@ -1350,43 +1314,100 @@
             sequenceIndex++;
             const dayNum = card.getAttribute('data-day');
             const topicInputElem = card.querySelector(`input[id^="topic"]`);
-            const topicVal = topicInputElem ? topicInputElem.value.trim() : "Core Lesson Subject";
+            const topicVal = topicInputElem ? topicInputElem.value.trim() : "";
+
+            const prevTopicInputElem = card.querySelector(`input[id^="prevTopic"]`);
+            const prevTopicVal = prevTopicInputElem ? prevTopicInputElem.value.trim() : "";
 
             const unitTrackInputElem = card.querySelector(`input[id^="unitTrack"]`);
-            const unitTrackVal = unitTrackInputElem ? unitTrackInputElem.value.trim() : `Unit ${sequenceIndex} - Module Sequence`;
+            const unitTrackVal = unitTrackInputElem ? unitTrackInputElem.value.trim() : "";
 
             const subtopicInputElem = card.querySelector(`input[id^="subtopic"]`);
-            const subtopicVal = subtopicInputElem ? subtopicInputElem.value.trim() : `Core principles and analysis of ${topicVal}`;
+            const subtopicVal = subtopicInputElem ? subtopicInputElem.value.trim() : "";
 
             const pageRangeInputElem = card.querySelector(`input[id^="pageRange"]`);
-            const pageRangeVal = pageRangeInputElem ? pageRangeInputElem.value.trim() : `pp. ${(sequenceIndex-1)*15 + 1}-${sequenceIndex*15}`;
+            const pageRangeVal = pageRangeInputElem ? pageRangeInputElem.value.trim() : "";
 
-            const selectedRationale = document.getElementById(`rationaleSelect${dayNum}`)?.value || "Standard instructional rationale.";
-            const selectedObjectives = document.getElementById(`objectivesSelect${dayNum}`)?.value || "Students will be able to analyze and comprehend key thematic concepts.";
-            const selectedPrereq = document.getElementById(`prereqSelect${dayNum}`)?.value || "Standard prerequisite knowledge.";
+            const selectedRationale = document.getElementById(`rationaleSelect${dayNum}`)?.value || "";
+            const selectedObjectives = document.getElementById(`objectivesSelect${dayNum}`)?.value || "";
+            const selectedPrereq = document.getElementById(`prereqSelect${dayNum}`)?.value || "";
             const selectedAidsOption = document.getElementById(`aidsSelect${dayNum}`)?.value || "";
 
-            const sMin = document.getElementById(`starterMin${dayNum}`)?.value || "5";
-            const mMin = document.getElementById(`mainMin${dayNum}`)?.value || "32";
-            const cMin = document.getElementById(`conclMin${dayNum}`)?.value || "8";
+            const sMin = document.getElementById(`starterMin${dayNum}`)?.value || "";
+            const mMin = document.getElementById(`mainMin${dayNum}`)?.value || "";
+            const cMin = document.getElementById(`conclMin${dayNum}`)?.value || "";
 
-            const checkedStrats = Array.from(card.querySelectorAll(`input[name^="strat"]:checked`)).map(cb => cb.value);
-            const stratText = checkedStrats.length > 0 ? checkedStrats.join(" + ") : tObj.strategies[0];
+            // Gather multi-selected Contents for Starter
+            let checkedStarterContents = Array.from(card.querySelectorAll(`input[name="starterContent${dayNum}"]:checked`)).map(cb => cb.value);
+            let manualStarterContent = document.getElementById(`starterContentManual${dayNum}`)?.value.trim() || "";
+            if(manualStarterContent) checkedStarterContents.push(manualStarterContent);
+            let starterContentText = checkedStarterContents.join("; ");
 
-            const checkedAssess = Array.from(card.querySelectorAll(`input[name^="assess"]:checked`)).map(cb => cb.value);
-            const assessText = checkedAssess.length > 0 ? checkedAssess.join(", ") : tObj.assessments[0];
+            // Gather multi-selected Teacher Verbs for Starter
+            let checkedTStarterVerbs = Array.from(card.querySelectorAll(`input[name="tStarterVerb${dayNum}"]:checked`)).map(cb => cb.value);
+            let manualTStarter = document.getElementById(`tStarterManual${dayNum}`)?.value.trim() || "";
+            let tStarterRoleText = checkedTStarterVerbs.map(v => `${v} ${prevTopicVal}`).join("; ");
+            if(manualTStarter) {
+                tStarterRoleText = tStarterRoleText ? tStarterRoleText + "; " + `${manualTStarter} ${prevTopicVal}` : `${manualTStarter} ${prevTopicVal}`;
+            }
+
+            // Gather multi-selected Student Verbs for Starter
+            let checkedSStarterVerbs = Array.from(card.querySelectorAll(`input[name="sStarterVerb${dayNum}"]:checked`)).map(cb => cb.value);
+            let sStarterRoleText = checkedSStarterVerbs.map(v => `${v} ${prevTopicVal}`).join("; ");
+
+            // Gather multi-selected Teacher Verbs for Main
+            let checkedTMainVerbs = Array.from(card.querySelectorAll(`input[name="tMainVerb${dayNum}"]:checked`)).map(cb => cb.value);
+            let tMainRoleText = checkedTMainVerbs.length > 0 ? checkedTMainVerbs.map(v => `${v} ${topicVal}`).join("; ") : `Presenting and explaining about ${topicVal}`;
+
+            // Gather multi-selected Student Verbs for Main
+            let checkedSMainVerbs = Array.from(card.querySelectorAll(`input[name="sMainVerb${dayNum}"]:checked`)).map(cb => cb.value);
+            let sMainRoleText = checkedSMainVerbs.length > 0 ? checkedSMainVerbs.map(v => `${v} ${topicVal}`).join("; ") : `Active participation and note-taking on ${topicVal}`;
+
+            // Gather multi-selected Contents for Concluding
+            let checkedConclContents = Array.from(card.querySelectorAll(`input[name="conclContent${dayNum}"]:checked`)).map(cb => cb.value);
+            let manualConclContent = document.getElementById(`conclContentManual${dayNum}`)?.value.trim() || "";
+            if(manualConclContent) checkedConclContents.push(manualConclContent);
+            let conclContentText = checkedConclContents.join("; ");
+
+            // Gather multi-selected Teacher Verbs for Concluding
+            let checkedTConclVerbs = Array.from(card.querySelectorAll(`input[name="tConclVerb${dayNum}"]:checked`)).map(cb => cb.value);
+            let manualTConcl = document.getElementById(`tConclManual${dayNum}`)?.value.trim() || "";
+            let tConclRoleText = checkedTConclVerbs.map(v => `${v} ${topicVal}`).join("; ");
+            if(manualTConcl) {
+                tConclRoleText = tConclRoleText ? tConclRoleText + "; " + `${manualTConcl} ${topicVal}` : `${manualTConcl} ${topicVal}`;
+            }
+
+            // Gather multi-selected Student Verbs for Concluding
+            let checkedSConclVerbs = Array.from(card.querySelectorAll(`input[name="sConclVerb${dayNum}"]:checked`)).map(cb => cb.value);
+            let sConclRoleText = checkedSConclVerbs.map(v => `${v} ${topicVal}`).join("; ");
+
+            // Distributed strategies per phase
+            let starterStrats = Array.from(card.querySelectorAll(`input[name^="starterStrat${dayNum}"]:checked`)).map(cb => cb.value);
+            let mainStrats = Array.from(card.querySelectorAll(`input[name^="mainStrat${dayNum}"]:checked`)).map(cb => cb.value);
+            let conclStrats = Array.from(card.querySelectorAll(`input[name^="conclStrat${dayNum}"]:checked`)).map(cb => cb.value);
+
+            let starterMethodText = starterStrats.join(" + ");
+            let mainMethodText = mainStrats.join(" + ");
+            let conclMethodText = conclStrats.join(" + ");
+
+            const checkedStarterAssess = Array.from(card.querySelectorAll(`input[name^="starterAssess${dayNum}"]:checked`)).map(cb => cb.value);
+            const starterAssessText = checkedStarterAssess.join(", ");
+
+            const checkedMainAssess = Array.from(card.querySelectorAll(`input[name^="mainAssess${dayNum}"]:checked`)).map(cb => cb.value);
+            const mainAssessText = checkedMainAssess.join(", ");
+
+            const checkedConclAssess = Array.from(card.querySelectorAll(`input[name^="conclAssess${dayNum}"]:checked`)).map(cb => cb.value);
+            const conclAssessText = checkedConclAssess.join(", ");
 
             const checkedAids = Array.from(card.querySelectorAll(`input[name^="aids"]:checked`)).map(cb => cb.value);
-            let aidsText = checkedAids.length > 0 ? checkedAids.join(", ") : tObj.teachingAidsList[0];
+            let aidsText = checkedAids.length > 0 ? checkedAids.join(", ") : "";
             if(selectedAidsOption) {
-                aidsText = selectedAidsOption + "; " + aidsText;
+                aidsText = selectedAidsOption + (aidsText ? "; " + aidsText : "");
             }
 
             let currDate = new Date(baseDate);
             currDate.setDate(baseDate.getDate() + (sequenceIndex - 1));
-            let dateFormatted = currDate.toISOString().split('T')[0];
-
-            const plan = getIntelligentLessonContent(topicVal, selectedLang);
+            let dateFormatted = startDateStr ? currDate.toISOString().split('T')[0] : "";
 
             let adminSigHtml = "";
             if (sequenceIndex === totalCards) {
@@ -1408,7 +1429,6 @@
             containerHtml += `
                 <div class="day-plan-page">
                     ${watermarkHtml}
-                    <!-- Golden Accent Decor Line -->
                     <div style="background: linear-gradient(135deg, #4f46e5, #0ea5e9, #d97706); height: 6px; border-radius: 3px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></div>
                     
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -1436,13 +1456,15 @@
                         <div><label>${tObj.unitTrack}</label><input type="text" value="${unitTrackVal}"></div>
                     </div>
 
-                    <div class="metadata-row"><label>${tObj.topic}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${topicVal}</textarea></div>
-                    <div class="metadata-row"><label>${tObj.subtopic}</label><textarea rows="2" style="height: 2.2em;" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${subtopicVal}</textarea></div>
-                    <div class="metadata-row"><label>${tObj.rationale}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedRationale}</textarea></div>
+                    <div class="metadata-row"><label>${tObj.previousTopic}</label><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${prevTopicVal}</textarea></div>
+                    <div class="metadata-row"><label>${tObj.topic}</label><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${topicVal}</textarea></div>
+                    <div class="metadata-row"><label>${tObj.subtopic}</label><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${subtopicVal}</textarea></div>
                     
-                    <div class="metadata-row"><label>${tObj.objectives}:</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">Students will be able to ${selectedObjectives.replace(/^(Students will be able to\s*)/i, '')}</textarea></div>
+                    <!-- Expanded Rows for Rationale and Learning Objectives -->
+                    <div class="metadata-row"><label>${tObj.rationale}</label><textarea rows="3" style="min-height: 3.5em;" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedRationale}</textarea></div>
+                    <div class="metadata-row"><label>${tObj.objectives}:</label><textarea rows="3" style="min-height: 3.5em;" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedObjectives}</textarea></div>
                     
-                    <div class="metadata-row"><label>${tObj.prereq}</label><textarea rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedPrereq}</textarea></div>
+                    <div class="metadata-row"><label>${tObj.prereq}</label><textarea rows="2" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedPrereq}</textarea></div>
 
                     <table>
                         <colgroup>
@@ -1468,37 +1490,37 @@
                         <tbody>
                             <tr>
                                 <td><strong>${tObj.starter}</strong></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${sMin} mins</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterContent}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterRole}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterAction}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterMethod}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.starterAssessment}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${sMin ? sMin + ' mins' : ''}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${starterContentText}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${tStarterRoleText}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${sStarterRoleText}</textarea></td>
+                                <td style="font-weight:bold; color:var(--accent);"><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${starterMethodText}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${starterAssessText}</textarea></td>
                             </tr>
                             <tr>
                                 <td><strong>${tObj.main}</strong></td>
-                                <td style="background:#fafafa;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${mMin} mins</textarea></td>
-                                <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${subtopicVal}</textarea></td>
-                                <td style="background:#fffdf0;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedLang === 'am' ? 'ንቁ ስልቶችን (' + stratText + ') ያመቻቻል እና ለ' + topicVal + ' ተስማሚ ድጋፍ ይሰጥዋል።' : (selectedLang === 'om' ? 'Tooftaalee (' + stratText + ') mijeessuun deggersa barbaachisaa ' + topicVal + ' f kennuu.' : 'Facilitates active strategies (' + stratText + ') and provides technical scaffolding for ' + topicVal + '.')}</textarea></td>
-                                <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.mainAction}</textarea></td>
-                                <td style="font-weight:bold; color:var(--accent);"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${stratText}</textarea></td>
-                                <td style="font-weight:bold; color:var(--primary);"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${assessText}</textarea></td>
+                                <td style="background:#fafafa;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${mMin ? mMin + ' mins' : ''}</textarea></td>
+                                <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${topicVal}</textarea></td>
+                                <td style="background:#fffdf0;"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${tMainRoleText}</textarea></td>
+                                <td><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${sMainRoleText}</textarea></td>
+                                <td style="font-weight:bold; color:var(--accent);"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${mainMethodText}</textarea></td>
+                                <td style="font-weight:bold; color:var(--primary);"><textarea rows="5" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${mainAssessText}</textarea></td>
                             </tr>
                             <tr>
                                 <td><strong>${tObj.concluding}</strong></td>
-                                <td style="background:#fafafa;"><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${cMin} mins</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryContent}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryRole}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryAction}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryMethod}</textarea></td>
-                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${plan.plenaryAssessment}</textarea></td>
+                                <td style="background:#fafafa;"><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${cMin ? cMin + ' mins' : ''}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${conclContentText}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${tConclRoleText}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${sConclRoleText}</textarea></td>
+                                <td style="font-weight:bold; color:var(--accent);"><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${conclMethodText}</textarea></td>
+                                <td><textarea rows="4" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${conclAssessText}</textarea></td>
                             </tr>
                         </tbody>
                     </table>
 
                     ${bottomLogoHtml}
                     <div class="footer-section"><label><strong>${tObj.teachingAids}</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${aidsText}</textarea></div>
-                    <div class="footer-section" style="margin-top:6px;"><label><strong>${tObj.reflection}</strong></label><textarea oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'">${selectedLang === 'am' ? 'የስልቱን ውጤታማነት (' + stratText + ') ከ' + topicVal + ' የመማር ዓላማዎች ጋር ማመዛዘን።' : (selectedLang === 'om' ? 'Bu’aqabeessummaa tooftichaa (' + stratText + ') kaayyoo barachuu ' + topicVal + ' wajjin madaaluu.' : 'Evaluated strategy efficiency (' + stratText + ') versus target cognitive outcomes for ' + topicVal + '.')}</textarea></div>
+                    <div class="footer-section" style="margin-top:6px;"><label><strong>${tObj.reflection}</strong></label><textarea placeholder="" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea></div>
                     
                     ${adminSigHtml}
                 </div>
@@ -1510,10 +1532,8 @@
         
         setTimeout(() => {
             document.querySelectorAll('#plansContainer textarea').forEach(ta => {
-                if(!ta.closest('.metadata-row') || !ta.previousElementSibling || ta.previousElementSibling.innerText !== tObj.subtopic) {
-                    ta.style.height = '';
-                    ta.style.height = ta.scrollHeight + 'px';
-                }
+                ta.style.height = '';
+                ta.style.height = ta.scrollHeight + 'px';
             });
         }, 50);
     }
@@ -1524,10 +1544,6 @@
             alert("Please generate lesson plans first.");
             return;
         }
-
-        let content = "";
-        const subject = document.getElementById('subjectInput').value || "Lesson_Plans";
-        const filename = subject.replace(/[^a-zA-Z0-9]/g, '_');
     }
 </script>
 
