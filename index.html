@@ -190,7 +190,7 @@
         .admin-sig-row { display: flex; justify-content: space-between; gap: 10px; }
         .admin-sig-item { flex: 1; display: flex; gap: 5px; align-items: baseline; border-bottom: 1px dotted #666; padding-bottom: 2px; }
         .admin-sig-item span { font-weight: 700; white-space: nowrap; }
-        .admin-sig-item input { border: none; border-bottom: 1px solid #333; font-size: 11px; padding: 0 3px; background: transparent; outline: none; }
+        .admin-sig-item input, .admin-sig-item select { border: none; border-bottom: 1px solid #333; font-size: 11px; padding: 0 3px; background: transparent; outline: none; font-family: inherit; }
 
         .export-panel { display: flex; gap: 12px; margin-top: 25px; flex-wrap: wrap; }
         .export-panel button { flex: 1; min-width: 150px; }
@@ -203,12 +203,12 @@
 
         @media print { 
             body { background: #fff; padding: 0; color: #000; font-family: 'Times New Roman', Times, serif !important; } 
-            .container, .day-plan-page, input, textarea, th, td, label { font-family: 'Times New Roman', Times, serif !important; }
+            .container, .day-plan-page, input, textarea, select, th, td, label { font-family: 'Times New Roman', Times, serif !important; }
             .container::before { display: none; }
             .controls, .export-panel, .secondary-btn, .ai-assist-btn { display: none !important; } 
             .container { box-shadow: none; padding: 0; max-width: 100%; width: 100%; border: none; } 
             .day-plan-page { page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid; margin-bottom: 0; padding-bottom: 10px; width: 100%; }
-            textarea, input { border: none !important; background: transparent !important; resize: none !important; height: auto !important; overflow: visible !important; white-space: pre-wrap !important; word-wrap: break-word !important; font-size: 11px !important; padding: 0 !important; color: #000 !important; }
+            textarea, input, select { border: none !important; background: transparent !important; resize: none !important; height: auto !important; overflow: visible !important; white-space: pre-wrap !important; word-wrap: break-word !important; font-size: 11px !important; padding: 0 !important; color: #000 !important; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
             table { page-break-inside: auto; width: 100% !important; table-layout: fixed !important; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             td, th { page-break-inside: avoid; overflow: visible !important; word-wrap: break-word !important; }
@@ -1041,6 +1041,8 @@
                     <div class="ai-select-group">
                         <label><span>Teaching Aids Options</span></label>
                         <select id="aidsSelect${dayNum}"></select>
+                        <!-- Added manual input space for custom teaching aids insertion -->
+                        <input type="text" id="manualAidsInput${dayNum}" placeholder="Manually add custom teaching aid here..." style="margin-top: 6px;">
                     </div>
                 </div>
 
@@ -1332,6 +1334,7 @@
             const selectedObjectives = document.getElementById(`objectivesSelect${dayNum}`)?.value || "";
             const selectedPrereq = document.getElementById(`prereqSelect${dayNum}`)?.value || "";
             const selectedAidsOption = document.getElementById(`aidsSelect${dayNum}`)?.value || "";
+            const manualAidsVal = document.getElementById(`manualAidsInput${dayNum}`)?.value.trim() || "";
 
             const sMin = document.getElementById(`starterMin${dayNum}`)?.value || "";
             const mMin = document.getElementById(`mainMin${dayNum}`)?.value || "";
@@ -1404,6 +1407,9 @@
             if(selectedAidsOption) {
                 aidsText = selectedAidsOption + (aidsText ? "; " + aidsText : "");
             }
+            if(manualAidsVal) {
+                aidsText = aidsText ? aidsText + "; " + manualAidsVal : manualAidsVal;
+            }
 
             let currDate = new Date(baseDate);
             currDate.setDate(baseDate.getDate() + (sequenceIndex - 1));
@@ -1417,10 +1423,29 @@
                             <div class="admin-sig-item"><span>${tObj.prepBy}</span> <input type="text" value="${teacherName}" style="flex:2;"> <span>${tObj.sig}</span> <input type="text" style="flex:1;"> <span>${tObj.date}</span> <input type="text" value="${dateFormatted}" style="flex:1;"></div>
                         </div>
                         <div class="admin-sig-row">
-                            <div class="admin-sig-item"><span>${tObj.deptHead}</span> <input type="text" placeholder="Name" style="flex:2;"> <span>${tObj.sig}</span> <input type="text" style="flex:1;"> <span>${tObj.date}</span> <input type="text" style="flex:1;"></div>
+                            <div class="admin-sig-item">
+                                <span>${tObj.deptHead}</span> 
+                                <input type="text" value="Birhanu Mekonen" list="deptHeadMergedList" style="flex:2;" placeholder="Select or type name...">
+                                <datalist id="deptHeadMergedList">
+                                    <option value="Birhanu Mekonen">
+                                    <option value="Hirouy Gezahegn">
+                                    <option value="Baye Alemu">
+                                    <option value="Seid Sindewu">
+                                </datalist>
+                                <span>${tObj.sig}</span> <input type="text" style="flex:1;"> 
+                                <span>${tObj.date}</span> <input type="text" style="flex:1;">
+                            </div>
                         </div>
                         <div class="admin-sig-row">
-                            <div class="admin-sig-item"><span>${tObj.vDir}</span> <input type="text" placeholder="Name" style="flex:2;"> <span>${tObj.sig}</span> <input type="text" style="flex:1;"> <span>${tObj.date}</span> <input type="text" style="flex:1;"></div>
+                            <div class="admin-sig-item">
+                                <span>${tObj.vDir}</span> 
+                                <input type="text" value="Gebeyehu Setegn" list="vDirMergedList" style="flex:2;" placeholder="Select or type name...">
+                                <datalist id="vDirMergedList">
+                                    <option value="Gebeyehu Setegn">
+                                </datalist>
+                                <span>${tObj.sig}</span> <input type="text" style="flex:1;"> 
+                                <span>${tObj.date}</span> <input type="text" style="flex:1;">
+                            </div>
                         </div>
                     </div>
                 `;
