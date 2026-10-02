@@ -608,8 +608,10 @@
                 "Mental readiness and curiosity cultivated through introductory warm-up activities for [TOPIC]."
             ],
             starterContentsList: [
-                "Review of prior lesson terminology", "Interactive quiz on previous concepts", 
-                "Guided warm-up problem solving", "Brainstorming session on background knowledge", "Concept connection prompt"
+                "Review", "Revisit", "Recall", "Refine", 
+                "Reinforce", "Reframe", "Reassess", "Reexamine", 
+                "Reactivate", "Reconstruct", "Realign", "Resynthesize", 
+                "Rejuvenate", "Reposition"
             ],
             concludingContentsList: [
                 "Summary and wrap-up discussion", "Q&A clarification session", 
@@ -964,6 +966,13 @@
         }
     }
 
+    function insertExercise(dayNum) {
+        const input = document.getElementById(`conclContentManual${dayNum}`);
+        if(input) {
+            input.value = input.value ? input.value + ", Exercise" : "Exercise";
+        }
+    }
+
     function getDayConfigHtml(dayNum, defaultTopic) {
         const selectedLang = document.getElementById('languageSelect')?.value || "en";
         const tObj = langDict[selectedLang] || langDict.en;
@@ -1097,7 +1106,10 @@
                             <div>
                                 <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Contents (Select multiple):</label>
                                 <div class="checkbox-scroll">${conclContentsOpts}</div>
-                                <input type="text" id="conclContentManual${dayNum}" placeholder="Or type custom content..." style="width: 100%; margin-top: 6px; padding: 6px; font-size: 12px;">
+                                <div style="display: flex; gap: 6px; margin-top: 6px;">
+                                    <input type="text" id="conclContentManual${dayNum}" placeholder="Or type custom content..." style="flex: 1; padding: 6px; font-size: 12px;">
+                                    <button type="button" class="ai-assist-btn" onclick="insertExercise(${dayNum})" title="Insert Exercise">Insert Exercise</button>
+                                </div>
                             </div>
                             <div>
                                 <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Teacher Role Verbs (Select multiple):</label>
@@ -1340,10 +1352,10 @@
             const mMin = document.getElementById(`mainMin${dayNum}`)?.value || "";
             const cMin = document.getElementById(`conclMin${dayNum}`)?.value || "";
 
-            // Gather multi-selected Contents for Starter
-            let checkedStarterContents = Array.from(card.querySelectorAll(`input[name="starterContent${dayNum}"]:checked`)).map(cb => cb.value);
+            // Gather multi-selected Contents for Starter integrated with previous topic
+            let checkedStarterContents = Array.from(card.querySelectorAll(`input[name="starterContent${dayNum}"]:checked`)).map(cb => `${cb.value} (${prevTopicVal})`);
             let manualStarterContent = document.getElementById(`starterContentManual${dayNum}`)?.value.trim() || "";
-            if(manualStarterContent) checkedStarterContents.push(manualStarterContent);
+            if(manualStarterContent) checkedStarterContents.push(`${manualStarterContent} (${prevTopicVal})`);
             let starterContentText = checkedStarterContents.join("; ");
 
             // Gather multi-selected Teacher Verbs for Starter
